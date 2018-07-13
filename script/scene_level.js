@@ -49,6 +49,25 @@ function initialize_level() {
         }
         levelMap.push(levelMapRow);
     }
+    for (var i = 0; i < levelProperties.gridWidth; i++) {
+        for (var j = 0; j < levelProperties.gridHeight - 1; j++) {
+            if (levelMap[i][j] == 0 && levelMap[i][j + 1] == 1) {
+                if (i > 0 && levelMap[i - 1][j + 1] == 1) {
+                    if (i < levelProperties.gridWidth - 1 && levelMap[i + 1][j + 1] == 1) {
+                        levelMap[i][j] = -2;
+                    } else {
+                        levelMap[i][j] = -4;
+                    }
+                } else {
+                    if (i < levelProperties.gridWidth - 1 && levelMap[i + 1][j + 1] == 1) {
+                        levelMap[i][j] = -3;
+                    } else {
+                        levelMap[i][j] = -1;
+                    }
+                }
+            }
+        }
+    }
 
     walls = new PIXI.Container();
     //walls.position.set(0, 0);
@@ -258,7 +277,7 @@ function play(delta) {
         var ii = i + tileX;
         for (var j = 0; j < levelProperties.tileDisplayY; j++) {
             var jj = j + tileY;
-            var n = -1;
+            var n = -99;
             if (ii >= 0 && ii < levelProperties.gridWidth && jj >= 0 && jj < levelProperties.gridHeight)
                 n = levelMap[ii][jj];
             switch(n) {
@@ -267,6 +286,18 @@ function play(delta) {
                     break;
                 case 1:
                     graphicMap[i][j].texture = PIXI.utils.TextureCache["wall"];
+                    break;
+                case -1:
+                    graphicMap[i][j].texture = PIXI.utils.TextureCache["cap_lr"];
+                    break;
+                case -2:
+                    graphicMap[i][j].texture = PIXI.utils.TextureCache["cap"];
+                    break;
+                case -3:
+                    graphicMap[i][j].texture = PIXI.utils.TextureCache["cap_l"];
+                    break;
+                case -4:
+                    graphicMap[i][j].texture = PIXI.utils.TextureCache["cap_r"];
                     break;
                 default:
                     graphicMap[i][j].texture = PIXI.utils.TextureCache["abyss"];
