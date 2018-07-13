@@ -8,6 +8,7 @@ var objects;
 var player, pickups;
 var walls;
 var levelMap, graphicMap;
+var playerAnimations;
 function initialize_level() {
     levelProperties = {
         width: 0,
@@ -31,11 +32,19 @@ function initialize_level() {
     spriteAtlas = PIXI.loader.resources["img/sprites.json"].textures;
     tileAtlas = PIXI.loader.resources["img/tiles.json"].textures;
 
-    var playerFrames = [];
+    playerAnimations = {};
+    playerAnimations.idle = [];
     for (var i = 1; i <= 1; i++) {
-        playerFrames.push(PIXI.Texture.fromFrame('player f' + i));
+        playerAnimations.idle.push(PIXI.Texture.fromFrame('player f' + i));
     }
-
+    playerAnimations.jump = [];
+    for (var i = 1; i <= 1; i++) {
+        playerAnimations.jump.push(PIXI.Texture.fromFrame('player jump f' + i));
+    }
+    playerAnimations.run = [];
+    for (var i = 1; i <= 6; i++) {
+        playerAnimations.run.push(PIXI.Texture.fromFrame('player run f' + i));
+    }
 
     levelMap = [];
     var levelMapRow;
@@ -91,7 +100,7 @@ function initialize_level() {
     levelScene.addChild(objects);
 
     //player = new PIXI.Sprite(spriteAtlas["frame 1"]);
-    player = new PIXI.extras.AnimatedSprite(playerFrames);
+    player = new PIXI.extras.AnimatedSprite(playerAnimations.run);
     player.px = 128;
     player.py = 128;
     player.vx = 0.5;
@@ -266,6 +275,19 @@ function play(delta) {
             }
             tx++;
         }
+    }
+
+    if (!grounded) {
+        player.textures = playerAnimations.jump;
+    } else if (keys.left.held || keys.right.held) {
+        if (player.textures != playerAnimations.run) {
+            player.textures = playerAnimations.run;
+            player.animationSpeed = 0.4;
+            player.play();
+        }
+
+    } else {
+        player.textures = playerAnimations.idle;
     }
 
     if (keys.b.held && keys.b.toggled) {
