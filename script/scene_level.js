@@ -9,7 +9,7 @@ var player, pickups;
 var walls;
 var levelMap, graphicMap;
 var playerAnimations;
-var tileType; //, tileKeys;
+var tileType;
 function initialize_level() {
     levelProperties = {
         width: 0,
@@ -241,23 +241,6 @@ function play(delta) {
     player.vx *= Math.pow(0.9, delta);
     player.vy *= Math.pow(0.99, delta);
 
-/*
-    player.px += player.vx * delta;
-    player.py += player.vy * delta;
-    var ii = Math.floor(player.px / levelProperties.grid);
-    var jj = Math.floor(player.py / levelProperties.grid);
-    if (ii >= 0 && ii < levelProperties.gridWidth && jj >= 0 && jj < levelProperties.gridHeight) {
-        if (levelMap[ii][jj] == 1) {
-            player.px -= player.vx * delta;
-            player.py -= player.vy * delta;
-            player.vx = -player.vx;
-            player.vy = 0;
-            //PIXI.sound.stop('sfx_block');
-            //PIXI.sound.play('sfx_block');
-        }
-    }
-    */
-
     var tx = player.px;
     var ty = player.py;
     var tdx = player.vx * delta;
@@ -356,7 +339,6 @@ function play(delta) {
         }
     }
 
-
     player.x = player.px;
     player.y = player.py;
 
@@ -389,15 +371,6 @@ function play(delta) {
         camera.px += (camera_fx - camera.px) / cdist * 8;
         camera.py += (camera_fy - camera.py) / cdist * 8;
     }
-    //var dist = Math.sqrt(Math.pow(camera.x - player_fx, 2) + Math.pow(camera.y - player.py, 2)) - 64;
-    /*
-    var mincamdist = 13;
-    var maxcamdist = 256;
-    var xdist = Math.min(Math.abs(camera.x - camera.px) + mincamdist, maxcamdist - mincamdist);
-    var ydist = Math.min(Math.abs(camera.y - camera.py) + mincamdist, maxcamdist - mincamdist);
-    camera.x = (camera.x * xdist + camera.px * mincamdist) / (xdist + mincamdist);
-    camera.y = (camera.y * ydist + camera.py * mincamdist) / (ydist + mincamdist);
-    */
 
     camera_fx = player.px + camera.px;
     camera_fy = player.py + camera.py;
@@ -437,43 +410,6 @@ function play(delta) {
             } else {
                 graphicMap[i][j].texture = PIXI.utils.TextureCache["abyss"];
             }
-            /*
-            switch(n) {
-                case 0:
-                    graphicMap[i][j].texture = PIXI.utils.TextureCache["air"];
-                    break;
-                case 1:
-                    graphicMap[i][j].texture = PIXI.utils.TextureCache["wall"];
-                    break;
-                case 2:
-                    graphicMap[i][j].texture = PIXI.utils.TextureCache["wall_grass"];
-                    break;
-                case 3:
-                    graphicMap[i][j].texture = PIXI.utils.TextureCache["crate"];
-                    break;
-                case 4:
-                    graphicMap[i][j].texture = PIXI.utils.TextureCache["crate_top"];
-                    break;
-                case 5:
-                    graphicMap[i][j].texture = PIXI.utils.TextureCache["leaf"];
-                    break;
-                case -1:
-                    graphicMap[i][j].texture = PIXI.utils.TextureCache["cap_lr"];
-                    break;
-                case -2:
-                    graphicMap[i][j].texture = PIXI.utils.TextureCache["cap"];
-                    break;
-                case -3:
-                    graphicMap[i][j].texture = PIXI.utils.TextureCache["cap_l"];
-                    break;
-                case -4:
-                    graphicMap[i][j].texture = PIXI.utils.TextureCache["cap_r"];
-                    break;
-                default:
-                    graphicMap[i][j].texture = PIXI.utils.TextureCache["abyss"];
-                    break;
-            }
-            */
         }
     }
 }
