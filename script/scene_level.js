@@ -76,7 +76,7 @@ function initialize_level() {
     player.py = 128;
     player.vx = 0.5;
     player.vy = 0;
-    player.anchor.set(0.5);
+    player.anchor.set(0.5, 1.0);
     player.animationSpeed = 0.1;
     player.play();
     objects.addChild(player);
@@ -125,12 +125,14 @@ function levelResize() {
 */
 
 function play(delta) {
-    player.vx *= 0.9;
-    player.vy *= 0.9;
-    if (keys.up.held) player.vy -= 0.5 * delta;
+    player.vy += 0.5 * delta
+    if (keys.up.held) player.vy = -10;
     if (keys.down.held) player.vy += 0.5 * delta;
     if (keys.left.held) player.vx -= 0.5 * delta;
     if (keys.right.held) player.vx += 0.5 * delta;
+    player.vx *= Math.pow(0.9, delta);
+    player.vy *= Math.pow(0.99, delta);
+
 
     player.px += player.vx * delta;
     player.py += player.vy * delta;
@@ -141,7 +143,7 @@ function play(delta) {
             player.px -= player.vx * delta;
             player.py -= player.vy * delta;
             player.vx = -player.vx;
-            player.vy = -player.vy;
+            player.vy = 0;
             //PIXI.sound.stop('sfx_block');
             //PIXI.sound.play('sfx_block');
         }
