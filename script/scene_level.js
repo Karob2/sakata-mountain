@@ -124,16 +124,54 @@ function levelResize() {
 }
 */
 
+/*
+function getGridIntersections(start, end) {
+    //start[0] = start[0] / levelProperties.grid;
+    var m = (start[1] - end[1]) / (start[0] - end[0]);
+    var tsx, tex;
+    if (start[0] < end[0]) {
+        tsx = start[0];
+        tex = end[0];
+    } else {
+        tsx = end[0];
+        tex = start[0];
+    }
+
+    var n = (start[0] - end[0]) / (start[1] - end[1]);
+    if (start[1] < end[1]) {
+        tsx = start[1];
+        tex = end[1];
+    } else {
+        tsx = end[1];
+        tex = start[1];
+    }
+    for (var i = Math.
+}
+*/
+
+function checkWall(x, y) {
+    var ii = Math.floor(x / levelProperties.grid);
+    var jj = Math.floor(y / levelProperties.grid);
+    if (ii >= 0 && ii < levelProperties.gridWidth && jj >= 0 && jj < levelProperties.gridHeight) {
+        if (levelMap[ii][jj] == 1) return true;
+    }
+    return false;
+}
+
+function playerCheckWall(x, y) {
+    if (checkWall(x - 14, y)) return true;
+    if (checkWall(x + 14, y)) return true;
+    if (checkWall(x - 14, y - 60)) return true;
+    if (checkWall(x + 14, y - 60)) return true;
+    return false;
+}
+
 function play(delta) {
     player.vy += 0.5 * delta
-    if (keys.up.held) player.vy = -10;
-    if (keys.down.held) player.vy += 0.5 * delta;
-    if (keys.left.held) player.vx -= 0.5 * delta;
-    if (keys.right.held) player.vx += 0.5 * delta;
     player.vx *= Math.pow(0.9, delta);
     player.vy *= Math.pow(0.99, delta);
 
-
+/*
     player.px += player.vx * delta;
     player.py += player.vy * delta;
     var ii = Math.floor(player.px / levelProperties.grid);
@@ -148,25 +186,51 @@ function play(delta) {
             //PIXI.sound.play('sfx_block');
         }
     }
-    /*
-    if (player.px >= 511) {
-        player.px = 511;
-        player.vx = -player.vx;
-    }
-    if (player.px < 0) {
-        player.px = 0;
-        player.vx = -player.vx;
-    }
-    if (player.py > 511) {
-        player.py = 511;
-        player.vy = -player.vy;
-    }
-    if (player.py < 0) {
-        player.py = 0;
-        player.vy = -player.vy;
-    }
     */
-    //player.rotation += delta * 0.04;
+
+    var tx = player.px;
+    var ty = player.py;
+    var tdx = player.vx * delta;
+    var tdy = player.vy * delta;
+    var dd = Math.sqrt(Math.pow(player.vx, 2) + Math.pow(player.vy, 2)) * delta;
+    var tddx = tdx / dd;
+    var tddy = tdy / dd;
+    var grounded = false;
+    var vhit = false;
+    var hhit = false;
+    for (var i = 0; i <= dd; i++) {
+        if (!vhit) {
+            ty += tddy;
+            if (playerCheckWall(tx, ty)) {
+                ty -= tddy;
+                vhit = true;
+                if (player.vy > 0) {
+                    grounded = true;
+                    player.vy = 1;
+                } else {
+                    player.vy = 0;
+                }
+            }
+        }
+        if (!hhit) {
+            tx += tddx;
+            if (playerCheckWall(tx, ty)) {
+                tx -= tddx;
+                hhit = true;
+                player.vx = 0;
+            }
+        }
+    }
+    player.px = tx;
+    player.py = ty;
+    if (grounded && !keys.left.held && !keys.right.held) {
+        player.vx = 0;
+    }
+
+    if (grounded && keys.up.held && player.vy >= -1) player.vy = -10;
+    if (keys.down.held) player.vy += 0.5 * delta;
+    if (keys.left.held) player.vx -= 0.5 * delta;
+    if (keys.right.held) player.vx += 0.5 * delta;
 
     player.x = player.px;
     player.y = player.py;
