@@ -59,6 +59,19 @@ function initialize_level() {
         levelMap.push(levelMapRow);
     }
     for (var i = 0; i < levelProperties.gridWidth; i++) {
+        for (var j = 0; j < levelProperties.gridHeight; j++) {
+            if (levelMap[i][j] == 0) {
+                if (i > 0 && levelMap[i - 1][j] == 1 || i < levelProperties.gridWidth - 1 && levelMap[i + 1][j] == 1) {
+                    levelMap[i][j] = 5;
+                }
+                if (j < levelProperties.gridHeight - 1 && levelMap[i][j + 1] == 1) {
+                    if (Math.random() < 0.1) levelMap[i][j] = 3;
+                }
+            }
+        }
+    }
+    /*
+    for (var i = 0; i < levelProperties.gridWidth; i++) {
         for (var j = 0; j < levelProperties.gridHeight - 1; j++) {
             if (levelMap[i][j] == 0 && levelMap[i][j + 1] >= 1) {
                 levelMap[i][j + 1] = 2;
@@ -78,6 +91,7 @@ function initialize_level() {
             }
         }
     }
+    */
 
     walls = new PIXI.Container();
     //walls.position.set(0, 0);
@@ -403,6 +417,15 @@ function play(delta) {
                     break;
                 case 2:
                     graphicMap[i][j].texture = PIXI.utils.TextureCache["wall_grass"];
+                    break;
+                case 3:
+                    graphicMap[i][j].texture = PIXI.utils.TextureCache["crate"];
+                    break;
+                case 4:
+                    graphicMap[i][j].texture = PIXI.utils.TextureCache["crate_top"];
+                    break;
+                case 5:
+                    graphicMap[i][j].texture = PIXI.utils.TextureCache["leaf"];
                     break;
                 case -1:
                     graphicMap[i][j].texture = PIXI.utils.TextureCache["cap_lr"];
