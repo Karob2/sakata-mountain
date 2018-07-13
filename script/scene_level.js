@@ -51,15 +51,16 @@ function initialize_level() {
     }
     for (var i = 0; i < levelProperties.gridWidth; i++) {
         for (var j = 0; j < levelProperties.gridHeight - 1; j++) {
-            if (levelMap[i][j] == 0 && levelMap[i][j + 1] == 1) {
-                if (i > 0 && levelMap[i - 1][j + 1] == 1) {
-                    if (i < levelProperties.gridWidth - 1 && levelMap[i + 1][j + 1] == 1) {
+            if (levelMap[i][j] == 0 && levelMap[i][j + 1] >= 1) {
+                levelMap[i][j + 1] = 2;
+                if (i > 0 && levelMap[i - 1][j + 1] >= 1) {
+                    if (i < levelProperties.gridWidth - 1 && levelMap[i + 1][j + 1] >= 1) {
                         levelMap[i][j] = -2;
                     } else {
                         levelMap[i][j] = -4;
                     }
                 } else {
-                    if (i < levelProperties.gridWidth - 1 && levelMap[i + 1][j + 1] == 1) {
+                    if (i < levelProperties.gridWidth - 1 && levelMap[i + 1][j + 1] >= 1) {
                         levelMap[i][j] = -3;
                     } else {
                         levelMap[i][j] = -1;
@@ -172,7 +173,7 @@ function checkWall(x, y) {
     var ii = Math.floor(x / levelProperties.grid);
     var jj = Math.floor(y / levelProperties.grid);
     if (ii >= 0 && ii < levelProperties.gridWidth && jj >= 0 && jj < levelProperties.gridHeight) {
-        if (levelMap[ii][jj] == 1) return true;
+        if (levelMap[ii][jj] >= 1) return true;
     }
     return false;
 }
@@ -282,10 +283,13 @@ function play(delta) {
                 n = levelMap[ii][jj];
             switch(n) {
                 case 0:
-                    graphicMap[i][j].texture = PIXI.utils.TextureCache["floor"];
+                    graphicMap[i][j].texture = PIXI.utils.TextureCache["air"];
                     break;
                 case 1:
                     graphicMap[i][j].texture = PIXI.utils.TextureCache["wall"];
+                    break;
+                case 2:
+                    graphicMap[i][j].texture = PIXI.utils.TextureCache["wall_grass"];
                     break;
                 case -1:
                     graphicMap[i][j].texture = PIXI.utils.TextureCache["cap_lr"];
