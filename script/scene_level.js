@@ -100,6 +100,7 @@ function initialize_level() {
     player.animationSpeed = 0.1;
     player.play();
     objects.addChild(player);
+    player.direction = 1;
 
     pickups = new PIXI.Container();
     objects.addChild(pickups);
@@ -296,11 +297,21 @@ function play(delta) {
     player.x = player.px;
     player.y = player.py;
 
+    /*
     var dist = Math.sqrt(Math.pow(camera.x - player.px, 2) + Math.pow(camera.y - player.py, 2)) - 64;
     if (dist > 0) {
     }
-    camera.x = (camera.x * 9 + player.px) / 10;
-    camera.y = (camera.y * 9 + player.py) / 10;
+    */
+    if (keys.left.held) {
+        player.direction = -1;
+        player.scale.x = -1;
+    }
+    if (keys.right.held) {
+        player.direction = 1;
+        player.scale.x = 1;
+    }
+    camera.x = (camera.x * 9 + (player.px + player.direction * 64)) / 10;
+    camera.y = (camera.y * 9 + (player.py)) / 10;
 
     camera.dx = Math.round(camera.x) - gameProperties.width / 2;
     camera.dy = Math.round(camera.y) - gameProperties.height / 2;
