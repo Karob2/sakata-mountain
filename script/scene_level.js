@@ -48,22 +48,28 @@ function initialize_level() {
     }
 
     tileType = {};
-    tileType.air = {coll: 0, name: "air"};
+    tileType.air = {coll: 0, name: "air", grow: true};
     tileType.abyss = {coll: 0, name: "abyss"};
-    tileType.wall = {coll: 1, name: "wall"};
-    tileType.wall_grass = {coll: 1, name: "wall_grass"};
-    tileType.cap_lr = {coll: 0, name: "cap_lr"};
-    tileType.cap = {coll: 0, name: "cap"};
-    tileType.cap_l = {coll: 0, name: "cap_l"};
-    tileType.cap_r = {coll: 0, name: "cap_r"};
-    tileType.crate = {coll: 2, name: "crate"};
+    tileType.wall = {coll: 1, name: "wall", block: true, grass: true};
+    tileType.wall_grass = {coll: 1, name: "wall_grass", block: true, grass: true};
+    tileType.cap_lr = {coll: 0, name: "cap_lr", grow: true};
+    tileType.cap = {coll: 0, name: "cap", grow: true};
+    tileType.cap_l = {coll: 0, name: "cap_l", grow: true};
+    tileType.cap_r = {coll: 0, name: "cap_r", grow: true};
+    tileType.crate = {coll: 2, name: "crate", block: true};
     tileType.crate_top = {coll: 0, name: "crate_top"};
     tileType.leaf = {coll: 2, name: "leaf"};
     var tileKeys = Object.keys(tileType);
     tileType.index = [];
     for (var i = 0; i < tileKeys.length; i++) {
         tileType[tileKeys[i]].id = i;
-        tileType.index.push({coll: tileType[tileKeys[i]].coll, name: tileType[tileKeys[i]].name});
+        tileType.index.push({
+            coll: tileType[tileKeys[i]].coll,
+            name: tileType[tileKeys[i]].name,
+            block: tileType[tileKeys[i]].block,
+            grass: tileType[tileKeys[i]].grass,
+            grow: tileType[tileKeys[i]].grow
+        });
     }
 
     levelMap = [];
@@ -90,28 +96,26 @@ function initialize_level() {
             }
         }
     }
-    /*
     for (var i = 0; i < levelProperties.gridWidth; i++) {
         for (var j = 0; j < levelProperties.gridHeight - 1; j++) {
-            if (levelMap[i][j] == 0 && levelMap[i][j + 1] >= 1) {
-                levelMap[i][j + 1] = 2;
-                if (i > 0 && levelMap[i - 1][j + 1] >= 1) {
-                    if (i < levelProperties.gridWidth - 1 && levelMap[i + 1][j + 1] >= 1) {
-                        levelMap[i][j] = -2;
+            if (levelMap[i][j] == tileType.air.id && levelMap[i][j + 1] == tileType.wall.id) {
+                levelMap[i][j + 1] = tileType.wall_grass.id;
+                if (i > 0 && tileType.index[levelMap[i - 1][j + 1]].grass && tileType.index[levelMap[i - 1][j]].grow || tileType.index[levelMap[i - 1][j]].block) {
+                    if (i < levelProperties.gridWidth - 1 && tileType.index[levelMap[i + 1][j + 1]].grass && tileType.index[levelMap[i + 1][j]].grow || tileType.index[levelMap[i + 1][j]].block) {
+                        levelMap[i][j] = tileType.cap.id;
                     } else {
-                        levelMap[i][j] = -4;
+                        levelMap[i][j] = tileType.cap_r.id;
                     }
                 } else {
-                    if (i < levelProperties.gridWidth - 1 && levelMap[i + 1][j + 1] >= 1) {
-                        levelMap[i][j] = -3;
+                    if (i < levelProperties.gridWidth - 1 && tileType.index[levelMap[i + 1][j + 1]].grass && tileType.index[levelMap[i + 1][j]].grow || tileType.index[levelMap[i + 1][j]].block) {
+                        levelMap[i][j] = tileType.cap_l.id;
                     } else {
-                        levelMap[i][j] = -1;
+                        levelMap[i][j] = tileType.cap_lr.id;
                     }
                 }
             }
         }
     }
-    */
 
     walls = new PIXI.Container();
     //walls.position.set(0, 0);
