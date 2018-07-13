@@ -124,6 +124,8 @@ function initialize_level() {
     camera = {};
     camera.x = player.px;
     camera.y = player.py;
+    camera.px = 0;
+    camera.py = 0;
 }
 
 /*
@@ -257,8 +259,8 @@ function play(delta) {
         player.vx = 0;
     }
 
-    if (grounded && keys.up.held && player.vy >= -1) player.vy = -10;
-    if (keys.down.held) player.vy += 0.5 * delta;
+    if (grounded && keys.b.held && player.vy >= -1) player.vy = -10;
+    //if (keys.down.held) player.vy += 0.5 * delta;
     if (keys.left.held) player.vx -= 0.5 * delta;
     if (keys.right.held) player.vx += 0.5 * delta;
 
@@ -289,7 +291,7 @@ function play(delta) {
     } else {
         player.textures = playerAnimations.idle;
     }
-
+    /*
     if (keys.b.held && keys.b.toggled) {
         keys.b.toggled = false;
         var tx = Math.floor(player.px / levelProperties.grid);
@@ -298,6 +300,7 @@ function play(delta) {
             levelMap[tx][ty] = 1;
         }
     }
+    */
     if (keys.c.held && keys.c.toggled) {
         keys.c.toggled = false;
         var tx = Math.floor(player.px / levelProperties.grid) - 1;
@@ -319,11 +322,6 @@ function play(delta) {
     player.x = player.px;
     player.y = player.py;
 
-    /*
-    var dist = Math.sqrt(Math.pow(camera.x - player.px, 2) + Math.pow(camera.y - player.py, 2)) - 64;
-    if (dist > 0) {
-    }
-    */
     if (keys.left.held) {
         player.direction = -1;
         player.scale.x = -1;
@@ -332,8 +330,49 @@ function play(delta) {
         player.direction = 1;
         player.scale.x = 1;
     }
-    camera.x = (camera.x * 9 + (player.px + player.direction * 64)) / 10;
-    camera.y = (camera.y * 9 + (player.py)) / 10;
+    if (keys.up.held) {
+        player.look = -1;
+    } else if (keys.down.held) {
+        player.look = 1;
+    /*
+    } else if (!grounded) {
+        player.look = Math.min(-1 + Math.max((player.vy - 10) / 1, 0), 1.5);
+    */
+    } else {
+        player.look = -1;
+    }
+    var camera_fx = player.direction * 64;
+    var camera_fy = player.look * 64;
+    var cdist = Math.sqrt(Math.pow(camera.px - camera_fx, 2) + Math.pow(camera.py - camera_fy, 2));
+    if (cdist < 8) {
+        camera.px = camera_fx;
+        camera.py = camera_fy;
+    } else {
+        camera.px += (camera_fx - camera.px) / cdist * 8;
+        camera.py += (camera_fy - camera.py) / cdist * 8;
+    }
+    //var dist = Math.sqrt(Math.pow(camera.x - player_fx, 2) + Math.pow(camera.y - player.py, 2)) - 64;
+    /*
+    var mincamdist = 13;
+    var maxcamdist = 256;
+    var xdist = Math.min(Math.abs(camera.x - camera.px) + mincamdist, maxcamdist - mincamdist);
+    var ydist = Math.min(Math.abs(camera.y - camera.py) + mincamdist, maxcamdist - mincamdist);
+    camera.x = (camera.x * xdist + camera.px * mincamdist) / (xdist + mincamdist);
+    camera.y = (camera.y * ydist + camera.py * mincamdist) / (ydist + mincamdist);
+    */
+
+    camera_fx = player.px + camera.px;
+    camera_fy = player.py + camera.py;
+    camera.x = (camera.x * 9 + camera_fx) / 10;
+    camera.y = (camera.y * 9 + camera_fy) / 10;
+    //camera.x = camera_fx;
+    //camera.y = camera_fy;
+
+    cdist = Math.sqrt(Math.pow(camera.x - camera_fx, 2) + Math.pow(camera.y - camera_fy, 2));
+    if (cdist > 80) {
+        camera.x += (camera_fx - camera.x) * (cdist - 80) / cdist;
+        camera.y += (camera_fy - camera.y) * (cdist - 80) / cdist;
+    }
 
     camera.dx = Math.round(camera.x) - gameProperties.width / 2;
     camera.dy = Math.round(camera.y) - gameProperties.height / 2;
