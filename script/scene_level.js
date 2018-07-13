@@ -58,7 +58,7 @@ function initialize_level() {
     tileType.cap_r = {coll: 0, name: "cap_r", grow: true};
     tileType.crate = {coll: 2, name: "crate", block: true};
     tileType.crate_top = {coll: 0, name: "crate_top"};
-    tileType.leaf = {coll: 2, name: "leaf"};
+    tileType.leaf = {coll: 3, name: "leaf"};
     var tileKeys = Object.keys(tileType);
     tileType.index = [];
     for (var i = 0; i < tileKeys.length; i++) {
@@ -88,10 +88,17 @@ function initialize_level() {
         for (var j = 0; j < levelProperties.gridHeight; j++) {
             if (levelMap[i][j] == tileType.air.id) {
                 if (i > 0 && levelMap[i - 1][j] == tileType.wall.id || i < levelProperties.gridWidth - 1 && levelMap[i + 1][j] == tileType.wall.id) {
-                    levelMap[i][j] = tileType.leaf.id;
+                    if (j < levelProperties.gridHeight - 1 && levelMap[i][j + 1] == tileType.air.id && j > 0 && (levelMap[i][j - 1] == tileType.air.id || levelMap[i][j - 1] == tileType.leaf.id)) {
+                        levelMap[i][j] = tileType.leaf.id;
+                    }
                 }
                 if (j < levelProperties.gridHeight - 1 && levelMap[i][j + 1] == tileType.wall.id) {
-                    if (Math.random() < 0.1) levelMap[i][j] = tileType.crate.id;
+                    if (Math.random() < 0.4) {
+                        levelMap[i][j] = tileType.crate.id;
+                        if (j > 0 && levelMap[i][j - 1] != tileType.wall.id) {
+                            levelMap[i][j - 1] = tileType.crate_top.id;
+                        }
+                    }
                 }
             }
         }
@@ -223,17 +230,38 @@ function checkWall(x, y) {
     var ii = Math.floor(x / levelProperties.grid);
     var jj = Math.floor(y / levelProperties.grid);
     if (ii >= 0 && ii < levelProperties.gridWidth && jj >= 0 && jj < levelProperties.gridHeight) {
-        if (tileType.index[levelMap[ii][jj]].coll == 1) return true;
+        var cw = tileType.index[levelMap[ii][jj]].coll;
+        if (cw == 2) {
+            if (y - jj * levelProperties.grid < 1) {
+                return 2;
+            }
+            return 0;
+        } else if (cw == 3) {
+            var ty = y - jj * levelProperties.grid;
+            var cy = levelProperties.grid * 3 / 4;
+            if (Math.abs(ty - cy) < 0.6) {
+                return 2;
+            }
+            return 0;
+        } else {
+            return cw;
+        }
     }
-    return false;
+    return 0;
 }
 
 function playerCheckWall(x, y) {
-    if (checkWall(x - 14, y)) return true;
-    if (checkWall(x + 14, y)) return true;
-    if (checkWall(x - 14, y - 60)) return true;
-    if (checkWall(x + 14, y - 60)) return true;
-    return false;
+    var c1 = checkWall(x - 14, y);
+    var c2 = checkWall(x + 14, y);
+    var c3 = checkWall(x - 14, y - 60);
+    var c4 = checkWall(x + 14, y - 60);
+    if (c1 == 1 || c2 == 1 || c3 == 1 || c4 == 1) {
+        return 1;
+    }
+    if (c1 == 2 || c2 == 2) {
+        return 2;
+    }
+    return 0;
 }
 
 function play(delta) {
@@ -254,7 +282,8 @@ function play(delta) {
     for (var i = 0; i <= dd; i++) {
         if (!vhit) {
             ty += tddy;
-            if (playerCheckWall(tx, ty)) {
+            var cw = playerCheckWall(tx, ty);
+            if (cw == 1 || player.vy > 0 && cw == 2 && !(keys.down.held && keys.b.held)) {
                 ty -= tddy;
                 vhit = true;
                 if (player.vy > 0) {
@@ -267,7 +296,7 @@ function play(delta) {
         }
         if (!hhit) {
             tx += tddx;
-            if (playerCheckWall(tx, ty)) {
+            if (playerCheckWall(tx, ty) == 1) {
                 tx -= tddx;
                 hhit = true;
                 player.vx = 0;
