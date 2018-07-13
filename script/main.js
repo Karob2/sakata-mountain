@@ -121,18 +121,25 @@ function setGameSize() {
     app.view.style.position = "absolute";
     app.view.style.top = "0px";
     app.view.style.left = "0px";
-    app.renderer.resize(window.innerWidth, window.innerHeight);
-    var ratioW = window.innerWidth / gameProperties.preferred_width;
-    var ratioH = window.innerHeight / gameProperties.preferred_height;
+    var wWidth = window.innerWidth;
+    var wHeight = window.innerHeight;
+//#ifdef debug
+    wWidth = 512 * 2;
+    wHeight = 384 * 2;
+    document.body.style.backgroundColor = "#222"
+//#endif
+    app.renderer.resize(wWidth, wHeight);
+    var ratioW = wWidth / gameProperties.preferred_width;
+    var ratioH = wHeight / gameProperties.preferred_height;
     if (ratioW < ratioH) {
-        gameProperties.width = gameProperties.preferred_height * window.innerWidth / window.innerHeight;
+        gameProperties.width = gameProperties.preferred_height * wWidth / wHeight;
         gameProperties.height = gameProperties.preferred_height;
-        gameScene.scale.x = window.innerWidth / gameProperties.width;
+        gameScene.scale.x = wWidth / gameProperties.width;
         gameScene.scale.y = gameScene.scale.x;
     } else {
-        gameProperties.height = gameProperties.preferred_width * window.innerHeight / window.innerWidth;
+        gameProperties.height = gameProperties.preferred_width * wHeight / wWidth;
         gameProperties.width = gameProperties.preferred_width;
-        gameScene.scale.x = window.innerWidth / gameProperties.width;
+        gameScene.scale.x = wWidth / gameProperties.width;
         gameScene.scale.y = gameScene.scale.x;
     }
     if (sceneResizeHook != null) sceneResizeHook();
