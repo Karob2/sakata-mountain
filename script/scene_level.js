@@ -9,6 +9,7 @@ var player, pickups;
 var walls;
 var levelMap, graphicMap;
 var playerAnimations;
+var tileType; //, tileKeys;
 function initialize_level() {
     levelProperties = {
         width: 0,
@@ -46,26 +47,45 @@ function initialize_level() {
         playerAnimations.run.push(PIXI.Texture.fromFrame('player run f' + i));
     }
 
+    tileType = {};
+    tileType.air = {coll: 0, name: "air"};
+    tileType.abyss = {coll: 0, name: "abyss"};
+    tileType.wall = {coll: 1, name: "wall"};
+    tileType.wall_grass = {coll: 1, name: "wall_grass"};
+    tileType.cap_lr = {coll: 0, name: "cap_lr"};
+    tileType.cap = {coll: 0, name: "cap"};
+    tileType.cap_l = {coll: 0, name: "cap_l"};
+    tileType.cap_r = {coll: 0, name: "cap_r"};
+    tileType.crate = {coll: 2, name: "crate"};
+    tileType.crate_top = {coll: 0, name: "crate_top"};
+    tileType.leaf = {coll: 2, name: "leaf"};
+    var tileKeys = Object.keys(tileType);
+    tileType.index = [];
+    for (var i = 0; i < tileKeys.length; i++) {
+        tileType[tileKeys[i]].id = i;
+        tileType.index.push({coll: tileType[tileKeys[i]].coll, name: tileType[tileKeys[i]].name});
+    }
+
     levelMap = [];
     var levelMapRow;
     for (var i = 0; i < levelProperties.gridWidth; i++) {
         levelMapRow = [];
         for (var j = 0; j < levelProperties.gridHeight; j++) {
             if (i == 0 || i == levelProperties.gridWidth - 1 || j == 0 || j == levelProperties.gridHeight - 1 || Math.random() < 0.1)
-                levelMapRow.push(1);
+                levelMapRow.push(tileType.wall.id);
             else
-                levelMapRow.push(0);
+                levelMapRow.push(tileType.air.id);
         }
         levelMap.push(levelMapRow);
     }
     for (var i = 0; i < levelProperties.gridWidth; i++) {
         for (var j = 0; j < levelProperties.gridHeight; j++) {
-            if (levelMap[i][j] == 0) {
-                if (i > 0 && levelMap[i - 1][j] == 1 || i < levelProperties.gridWidth - 1 && levelMap[i + 1][j] == 1) {
-                    levelMap[i][j] = 5;
+            if (levelMap[i][j] == tileType.air.id) {
+                if (i > 0 && levelMap[i - 1][j] == tileType.wall.id || i < levelProperties.gridWidth - 1 && levelMap[i + 1][j] == tileType.wall.id) {
+                    levelMap[i][j] = tileType.leaf.id;
                 }
-                if (j < levelProperties.gridHeight - 1 && levelMap[i][j + 1] == 1) {
-                    if (Math.random() < 0.1) levelMap[i][j] = 3;
+                if (j < levelProperties.gridHeight - 1 && levelMap[i][j + 1] == tileType.wall.id) {
+                    if (Math.random() < 0.1) levelMap[i][j] = tileType.crate.id;
                 }
             }
         }
@@ -199,7 +219,7 @@ function checkWall(x, y) {
     var ii = Math.floor(x / levelProperties.grid);
     var jj = Math.floor(y / levelProperties.grid);
     if (ii >= 0 && ii < levelProperties.gridWidth && jj >= 0 && jj < levelProperties.gridHeight) {
-        if (levelMap[ii][jj] >= 1) return true;
+        if (tileType.index[levelMap[ii][jj]].coll == 1) return true;
     }
     return false;
 }
@@ -408,6 +428,12 @@ function play(delta) {
             var n = -99;
             if (ii >= 0 && ii < levelProperties.gridWidth && jj >= 0 && jj < levelProperties.gridHeight)
                 n = levelMap[ii][jj];
+            if (n >= 0 && n < tileType.index.length) {
+                graphicMap[i][j].texture = PIXI.utils.TextureCache[tileType.index[n].name];
+            } else {
+                graphicMap[i][j].texture = PIXI.utils.TextureCache["abyss"];
+            }
+            /*
             switch(n) {
                 case 0:
                     graphicMap[i][j].texture = PIXI.utils.TextureCache["air"];
@@ -443,6 +469,7 @@ function play(delta) {
                     graphicMap[i][j].texture = PIXI.utils.TextureCache["abyss"];
                     break;
             }
+            */
         }
     }
 }
