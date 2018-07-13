@@ -12,6 +12,18 @@ var keys = {
     },
     right: {
         bindings: [39, 68]
+    },
+    a: {
+        bindings: [74, 90]
+    },
+    b: {
+        bindings: [75, 88]
+    },
+    c: {
+        bindings: [76, 67]
+    },
+    d: {
+        bindings: [59, 86]
     }
 }
 var keyskeys = Object.keys(keys);
@@ -29,6 +41,7 @@ function checkKey(key, k, state) {
     key.held = state
 }
 document.onkeydown = function(k) {
+    //console.log(k.which);
     for (var i = 0; i < keyskeys.length; i++ ) {
         checkKey(keys[keyskeys[i]], k, true);
     }

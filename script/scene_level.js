@@ -252,6 +252,47 @@ function play(delta) {
     if (keys.left.held) player.vx -= 0.5 * delta;
     if (keys.right.held) player.vx += 0.5 * delta;
 
+    if (keys.a.held && keys.a.toggled) {
+        keys.a.toggled = false;
+        var tx = Math.floor(player.px / levelProperties.grid) - 1;
+        for (var i = 0; i < 3; i++) {
+            var ty = Math.floor(player.py / levelProperties.grid) - 1;
+            for (var j = 0; j < 3; j++) {
+                if (tx >= 0 && tx < levelProperties.gridWidth && ty >= 0 && ty < levelProperties.gridHeight) {
+                    levelMap[tx][ty] = 0;
+                }
+                ty++;
+            }
+            tx++;
+        }
+    }
+
+    if (keys.b.held && keys.b.toggled) {
+        keys.b.toggled = false;
+        var tx = Math.floor(player.px / levelProperties.grid);
+        var ty = Math.floor(player.py / levelProperties.grid) + 1;
+        if (tx >= 0 && tx < levelProperties.gridWidth && ty >= 0 && ty < levelProperties.gridHeight) {
+            levelMap[tx][ty] = 1;
+        }
+    }
+    if (keys.c.held && keys.c.toggled) {
+        keys.c.toggled = false;
+        var tx = Math.floor(player.px / levelProperties.grid) - 1;
+        var ty = Math.floor(player.py / levelProperties.grid);
+        if (tx >= 0 && tx < levelProperties.gridWidth && ty >= 0 && ty < levelProperties.gridHeight) {
+            levelMap[tx][ty] = 1;
+        }
+    }
+    if (keys.d.held && keys.d.toggled) {
+        keys.d.toggled = false;
+        var tx = Math.floor(player.px / levelProperties.grid) + 1;
+        var ty = Math.floor(player.py / levelProperties.grid);
+        if (tx >= 0 && tx < levelProperties.gridWidth && ty >= 0 && ty < levelProperties.gridHeight) {
+            levelMap[tx][ty] = 1;
+        }
+    }
+
+
     player.x = player.px;
     player.y = player.py;
 
