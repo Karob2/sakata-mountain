@@ -5,7 +5,7 @@ var levelScene;
 var spriteAtlas, tileAtlas;
 var camera;
 var objects;
-var player, pickups;
+var player, fairies;
 var walls;
 var levelMap, graphicMap;
 var playerAnimations;
@@ -146,8 +146,8 @@ function initialize_level() {
 
     //player = new PIXI.Sprite(spriteAtlas["frame 1"]);
     player = new PIXI.extras.AnimatedSprite(playerAnimations.run);
-    player.px = 128;
-    player.py = 128;
+    player.px = (Math.floor(levelProperties.gridWidth / 2) + 0.5) * levelProperties.grid;
+    player.py = (Math.floor(levelProperties.gridHeight / 2) + 0.5) * levelProperties.grid;
     player.vx = 0.5;
     player.vy = 0;
     player.anchor.set(0.5, 1.0);
@@ -156,14 +156,23 @@ function initialize_level() {
     objects.addChild(player);
     player.direction = 1;
 
-    pickups = new PIXI.Container();
-    objects.addChild(pickups);
     var o;
- 
-    for (var i = 0; i < 5; i++) {
-        o = new PIXI.Sprite(spriteAtlas["food"]);
-        o.position.set(Math.floor(Math.random() * (levelProperties.gridWidth - 2) + 1) * levelProperties.grid, Math.floor(Math.random() * (levelProperties.gridHeight - 2) + 1) * levelProperties.grid);
-        pickups.addChild(o);
+
+    fairies = new PIXI.Container();
+    objects.addChild(fairies);
+    for (var i = 0; i < 30; i++) {
+        o = new PIXI.Sprite(spriteAtlas["fairy"]);
+        o.hauntX = Math.floor(Math.random() * (levelProperties.gridWidth - 2) + 1) * levelProperties.grid;
+        o.hauntY = Math.floor(Math.random() * (levelProperties.gridHeight - 2) + 1) * levelProperties.grid;
+        o.x = o.hauntX;
+        o.y = o.hauntY;
+        o.vx = 0;
+        o.vy = 0;
+        o.vvx = 0;
+        o.vvy = 0;
+        o.hx = o.hauntX;
+        o.hy = o.hauntY;
+        fairies.addChild(o);
     }
 
     camera = {};
@@ -265,6 +274,9 @@ function playerCheckWall(x, y) {
 }
 
 function play(delta) {
+
+    // Move Player:
+
     player.vy += 0.5 * delta
     player.vx *= Math.pow(0.9, delta);
     player.vy *= Math.pow(0.99, delta);
@@ -390,6 +402,9 @@ function play(delta) {
     } else {
         player.look = -1;
     }
+
+    // Move camera:
+
     var camera_fx = player.direction * 64;
     var camera_fy = player.look * 64;
     var cdist = Math.sqrt(Math.pow(camera.px - camera_fx, 2) + Math.pow(camera.py - camera_fy, 2));
@@ -419,6 +434,47 @@ function play(delta) {
 
     objects.x = -camera.dx;
     objects.y = -camera.dy;
+
+    // Move enemies:
+
+    for (var i = 0; i < fairies.children.length; i++){
+        var dist, tx, ty;
+
+        fairies.children[i].vvx += (Math.random() - 0.5) * delta * 0.1;
+        fairies.children[i].vvy += (Math.random() - 0.5) * delta * 0.1;
+        dist = Math.sqrt(Math.pow(fairies.children[i].vvx, 2) + Math.pow(fairies.children[i].vvy, 2));
+        if (dist > 2) {
+            fairies.children[i].vvx *= 2 / dist;
+            fairies.children[i].vvy *= 2 / dist;
+        }
+        fairies.children[i].vx += fairies.children[i].vvx;
+        fairies.children[i].vy += fairies.children[i].vvy;
+
+        fairies.children[i].vx += (Math.random() - 0.5) * delta * 0.1;
+        fairies.children[i].vy += (Math.random() - 0.5) * delta * 0.1;
+        dist = Math.sqrt(Math.pow(fairies.children[i].vx, 2) + Math.pow(fairies.children[i].vy, 2));
+        if (dist > 2) {
+            fairies.children[i].vx *= 2 / dist;
+            fairies.children[i].vy *= 2 / dist;
+        }
+        fairies.children[i].hx += fairies.children[i].vx;
+        fairies.children[i].hy += fairies.children[i].vy;
+
+        tx = fairies.children[i].hx - fairies.children[i].hauntX;
+        ty = fairies.children[i].hy - fairies.children[i].hauntY;
+        dist = Math.sqrt(Math.pow(tx, 2) + Math.pow(ty, 2));
+        if (dist > 64) {
+            tx *= 64 / dist;
+            ty *= 64 / dist;
+            fairies.children[i].hx = fairies.children[i].hauntX + tx;
+            fairies.children[i].hy = fairies.children[i].hauntY + ty;
+        }
+
+        fairies.children[i].x = (fairies.children[i].x * 49 + fairies.children[i].hx) / 50;
+        fairies.children[i].y = (fairies.children[i].y * 49 + fairies.children[i].hy) / 50;
+    }
+
+    // Arrange tiles:
 
     var tx = camera.dx;
     var ty = camera.dy;
