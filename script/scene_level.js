@@ -5,7 +5,7 @@ var levelScene;
 var spriteAtlas, tileAtlas;
 var camera;
 var objects;
-var player, fairies;
+var player, fairies, bullets_1;
 var walls;
 var levelMap, graphicMap;
 var playerAnimations;
@@ -162,6 +162,7 @@ function initialize_level() {
     objects.addChild(fairies);
     for (var i = 0; i < 30; i++) {
         o = new PIXI.Sprite(spriteAtlas["fairy"]);
+        o.anchor.set(0.5, 0.5);
         o.hauntX = Math.floor(Math.random() * (levelProperties.gridWidth - 2) + 1) * levelProperties.grid;
         o.hauntY = Math.floor(Math.random() * (levelProperties.gridHeight - 2) + 1) * levelProperties.grid;
         o.x = o.hauntX;
@@ -172,7 +173,17 @@ function initialize_level() {
         o.vvy = 0;
         o.hx = o.hauntX;
         o.hy = o.hauntY;
+        o.cooldown_1 = 0;
         fairies.addChild(o);
+    }
+
+    bullets_1 = [];
+    for (var i = 0; i < 30; i++) {
+        o = new PIXI.Sprite(spriteAtlas["bullet 1"]);
+        o.visible = false;
+        o.anchor.set(0.5, 0.5);
+        bullets_1.push({sprite: o, age: 0, active: false});
+        objects.addChild(o);
     }
 
     camera = {};
@@ -382,6 +393,8 @@ function play(delta) {
 
     player.x = player.px;
     player.y = player.py;
+    player.cx = player.x;
+    player.cy = player.y - levelProperties.grid / 2;
 
     if (keys.left.held) {
         player.direction = -1;
@@ -440,38 +453,66 @@ function play(delta) {
     for (var i = 0; i < fairies.children.length; i++){
         var dist, tx, ty;
 
-        fairies.children[i].vvx += (Math.random() - 0.5) * delta * 0.1;
-        fairies.children[i].vvy += (Math.random() - 0.5) * delta * 0.1;
-        dist = Math.sqrt(Math.pow(fairies.children[i].vvx, 2) + Math.pow(fairies.children[i].vvy, 2));
-        if (dist > 2) {
-            fairies.children[i].vvx *= 2 / dist;
-            fairies.children[i].vvy *= 2 / dist;
-        }
-        fairies.children[i].vx += fairies.children[i].vvx;
-        fairies.children[i].vy += fairies.children[i].vvy;
+        var fairy = fairies.children[i];
 
-        fairies.children[i].vx += (Math.random() - 0.5) * delta * 0.1;
-        fairies.children[i].vy += (Math.random() - 0.5) * delta * 0.1;
-        dist = Math.sqrt(Math.pow(fairies.children[i].vx, 2) + Math.pow(fairies.children[i].vy, 2));
+        fairy.vvx += (Math.random() - 0.5) * delta * 0.1;
+        fairy.vvy += (Math.random() - 0.5) * delta * 0.1;
+        dist = Math.sqrt(Math.pow(fairy.vvx, 2) + Math.pow(fairy.vvy, 2));
         if (dist > 2) {
-            fairies.children[i].vx *= 2 / dist;
-            fairies.children[i].vy *= 2 / dist;
+            fairy.vvx *= 2 / dist;
+            fairy.vvy *= 2 / dist;
         }
-        fairies.children[i].hx += fairies.children[i].vx;
-        fairies.children[i].hy += fairies.children[i].vy;
+        fairy.vx += fairy.vvx;
+        fairy.vy += fairy.vvy;
 
-        tx = fairies.children[i].hx - fairies.children[i].hauntX;
-        ty = fairies.children[i].hy - fairies.children[i].hauntY;
+        fairy.vx += (Math.random() - 0.5) * delta * 0.1;
+        fairy.vy += (Math.random() - 0.5) * delta * 0.1;
+        dist = Math.sqrt(Math.pow(fairy.vx, 2) + Math.pow(fairy.vy, 2));
+        if (dist > 2) {
+            fairy.vx *= 2 / dist;
+            fairy.vy *= 2 / dist;
+        }
+        fairy.hx += fairy.vx;
+        fairy.hy += fairy.vy;
+
+        tx = fairy.hx - fairy.hauntX;
+        ty = fairy.hy - fairy.hauntY;
         dist = Math.sqrt(Math.pow(tx, 2) + Math.pow(ty, 2));
         if (dist > 64) {
             tx *= 64 / dist;
             ty *= 64 / dist;
-            fairies.children[i].hx = fairies.children[i].hauntX + tx;
-            fairies.children[i].hy = fairies.children[i].hauntY + ty;
+            fairy.hx = fairy.hauntX + tx;
+            fairy.hy = fairy.hauntY + ty;
         }
 
-        fairies.children[i].x = (fairies.children[i].x * 49 + fairies.children[i].hx) / 50;
-        fairies.children[i].y = (fairies.children[i].y * 49 + fairies.children[i].hy) / 50;
+        // TODO: This and the player camera equivalent are supposed to be affected by delta.
+        fairy.x = (fairy.x * 49 + fairy.hx) / 50;
+        fairy.y = (fairy.y * 49 + fairy.hy) / 50;
+
+        if (fairy.cooldown_1 > 0) {
+            fairy.cooldown_1 -= delta;
+        }
+
+        dist = Math.sqrt(Math.pow(player.cx - fairy.x, 2) + Math.pow(player.cy - fairy.y, 2));
+        if (dist < 256) {
+            if (fairy.cooldown_1 < 1) {
+                fairy.cooldown_1 = 100;
+                fireBullet_1(
+                    fairy.x,
+                    fairy.y,
+                    (player.cx - fairy.x) / dist * 3,
+                    (player.cy - fairy.y) / dist * 3
+                );
+            }
+        }
+    }
+
+    for (var i = 0; i < bullets_1.length; i++) {
+        if (bullets_1[i].active) {
+            bullets_1[i].sprite.x += bullets_1[i].vx;
+            bullets_1[i].sprite.y += bullets_1[i].vy;
+            bullets_1[i].age++;
+        }
     }
 
     // Arrange tiles:
@@ -497,4 +538,30 @@ function play(delta) {
             }
         }
     }
+}
+
+function fireBullet_1(x, y, vx, vy) {
+    var maxAge = -1;
+    var maxId = 0;
+    for (var i = 0; i < bullets_1.length; i++) {
+        if (!bullets_1[i].active) {
+            bullets_1[i].active = true;
+            bullets_1[i].sprite.visible = true;
+            bullets_1[i].sprite.x = x;
+            bullets_1[i].sprite.y = y;
+            bullets_1[i].vx = vx;
+            bullets_1[i].vy = vy;
+            bullets_1[i].age = 0;
+            break;
+        }
+        if (bullets_1[i].age > maxAge) {
+            maxAge = bullets_1[i].age;
+            maxId = i;
+        }
+    }
+    bullets_1[maxId].sprite.x = x;
+    bullets_1[maxId].sprite.y = y;
+    bullets_1[maxId].vx = vx;
+    bullets_1[maxId].vy = vy;
+    bullets_1[maxId].age = 0;
 }
