@@ -5,7 +5,7 @@ var levelScene;
 var spriteAtlas, tileAtlas;
 var camera;
 var objects;
-var player, fairies, bullets_1;
+var player, fairies, bullets_1; //, bullets_2;
 var walls;
 var levelMap, graphicMap;
 var playerAnimations;
@@ -174,6 +174,7 @@ function initialize_level() {
         o.hx = o.hauntX;
         o.hy = o.hauntY;
         o.cooldown_1 = 0;
+        o.cooldown_2 = 4;
         fairies.addChild(o);
     }
 
@@ -185,6 +186,17 @@ function initialize_level() {
         bullets_1.push({sprite: o, age: 0, active: false});
         objects.addChild(o);
     }
+
+    /*
+    bullets_2 = [];
+    for (var i = 0; i < 30; i++) {
+        o = new PIXI.Sprite(spriteAtlas["bullet 2"]);
+        o.visible = false;
+        o.anchor.set(0.5, 0.5);
+        bullets_2.push({sprite: o, age: 0, active: false});
+        objects.addChild(o);
+    }
+    */
 
     camera = {};
     camera.x = player.px;
@@ -496,22 +508,41 @@ function play(delta) {
         dist = Math.sqrt(Math.pow(player.cx - fairy.x, 2) + Math.pow(player.cy - fairy.y, 2));
         if (dist < 256) {
             if (fairy.cooldown_1 < 1) {
-                fairy.cooldown_1 = 100;
+                fairy.cooldown_1 = 100 * (Math.random() + 0.5);
                 fireBullet_1(
                     fairy.x,
                     fairy.y,
                     (player.cx - fairy.x) / dist * 3,
-                    (player.cy - fairy.y) / dist * 3
+                    (player.cy - fairy.y) / dist * 3,
+                    "bullet 1"
                 );
+                fairy.cooldown_2--;
+                if (fairy.cooldown_2 < 1) {
+                    fairy.cooldown_2 = 4 + Math.random() * 2.5;
+                    fireBullet_1(
+                        fairy.x,
+                        fairy.y,
+                        (player.cx - fairy.x) / dist * 7,
+                        (player.cy - fairy.y) / dist * 7,
+                        "bullet 2"
+                    );
+                    fairy.texture = PIXI.utils.TextureCache["fairy"];
+                } else if (fairy.cooldown_2 < 2) {
+                    fairy.texture = PIXI.utils.TextureCache["fairy_charge"];
+                }
             }
         }
     }
 
     for (var i = 0; i < bullets_1.length; i++) {
         if (bullets_1[i].active) {
-            bullets_1[i].sprite.x += bullets_1[i].vx;
-            bullets_1[i].sprite.y += bullets_1[i].vy;
-            bullets_1[i].age++;
+            bullets_1[i].sprite.x += bullets_1[i].vx * delta;
+            bullets_1[i].sprite.y += bullets_1[i].vy * delta;
+            bullets_1[i].age += delta;
+            if (bullets_1[i].age > 400) {
+                bullets_1[i].active = false;
+                bullets_1[i].sprite.visible = false;
+            }
         }
     }
 
@@ -540,7 +571,7 @@ function play(delta) {
     }
 }
 
-function fireBullet_1(x, y, vx, vy) {
+function fireBullet_1(x, y, vx, vy, texture) {
     var maxAge = -1;
     var maxId = 0;
     for (var i = 0; i < bullets_1.length; i++) {
@@ -552,6 +583,7 @@ function fireBullet_1(x, y, vx, vy) {
             bullets_1[i].vx = vx;
             bullets_1[i].vy = vy;
             bullets_1[i].age = 0;
+            bullets_1[i].sprite.texture = PIXI.utils.TextureCache[texture];
             break;
         }
         if (bullets_1[i].age > maxAge) {
@@ -564,4 +596,5 @@ function fireBullet_1(x, y, vx, vy) {
     bullets_1[maxId].vx = vx;
     bullets_1[maxId].vy = vy;
     bullets_1[maxId].age = 0;
+    bullets_1[maxId].sprite.texture = PIXI.utils.TextureCache[texture];
 }
