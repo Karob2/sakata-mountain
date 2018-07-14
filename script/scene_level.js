@@ -162,6 +162,8 @@ function initialize_level() {
     player.cooldown = 0;
     objects.addChild(player);
     player.direction = 1;
+    player.hasJumped = false;
+    player.hasSlashed = false;
 
     var o;
 
@@ -194,13 +196,25 @@ function initialize_level() {
         objects.addChild(o);
     }
 
+    /*
+    var wave_animation = [];
+    for (var i = 1; i <= 2; i++) {
+        wave_animation.push(PIXI.Texture.fromFrame('wave f' + i));
+    }
+    */
     slashFx = new PIXI.Container();
     objects.addChild(slashFx);
-    o = new PIXI.Sprite(spriteAtlas["wave"]);
+    o = new PIXI.Sprite(spriteAtlas["wave f1"]);
+    /*
+    o = new PIXI.extras.AnimatedSprite(wave_animation);
+    o.animationSpeed = 0.1;
+    o.loop = true;
+    o.play();
+    */
     o.visible = false;
     o.anchor.set(0.5, 0.5);
     slashFx.addChild(o);
-    o = new PIXI.Sprite(spriteAtlas["wave"]);
+    o = new PIXI.Sprite(spriteAtlas["wave f1"]);
     o.visible = false;
     o.anchor.set(0.5, 0.5);
     o.scale.x = -1;
@@ -370,7 +384,13 @@ function play(delta) {
 
     // Jump and run.
 
-    if (grounded && keys.b.held && player.vy >= -1) player.vy = -10;
+    if (!keys.a.held) player.hasSlashed = false;
+    if (!keys.b.held) player.hasJumped = false;
+
+    if (!player.hasJumped && grounded && keys.b.held && player.vy >= -1) {
+        player.vy = -10;
+        player.hasJumped = true;
+    }
     //if (keys.down.held) player.vy += 0.5 * delta;
     if (keys.left.held) player.vx -= 0.5 * delta;
     if (keys.right.held) player.vx += 0.5 * delta;
@@ -379,7 +399,8 @@ function play(delta) {
 
     if (player.cooldown > 0) player.cooldown -= delta;
     if (player.textures != playerAnimations.knife || player.currentFrame == player.totalFrames - 1) {
-        if (keys.a.held && player.cooldown < 1) {
+        if (!player.hasSlashed && keys.a.held && player.cooldown < 1) {
+            player.hasSlashed = true;
             player.cooldown = 40;
             player.textures = playerAnimations.knife;
             player.animationSpeed = 0.4;
