@@ -14,16 +14,16 @@ var keys = {
         bindings: [39, 68]
     },
     a: {
-        bindings: [74, 90]
+        bindings: [74, 90, 52]
     },
     b: {
-        bindings: [75, 88]
+        bindings: [75, 88, 51]
     },
     c: {
-        bindings: [76, 67]
+        bindings: [76, 67, 50]
     },
     d: {
-        bindings: [59, 86]
+        bindings: [59, 86, 49]
     }
 }
 var keyskeys = Object.keys(keys);
