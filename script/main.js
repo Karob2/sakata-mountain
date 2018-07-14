@@ -101,6 +101,7 @@ function start_stage(stageType, stageNumber) {
         return;
     }
     if (stageType == "level") {
+        app.renderer.backgroundColor = 0x201030;
         //PIXI.sound.stop('bgm_menu');
         //PIXI.sound.play('bgm_level', {loop:true});
         menuScene.visible = false;
@@ -216,3 +217,12 @@ setGameSize();
 
 load(0);
 */
+
+// DEBUG
+function reloadMap() {
+    var head= document.getElementsByTagName('head')[0];
+    var script= document.createElement('script');
+    script.src= 'script/levelmap.js';
+    head.appendChild(script);
+    importLevelMap();
+}

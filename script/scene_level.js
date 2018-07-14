@@ -57,7 +57,7 @@ function initialize_level() {
 
     tileType = {};
     tileType.air = {coll: 0, name: "air", grow: true};
-    tileType.abyss = {coll: 0, name: "abyss"};
+    tileType.backdrop = {coll: 0, name: "backdrop"};
     tileType.wall = {coll: 1, name: "wall", block: true, grass: true};
     tileType.wall_grass = {coll: 1, name: "wall_grass", block: true, grass: true};
     tileType.ramp_l = {coll: 4, name: "ramp_l"};
@@ -71,6 +71,8 @@ function initialize_level() {
     tileType.crate = {coll: 2, name: "crate", block: true};
     tileType.crate_top = {coll: 0, name: "crate_top"};
     tileType.leaf = {coll: 3, name: "leaf"};
+    tileType.wall_bottom_l = {coll: 1, name: "wall_bottom_l"};
+    tileType.wall_bottom_r = {coll: 1, name: "wall_bottom_r"};
     var tileKeys = Object.keys(tileType);
     tileType.index = [];
     for (var i = 0; i < tileKeys.length; i++) {
@@ -89,7 +91,7 @@ function initialize_level() {
     for (var i = 0; i < levelProperties.gridWidth; i++) {
         levelMapRow = [];
         for (var j = 0; j < levelProperties.gridHeight; j++) {
-            if (i == 0 || i == levelProperties.gridWidth - 1 || j == 0 || j == levelProperties.gridHeight - 1 || Math.random() < 0.65)
+            if (i == 0 || i == levelProperties.gridWidth - 1 || j == 0 || j == levelProperties.gridHeight - 1 || Math.random() < 0.065)
                 levelMapRow.push(tileType.wall.id);
             else
                 levelMapRow.push(tileType.air.id);
@@ -177,8 +179,12 @@ function initialize_level() {
 
     //player = new PIXI.Sprite(spriteAtlas["frame 1"]);
     player = new PIXI.extras.AnimatedSprite(playerAnimations.idle);
+    /*
     player.px = (Math.floor(levelProperties.gridWidth / 2) + 0.5) * levelProperties.grid;
     player.py = (Math.floor(levelProperties.gridHeight / 2) + 0.5) * levelProperties.grid;
+    */
+    player.px = levelProperties.grid * 1.5;
+    player.py = levelProperties.height - levelProperties.grid - 1;
     player.vx = 0.5;
     player.vy = 0;
     player.anchor.set(0.5, 1.0);
@@ -268,6 +274,8 @@ function initialize_level() {
     camera.py = 0;
 
     waveTimer = 10;
+
+    importLevelMap();
 }
 
 /*
@@ -358,7 +366,7 @@ function checkWall(x, y) {
             return cw;
         }
     }
-    return 0;
+    return 1;
 }
 
 function playerCheckWall(x, y) {
@@ -784,12 +792,20 @@ function play(delta) {
         for (var j = 0; j < levelProperties.tileDisplayY; j++) {
             var jj = j + tileY;
             var n = -99;
-            if (ii >= 0 && ii < levelProperties.gridWidth && jj >= 0 && jj < levelProperties.gridHeight)
-                n = levelMap[ii][jj];
+            if (jj < levelProperties.tileDisplayY / 2) {
+                n = tileType.air.id;
+            } else {
+                n = tileType.wall.id;
+            }
+            var iii = Math.min(Math.max(ii, 0), levelProperties.gridWidth - 1);
+           // var jjj = Math.min(Math.max(jj, 0), levelProperties.gridHeight - 1);
+            //if (ii >= 0 && ii < levelProperties.gridWidth && jj >= 0 && jj < levelProperties.gridHeight)
+            if (jj >= 0 && jj < levelProperties.gridHeight)
+                n = levelMap[iii][jj];
             if (n >= 0 && n < tileType.index.length) {
                 graphicMap[i][j].texture = PIXI.utils.TextureCache[tileType.index[n].name];
             } else {
-                graphicMap[i][j].texture = PIXI.utils.TextureCache["abyss"];
+                graphicMap[i][j].texture = PIXI.utils.TextureCache["backdrop"];
             }
         }
     }

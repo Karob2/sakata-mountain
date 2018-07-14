@@ -8,7 +8,7 @@
             "sourceSize": {"w":64, "h":64},
             "pivot": {"x":0.5, "y":0.5}
         },
-        "abyss": {
+        "backdrop": {
             "frame": {"x":67, "y":1, "w":64, "h":64},
             "rotated": false,
             "trimmed": false,
@@ -16,14 +16,14 @@
             "sourceSize": {"w":64, "h":64},
             "pivot": {"x":0.5, "y":0.5}
         },
-        "wall": {
-            "frame": {"x":1, "y":67, "w":64, "h":64},
-            "rotated": false,
-            "trimmed": false,
-            "spriteSourceSize": {"x":0, "y":0, "w":64, "h":64},
-            "sourceSize": {"w":64, "h":64},
-            "pivot": {"x":0.5, "y":0.5}
-        },
+            "wall": {
+                "frame": {"x":1, "y":67, "w":64, "h":64},
+                "rotated": false,
+                "trimmed": false,
+                "spriteSourceSize": {"x":0, "y":0, "w":64, "h":64},
+                "sourceSize": {"w":64, "h":64},
+                "pivot": {"x":0.5, "y":0.5}
+            },
         "wall_grass": {
             "frame": {"x":67, "y":67, "w":64, "h":64},
             "rotated": false,
@@ -119,12 +119,28 @@
             "spriteSourceSize": {"x":0, "y":0, "w":64, "h":64},
             "sourceSize": {"w":64, "h":64},
             "pivot": {"x":0.5, "y":0.5}
+        },
+        "wall_bottom_l": {
+            "frame": {"x":265, "y":0, "w":64, "h":64},
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {"x":0, "y":0, "w":64, "h":64},
+            "sourceSize": {"w":64, "h":64},
+            "pivot": {"x":0.5, "y":0.5}
+        },
+        "wall_bottom_r": {
+            "frame": {"x":265, "y":66, "w":64, "h":64},
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {"x":0, "y":0, "w":64, "h":64},
+            "sourceSize": {"w":64, "h":64},
+            "pivot": {"x":0.5, "y":0.5}
         }
     },
     "meta": {
         "image": "tiles.png",
         "format": "RGBA8888",
-        "size": {"w":264,"h":264},
+        "size": {"w":264,"h":330},
         "scale": "1"
     }
 }
