@@ -562,8 +562,8 @@ function play(delta) {
             fairy.vvx *= 2 / dist;
             fairy.vvy *= 2 / dist;
         }
-        fairy.vx += fairy.vvx;
-        fairy.vy += fairy.vvy;
+        fairy.vx += fairy.vvx * delta;
+        fairy.vy += fairy.vvy * delta;
 
         fairy.vx += (Math.random() - 0.5) * delta * 0.1;
         fairy.vy += (Math.random() - 0.5) * delta * 0.1;
@@ -572,8 +572,8 @@ function play(delta) {
             fairy.vx *= 2 / dist;
             fairy.vy *= 2 / dist;
         }
-        fairy.hx += fairy.vx;
-        fairy.hy += fairy.vy;
+        fairy.hx += fairy.vx * delta;
+        fairy.hy += fairy.vy * delta;
 
         tx = fairy.hx - fairy.hauntX;
         ty = fairy.hy - fairy.hauntY;
@@ -602,12 +602,12 @@ function play(delta) {
             if (fairy.cooldown_1 < 1) {
                 fairy.cooldown_1 = 100 * (Math.random() + 0.5);
                 if (fairy.super) {
-                    for (var j = 0; j < 8; j++) {
+                    for (var j = 0; j < 12; j++) {
                         fireBullet_1(
                             fairy.x,
                             fairy.y,
-                            Math.sin(Math.PI * j / 4) * 5,
-                            Math.cos(Math.PI * j / 4) * 5,
+                            Math.sin(Math.PI * j * 2 / 12) * 5,
+                            Math.cos(Math.PI * j * 2 / 12) * 5,
                             "bullet 3"
                         );
                     }

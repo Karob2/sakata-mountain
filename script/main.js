@@ -124,6 +124,8 @@ function setGameSize() {
     var wWidth = window.innerWidth;
     var wHeight = window.innerHeight;
 //#ifdef debug
+    app.view.style.top = "20px";
+    app.view.style.left = "20px";
     wWidth = 512 * 2;
     wHeight = 384 * 2;
     document.body.style.backgroundColor = "#222"
