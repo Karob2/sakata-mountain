@@ -42,6 +42,10 @@ function initialize_level() {
     for (var i = 1; i <= 1; i++) {
         playerAnimations.jump.push(PIXI.Texture.fromFrame('player jump f' + i));
     }
+    playerAnimations.knife = [];
+    for (var i = 1; i <= 5; i++) {
+        playerAnimations.knife.push(PIXI.Texture.fromFrame('player knife f' + i));
+    }
     playerAnimations.run = [];
     for (var i = 1; i <= 6; i++) {
         playerAnimations.run.push(PIXI.Texture.fromFrame('player run f' + i));
@@ -145,14 +149,17 @@ function initialize_level() {
     levelScene.addChild(objects);
 
     //player = new PIXI.Sprite(spriteAtlas["frame 1"]);
-    player = new PIXI.extras.AnimatedSprite(playerAnimations.run);
+    player = new PIXI.extras.AnimatedSprite(playerAnimations.idle);
     player.px = (Math.floor(levelProperties.gridWidth / 2) + 0.5) * levelProperties.grid;
     player.py = (Math.floor(levelProperties.gridHeight / 2) + 0.5) * levelProperties.grid;
     player.vx = 0.5;
     player.vy = 0;
     player.anchor.set(0.5, 1.0);
+    /*
     player.animationSpeed = 0.1;
     player.play();
+    */
+    player.cooldown = 0;
     objects.addChild(player);
     player.direction = 1;
 
@@ -344,13 +351,41 @@ function play(delta) {
         player.vx = 0;
     }
 
+    // Jump and run.
+
     if (grounded && keys.b.held && player.vy >= -1) player.vy = -10;
     //if (keys.down.held) player.vy += 0.5 * delta;
     if (keys.left.held) player.vx -= 0.5 * delta;
     if (keys.right.held) player.vx += 0.5 * delta;
 
-    if (keys.a.held && keys.a.toggled) {
-        keys.a.toggled = false;
+    // Set player animation.
+
+    if (player.cooldown > 0) player.cooldown -= delta;
+    if (player.textures != playerAnimations.knife || player.currentFrame == player.totalFrames - 1) {
+        if (keys.a.held && player.cooldown < 1) {
+            player.cooldown = 40;
+            player.textures = playerAnimations.knife;
+            player.animationSpeed = 0.4;
+            player.loop = false;
+            player.play();
+        } else {
+            if (!grounded) {
+                player.textures = playerAnimations.jump;
+            } else if (keys.left.held || keys.right.held) {
+                if (player.textures != playerAnimations.run) {
+                    player.textures = playerAnimations.run;
+                    player.animationSpeed = 0.4;
+                    player.loop = true;
+                    player.play();
+                }
+            } else {
+                player.textures = playerAnimations.idle;
+            }
+        }
+    }
+
+    if (keys.d.held && keys.d.toggled) {
+        keys.d.toggled = false;
         var tx = Math.floor(player.px / levelProperties.grid) - 1;
         for (var i = 0; i < 3; i++) {
             var ty = Math.floor(player.py / levelProperties.grid) - 1;
@@ -364,18 +399,6 @@ function play(delta) {
         }
     }
 
-    if (!grounded) {
-        player.textures = playerAnimations.jump;
-    } else if (keys.left.held || keys.right.held) {
-        if (player.textures != playerAnimations.run) {
-            player.textures = playerAnimations.run;
-            player.animationSpeed = 0.4;
-            player.play();
-        }
-
-    } else {
-        player.textures = playerAnimations.idle;
-    }
     /*
     if (keys.b.held && keys.b.toggled) {
         keys.b.toggled = false;
@@ -385,7 +408,6 @@ function play(delta) {
             levelMap[tx][ty] = 1;
         }
     }
-    */
     if (keys.c.held && keys.c.toggled) {
         keys.c.toggled = false;
         var tx = Math.floor(player.px / levelProperties.grid) - 1;
@@ -402,6 +424,7 @@ function play(delta) {
             levelMap[tx][ty] = 1;
         }
     }
+    */
 
     player.x = player.px;
     player.y = player.py;
