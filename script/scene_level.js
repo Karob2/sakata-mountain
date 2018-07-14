@@ -590,7 +590,7 @@ function play(delta) {
             fairy.texture = PIXI.utils.TextureCache["fairy_charge 3"];
             fairy.super = true;
         }
-        if (dist < 256) {
+        if ((dist < 256 || fairy.cooldown_2 < 2 || fairy.super == true) && dist > 0) { //added >0 to avoid potential divide by zero
             if (fairy.cooldown_1 < 1) {
                 fairy.cooldown_1 = 100 * (Math.random() + 0.5);
                 if (fairy.super) {
