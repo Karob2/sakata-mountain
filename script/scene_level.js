@@ -202,6 +202,8 @@ function initialize_level() {
 
     fairies = new PIXI.Container();
     objects.addChild(fairies);
+    //fairyHearts = new PIXI.Container();
+    //objects.addChild(fairyHearts);
     for (var i = 0; i < 30; i++) {
         o = new PIXI.Sprite(spriteAtlas["fairy"]);
         o.anchor.set(0.5, 0.5);
@@ -219,6 +221,11 @@ function initialize_level() {
         o.cooldown_2 = 4;
         o.super = false;
         fairies.addChild(o);
+        o.heart = new PIXI.Sprite(spriteAtlas["fairy_heart"]);
+        o.heart.anchor.set(0.5, 0.5);
+        o.heart.x = o.x;
+        o.heart.y = o.y;
+        objects.addChild(o.heart);
     }
 
     bullets_1 = [];
@@ -632,8 +639,9 @@ function play(delta) {
 
         // Check if fairy is attacked.
         if (player.cooldown > 35) {
-            if (Math.abs(player.cx - fairy.x) < 72 && Math.abs(player.cy - fairy.y) < 62) {
+            if (Math.abs(player.cx - fairy.heart.x) < 72 && Math.abs(player.cy - fairy.heart.y) < 62) {
                 fairy.visible = false;
+                fairy.heart.visible = false;
             }
         }
 
@@ -644,6 +652,7 @@ function play(delta) {
             fairy.vvx *= 2 / dist;
             fairy.vvy *= 2 / dist;
         }
+
         fairy.vx += fairy.vvx * delta;
         fairy.vy += fairy.vvy * delta;
 
