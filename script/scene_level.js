@@ -19,8 +19,8 @@ function initialize_level() {
         width: 0,
         height: 0,
         grid: 64,
-        gridWidth: 32,
-        gridHeight: 16
+        gridWidth: 96,
+        gridHeight: 32
     }
     levelProperties.width = levelProperties.gridWidth * levelProperties.grid;
     levelProperties.height = levelProperties.gridHeight * levelProperties.grid;
@@ -89,7 +89,7 @@ function initialize_level() {
     for (var i = 0; i < levelProperties.gridWidth; i++) {
         levelMapRow = [];
         for (var j = 0; j < levelProperties.gridHeight; j++) {
-            if (i == 0 || i == levelProperties.gridWidth - 1 || j == 0 || j == levelProperties.gridHeight - 1 || Math.random() < 0.1)
+            if (i == 0 || i == levelProperties.gridWidth - 1 || j == 0 || j == levelProperties.gridHeight - 1 || Math.random() < 0.65)
                 levelMapRow.push(tileType.wall.id);
             else
                 levelMapRow.push(tileType.air.id);
@@ -423,14 +423,6 @@ function play(delta) {
                 tx -= tddx;
                 hhit = true;
                 player.vx = 0;
-                /*
-            } else if (cw == 4) { //should never happen physically
-                var ttx = levelProperties.grid - 1 - (tx - 14) % levelProperties.grid;
-                var tty = ty % levelProperties.grid;
-                if (tty > ttx) {
-                    ty -= tty - ttx;
-                }
-                */
             } else if (cw == 4) {
                 var ttx = levelProperties.grid - 1 - (tx + 14) % levelProperties.grid;
                 var tty = ty % levelProperties.grid;
