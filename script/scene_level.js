@@ -555,6 +555,15 @@ function play(delta) {
 
         var fairy = fairies.children[i];
 
+        if (!fairy.visible) continue;
+
+        // Check if fairy is attacked.
+        if (player.cooldown > 35) {
+            if (Math.abs(player.cx - fairy.x) < 72 && Math.abs(player.cy - fairy.y) < 62) {
+                fairy.visible = false;
+            }
+        }
+
         fairy.vvx += (Math.random() - 0.5) * delta * 0.1;
         fairy.vvy += (Math.random() - 0.5) * delta * 0.1;
         dist = Math.sqrt(Math.pow(fairy.vvx, 2) + Math.pow(fairy.vvy, 2));
@@ -644,6 +653,16 @@ function play(delta) {
 
     for (var i = 0; i < bullets_1.length; i++) {
         if (bullets_1[i].active) {
+            // Check if bullet is attacked.
+            if (player.cooldown > 35) {
+                if (Math.abs(player.cx - bullets_1[i].sprite.x) < 72 && Math.abs(player.cy - bullets_1[i].sprite.y) < 62) {
+                    bullets_1[i].sprite.scale.x *= -1;
+                    bullets_1[i].vx *= -1;
+                    bullets_1[i].age = 0;
+                    //bullets_1[i].active = false;
+                    //bullets_1[i].sprite.visible = false;
+                }
+            }
             bullets_1[i].sprite.x += bullets_1[i].vx * delta;
             bullets_1[i].sprite.y += bullets_1[i].vy * delta;
             bullets_1[i].age += delta;
@@ -724,7 +743,8 @@ function fireBullet_1(x, y, vx, vy, texture) {
             bullets_1[i].vy = vy;
             bullets_1[i].age = 0;
             bullets_1[i].sprite.texture = PIXI.utils.TextureCache[texture];
-            break;
+            if (vx != 0) bullets_1[i].sprite.scale.x = -Math.sign(vx);
+            return;
         }
         if (bullets_1[i].age > maxAge) {
             maxAge = bullets_1[i].age;
@@ -737,6 +757,7 @@ function fireBullet_1(x, y, vx, vy, texture) {
     bullets_1[maxId].vy = vy;
     bullets_1[maxId].age = 0;
     bullets_1[maxId].sprite.texture = PIXI.utils.TextureCache[texture];
+    if (vx != 0) bullets_1[maxId].sprite.scale.x = -Math.sign(vx);
 }
 
 function fireWave(x, y, vx, vy) {
@@ -752,7 +773,7 @@ function fireWave(x, y, vx, vy) {
             waves[i].vy = vy;
             waves[i].age = 0;
             waves[i].sprite.scale.x = -Math.sign(vx);
-            break;
+            return;
         }
         if (waves[i].age > maxAge) {
             maxAge = waves[i].age;
