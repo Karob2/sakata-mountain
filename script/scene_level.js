@@ -5,7 +5,7 @@ var levelScene;
 var spriteAtlas, tileAtlas;
 var camera;
 var objects;
-var player, fairies, bullets_1; //, bullets_2;
+var player, fairies, bullets_1, slashFx; //, bullets_2;
 var walls;
 var levelMap, graphicMap;
 var playerAnimations;
@@ -194,6 +194,18 @@ function initialize_level() {
         objects.addChild(o);
     }
 
+    slashFx = new PIXI.Container();
+    objects.addChild(slashFx);
+    o = new PIXI.Sprite(spriteAtlas["wave"]);
+    o.visible = false;
+    o.anchor.set(0.5, 0.5);
+    slashFx.addChild(o);
+    o = new PIXI.Sprite(spriteAtlas["wave"]);
+    o.visible = false;
+    o.anchor.set(0.5, 0.5);
+    o.scale.x = -1;
+    slashFx.addChild(o);
+
     /*
     bullets_2 = [];
     for (var i = 0; i < 30; i++) {
@@ -351,6 +363,11 @@ function play(delta) {
         player.vx = 0;
     }
 
+    player.x = player.px;
+    player.y = player.py;
+    player.cx = player.x;
+    player.cy = player.y - levelProperties.grid / 2;
+
     // Jump and run.
 
     if (grounded && keys.b.held && player.vy >= -1) player.vy = -10;
@@ -368,6 +385,16 @@ function play(delta) {
             player.animationSpeed = 0.4;
             player.loop = false;
             player.play();
+            slashFx.children[0].x = player.cx - 48;
+            slashFx.children[0].y = player.cy;
+            slashFx.children[0].visible = true;
+            slashFx.children[0].cooldown = 5;
+            /*
+            slashFx.children[1].x = player.cx + 48;
+            slashFx.children[1].y = player.cy;
+            slashFx.children[1].visible = true;
+            slashFx.children[1].cooldown = 5;
+            */
         } else {
             if (!grounded) {
                 player.textures = playerAnimations.jump;
@@ -380,6 +407,21 @@ function play(delta) {
                 }
             } else {
                 player.textures = playerAnimations.idle;
+            }
+        }
+    }
+
+    for (var i = 0; i < slashFx.children.length; i++) {
+        if (slashFx.children[i].visible) {
+            slashFx.children[i].cooldown -= delta;
+            if (slashFx.children[i].cooldown < 1) {
+                slashFx.children[i].visible = false;
+                if (i == 0) {
+                    slashFx.children[1].x = player.cx + 48;
+                    slashFx.children[1].y = player.cy;
+                    slashFx.children[1].visible = true;
+                    slashFx.children[1].cooldown = 5;
+                }
             }
         }
     }
@@ -425,11 +467,6 @@ function play(delta) {
         }
     }
     */
-
-    player.x = player.px;
-    player.y = player.py;
-    player.cx = player.x;
-    player.cy = player.y - levelProperties.grid / 2;
 
     if (keys.left.held) {
         player.direction = -1;
