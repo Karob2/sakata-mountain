@@ -5,7 +5,7 @@ var levelScene;
 var spriteAtlas, tileAtlas;
 var camera;
 var objects;
-var player, fairies, bullets_1, slashFx; //, bullets_2;
+var player, fairies, bullets_1, bullets_2, slashFx;
 var walls;
 var levelMap, graphicMap;
 var playerAnimations;
@@ -184,6 +184,7 @@ function initialize_level() {
         o.hy = o.hauntY;
         o.cooldown_1 = 0;
         o.cooldown_2 = 4;
+        o.super = false;
         fairies.addChild(o);
     }
 
@@ -193,6 +194,15 @@ function initialize_level() {
         o.visible = false;
         o.anchor.set(0.5, 0.5);
         bullets_1.push({sprite: o, age: 0, active: false});
+        objects.addChild(o);
+    }
+
+    bullets_2 = [];
+    for (var i = 0; i < 30; i++) {
+        o = new PIXI.Sprite(spriteAtlas["bullet 3"]);
+        o.visible = false;
+        o.anchor.set(0.5, 0.5);
+        bullets_2.push({sprite: o, age: 0, active: false});
         objects.addChild(o);
     }
 
@@ -219,17 +229,6 @@ function initialize_level() {
     o.anchor.set(0.5, 0.5);
     o.scale.x = -1;
     slashFx.addChild(o);
-
-    /*
-    bullets_2 = [];
-    for (var i = 0; i < 30; i++) {
-        o = new PIXI.Sprite(spriteAtlas["bullet 2"]);
-        o.visible = false;
-        o.anchor.set(0.5, 0.5);
-        bullets_2.push({sprite: o, age: 0, active: false});
-        objects.addChild(o);
-    }
-    */
 
     camera = {};
     camera.x = player.px;
@@ -587,29 +586,49 @@ function play(delta) {
         }
 
         dist = Math.sqrt(Math.pow(player.cx - fairy.x, 2) + Math.pow(player.cy - fairy.y, 2));
+        if (!fairy.super && dist < 128 && fairy.cooldown_2 >= 2) {
+            fairy.texture = PIXI.utils.TextureCache["fairy_charge 3"];
+            fairy.super = true;
+        }
         if (dist < 256) {
             if (fairy.cooldown_1 < 1) {
                 fairy.cooldown_1 = 100 * (Math.random() + 0.5);
-                fireBullet_1(
-                    fairy.x,
-                    fairy.y,
-                    (player.cx - fairy.x) / dist * 3,
-                    (player.cy - fairy.y) / dist * 3,
-                    "bullet 1"
-                );
-                fairy.cooldown_2--;
-                if (fairy.cooldown_2 < 1) {
-                    fairy.cooldown_2 = 4 + Math.random() * 2.5;
+                if (fairy.super) {
+                    for (var j = 0; j < 16; j++) {
+                        fireBullet_1(
+                            fairy.x,
+                            fairy.y,
+                            Math.sin(Math.PI * j / 8) * 5,
+                            Math.cos(Math.PI * j / 8) * 5,
+                            "bullet 3"
+                        );
+                    }
+                } else {
+                    fairy.cooldown_2--;
                     fireBullet_1(
                         fairy.x,
                         fairy.y,
-                        (player.cx - fairy.x) / dist * 7,
-                        (player.cy - fairy.y) / dist * 7,
-                        "bullet 2"
+                        (player.cx - fairy.x) / dist * 3,
+                        (player.cy - fairy.y) / dist * 3,
+                        "bullet 1"
                     );
+                    if (fairy.cooldown_2 < 1) {
+                        fairy.cooldown_2 = 4 + Math.random() * 2.5;
+                        fireBullet_1(
+                            fairy.x,
+                            fairy.y,
+                            (player.cx - fairy.x) / dist * 7,
+                            (player.cy - fairy.y) / dist * 7,
+                            "bullet 2"
+                        );
+                        fairy.texture = PIXI.utils.TextureCache["fairy"];
+                    }
+                }
+                fairy.super = false;
+                if (fairy.cooldown_2 < 2) {
+                    fairy.texture = PIXI.utils.TextureCache["fairy_charge 2"];
+                } else {
                     fairy.texture = PIXI.utils.TextureCache["fairy"];
-                } else if (fairy.cooldown_2 < 2) {
-                    fairy.texture = PIXI.utils.TextureCache["fairy_charge"];
                 }
             }
         }

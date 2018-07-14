@@ -112,7 +112,7 @@
             "sourceSize": {"w":64, "h":64},
             "pivot": {"x":0.5, "y":0.5}
         },
-        "fairy_charge": {
+        "fairy_charge 2": {
             "frame": {"x":64, "y":288, "w":64, "h":64},
             "rotated": false,
             "trimmed": false,
@@ -120,7 +120,7 @@
             "sourceSize": {"w":64, "h":64},
             "pivot": {"x":0.5, "y":0.5}
         },
-        "bullet 1": {
+        "fairy_charge 3": {
             "frame": {"x":128, "y":288, "w":64, "h":64},
             "rotated": false,
             "trimmed": false,
@@ -128,12 +128,28 @@
             "sourceSize": {"w":64, "h":64},
             "pivot": {"x":0.5, "y":0.5}
         },
-        "bullet 2": {
-            "frame": {"x":192, "y":288, "w":64, "h":64},
+        "bullet 1": {
+            "frame": {"x":192, "y":288, "w":32, "h":32},
             "rotated": false,
             "trimmed": false,
-            "spriteSourceSize": {"x":0, "y":0, "w":64, "h":64},
-            "sourceSize": {"w":64, "h":64},
+            "spriteSourceSize": {"x":0, "y":0, "w":32, "h":32},
+            "sourceSize": {"w":32, "h":32},
+            "pivot": {"x":0.5, "y":0.5}
+        },
+        "bullet 2": {
+            "frame": {"x":224, "y":288, "w":32, "h":32},
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {"x":0, "y":0, "w":32, "h":32},
+            "sourceSize": {"w":32, "h":32},
+            "pivot": {"x":0.5, "y":0.5}
+        },
+        "bullet 3": {
+            "frame": {"x":192, "y":320, "w":32, "h":32},
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {"x":0, "y":0, "w":32, "h":32},
+            "sourceSize": {"w":32, "h":32},
             "pivot": {"x":0.5, "y":0.5}
         },
         "wave f1": {
