@@ -11,6 +11,9 @@ var levelMap, graphicMap;
 var playerAnimations;
 var tileType;
 var waveTimer;
+// DEBUG:
+var gx, gy;
+
 function initialize_level() {
     levelProperties = {
         width: 0,
@@ -57,10 +60,14 @@ function initialize_level() {
     tileType.abyss = {coll: 0, name: "abyss"};
     tileType.wall = {coll: 1, name: "wall", block: true, grass: true};
     tileType.wall_grass = {coll: 1, name: "wall_grass", block: true, grass: true};
+    tileType.ramp_l = {coll: 4, name: "ramp_l"};
+    tileType.ramp_r = {coll: 5, name: "ramp_r"};
     tileType.cap_lr = {coll: 0, name: "cap_lr", grow: true};
     tileType.cap = {coll: 0, name: "cap", grow: true};
     tileType.cap_l = {coll: 0, name: "cap_l", grow: true};
     tileType.cap_r = {coll: 0, name: "cap_r", grow: true};
+    tileType.rampcap_l = {coll: 0, name: "rampcap_l"};
+    tileType.rampcap_r = {coll: 0, name: "rampcap_r"};
     tileType.crate = {coll: 2, name: "crate", block: true};
     tileType.crate_top = {coll: 0, name: "crate_top"};
     tileType.leaf = {coll: 3, name: "leaf"};
@@ -127,6 +134,25 @@ function initialize_level() {
                 }
             }
         }
+    }
+
+    var center = Math.floor(levelProperties.gridWidth / 2);
+    var bottom = levelProperties.gridHeight - 2;
+    levelMap[center][bottom + 1] = tileType.wall_grass.id;
+    levelMap[center][bottom] = tileType.cap.id;
+    levelMap[center + 1][bottom] = tileType.ramp_l.id;
+    levelMap[center + 1][bottom - 1] = tileType.rampcap_l.id;
+    levelMap[center + 2][bottom] = tileType.wall_grass.id;
+    levelMap[center + 2][bottom - 1] = tileType.cap.id;
+    for (var i = 0; i < 7; i++) {
+        levelMap[center + 2 + i][bottom - 1 - i] = tileType.ramp_l.id;
+        levelMap[center + 2 + i][bottom - 1 - i - 1] = tileType.rampcap_l.id;
+    }
+    levelMap[center + 9][bottom - 7] = tileType.wall_grass.id;
+    levelMap[center + 9][bottom - 8] = tileType.cap.id;
+    for (var i = 0; i < 4; i++) {
+        levelMap[center + 2 + 8 + i][bottom - 1 - 6 + i] = tileType.ramp_r.id;
+        levelMap[center + 2 + 8 + i][bottom - 1 - 6 + i - 1] = tileType.rampcap_r.id;
     }
 
     walls = new PIXI.Container();
@@ -314,6 +340,20 @@ function checkWall(x, y) {
                 return 2;
             }
             return 0;
+        } else if (cw == 4) {
+            var tx = x - ii * levelProperties.grid;
+            var ty = y - jj * levelProperties.grid;
+            if (ty > levelProperties.grid - tx - 1) {
+                return 4;
+            }
+            return 0;
+        } else if (cw == 5) {
+            var tx = x - ii * levelProperties.grid;
+            var ty = y - jj * levelProperties.grid;
+            if (ty > tx - 1) {
+                return 5;
+            }
+            return 0;
         } else {
             return cw;
         }
@@ -326,11 +366,18 @@ function playerCheckWall(x, y) {
     var c2 = checkWall(x + 14, y);
     var c3 = checkWall(x - 14, y - 60);
     var c4 = checkWall(x + 14, y - 60);
+    //var cm = checkWall(x, y);
     if (c1 == 1 || c2 == 1 || c3 == 1 || c4 == 1) {
         return 1;
     }
     if (c1 == 2 || c2 == 2) {
         return 2;
+    }
+    if (c2 == 4) {
+        return 4;
+    }
+    if (c1 == 5) {
+        return 5;
     }
     return 0;
 }
@@ -357,12 +404,13 @@ function play(delta) {
         if (!vhit) {
             ty += tddy;
             var cw = playerCheckWall(tx, ty);
-            if (cw == 1 || player.vy > 0 && cw == 2 && !(keys.down.held && keys.b.held)) {
+            if (cw == 1 || player.vy > 0 && cw == 2 && !(keys.down.held && keys.b.held) || cw == 4 || cw == 5) {
                 ty -= tddy;
                 vhit = true;
-                if (player.vy > 0) {
+                if (player.vy >= 0) {
                     grounded = true;
                     player.vy = 1;
+                    if (cw == 4 || cw == 5) player.vy = 10; //cheap hack to keep the player on the ramp going downhill
                 } else {
                     player.vy = 0;
                 }
@@ -370,10 +418,31 @@ function play(delta) {
         }
         if (!hhit) {
             tx += tddx;
-            if (playerCheckWall(tx, ty) == 1) {
+            var cw = playerCheckWall(tx, ty);
+            if (cw == 1) {
                 tx -= tddx;
                 hhit = true;
                 player.vx = 0;
+                /*
+            } else if (cw == 4) { //should never happen physically
+                var ttx = levelProperties.grid - 1 - (tx - 14) % levelProperties.grid;
+                var tty = ty % levelProperties.grid;
+                if (tty > ttx) {
+                    ty -= tty - ttx;
+                }
+                */
+            } else if (cw == 4) {
+                var ttx = levelProperties.grid - 1 - (tx + 14) % levelProperties.grid;
+                var tty = ty % levelProperties.grid;
+                if (tty > ttx) {
+                    ty -= tty - ttx;
+                }
+            } else if (cw == 5) {
+                var ttx = (tx - 14) % levelProperties.grid - 1;
+                var tty = ty % levelProperties.grid;
+                if (tty > ttx) {
+                    ty -= tty - ttx;
+                }
             }
         }
     }
@@ -387,6 +456,10 @@ function play(delta) {
     player.y = player.py;
     player.cx = player.x;
     player.cy = player.y - levelProperties.grid / 2;
+
+    // DEBUG:
+    gx = Math.floor(player.cx / levelProperties.grid);
+    gy = Math.floor(player.cy / levelProperties.grid);
 
     // Jump and run.
 

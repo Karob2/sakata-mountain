@@ -32,6 +32,22 @@
             "sourceSize": {"w":64, "h":64},
             "pivot": {"x":0.5, "y":0.5}
         },
+        "ramp_l": {
+            "frame": {"x":133, "y":67, "w":64, "h":64},
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {"x":0, "y":0, "w":64, "h":64},
+            "sourceSize": {"w":64, "h":64},
+            "pivot": {"x":0.5, "y":0.5}
+        },
+        "ramp_r": {
+            "frame": {"x":199, "y":67, "w":64, "h":64},
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {"x":0, "y":0, "w":64, "h":64},
+            "sourceSize": {"w":64, "h":64},
+            "pivot": {"x":0.5, "y":0.5}
+        },
         "cap_lr": {
             "frame": {"x":1, "y":133, "w":64, "h":64},
             "rotated": false,
@@ -58,6 +74,22 @@
         },
         "cap_r": {
             "frame": {"x":199, "y":133, "w":64, "h":64},
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {"x":0, "y":0, "w":64, "h":64},
+            "sourceSize": {"w":64, "h":64},
+            "pivot": {"x":0.5, "y":0.5}
+        },
+        "rampcap_l": {
+            "frame": {"x":133, "y":0, "w":64, "h":64},
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {"x":0, "y":0, "w":64, "h":64},
+            "sourceSize": {"w":64, "h":64},
+            "pivot": {"x":0.5, "y":0.5}
+        },
+        "rampcap_r": {
+            "frame": {"x":199, "y":0, "w":64, "h":64},
             "rotated": false,
             "trimmed": false,
             "spriteSourceSize": {"x":0, "y":0, "w":64, "h":64},
