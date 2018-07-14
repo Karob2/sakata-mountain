@@ -5,11 +5,12 @@ var levelScene;
 var spriteAtlas, tileAtlas;
 var camera;
 var objects;
-var player, fairies, bullets_1, bullets_2, slashFx;
+var player, fairies, bullets_1, bullets_2, waves, slashFx;
 var walls;
 var levelMap, graphicMap;
 var playerAnimations;
 var tileType;
+var waveTimer;
 function initialize_level() {
     levelProperties = {
         width: 0,
@@ -206,35 +207,41 @@ function initialize_level() {
         objects.addChild(o);
     }
 
-    /*
-    var wave_animation = [];
-    for (var i = 1; i <= 2; i++) {
-        wave_animation.push(PIXI.Texture.fromFrame('wave f' + i));
-    }
-    */
     slashFx = new PIXI.Container();
     objects.addChild(slashFx);
-    o = new PIXI.Sprite(spriteAtlas["wave f1"]);
-    /*
-    o = new PIXI.extras.AnimatedSprite(wave_animation);
-    o.animationSpeed = 0.1;
-    o.loop = true;
-    o.play();
-    */
+    o = new PIXI.Sprite(spriteAtlas["wave 1"]);
     o.visible = false;
     o.anchor.set(0.5, 0.5);
     slashFx.addChild(o);
-    o = new PIXI.Sprite(spriteAtlas["wave f1"]);
+    o = new PIXI.Sprite(spriteAtlas["wave 1"]);
     o.visible = false;
     o.anchor.set(0.5, 0.5);
     o.scale.x = -1;
     slashFx.addChild(o);
+
+    var wave_animation = [];
+    for (var i = 1; i <= 2; i++) {
+        wave_animation.push(PIXI.Texture.fromFrame('wave 2 f' + i));
+    }
+    waves = [];
+    for (var i = 0; i < 5; i++) {
+        o = new PIXI.extras.AnimatedSprite(wave_animation);
+        o.visible = false;
+        o.anchor.set(0.5, 0.5);
+        o.animationSpeed = 0.2;
+        o.loop = true;
+        o.play();
+        waves.push({sprite: o, age: 0, active: false});
+        objects.addChild(o);
+    }
 
     camera = {};
     camera.x = player.px;
     camera.y = player.py;
     camera.px = 0;
     camera.py = 0;
+
+    waveTimer = 10;
 }
 
 /*
@@ -415,6 +422,7 @@ function play(delta) {
             slashFx.children[1].visible = true;
             slashFx.children[1].cooldown = 5;
             */
+            fireWave(player.cx, player.cy, 8 * player.scale.x, 0);
         } else {
             if (!grounded) {
                 player.textures = playerAnimations.jump;
@@ -594,12 +602,12 @@ function play(delta) {
             if (fairy.cooldown_1 < 1) {
                 fairy.cooldown_1 = 100 * (Math.random() + 0.5);
                 if (fairy.super) {
-                    for (var j = 0; j < 16; j++) {
+                    for (var j = 0; j < 8; j++) {
                         fireBullet_1(
                             fairy.x,
                             fairy.y,
-                            Math.sin(Math.PI * j / 8) * 5,
-                            Math.cos(Math.PI * j / 8) * 5,
+                            Math.sin(Math.PI * j / 4) * 5,
+                            Math.cos(Math.PI * j / 4) * 5,
                             "bullet 3"
                         );
                     }
@@ -644,6 +652,38 @@ function play(delta) {
                 bullets_1[i].sprite.visible = false;
             }
         }
+    }
+
+    for (var i = 0; i < waves.length; i++) {
+        if (waves[i].active) {
+            waves[i].sprite.x += waves[i].vx * delta;
+            waves[i].sprite.y += waves[i].vy * delta;
+            waves[i].age += delta;
+            if (waves[i].age > 400) {
+                waves[i].active = false;
+                waves[i].sprite.visible = false;
+            } else {
+                var ii = Math.floor(waves[i].sprite.x / levelProperties.grid);
+                var jj = Math.floor(waves[i].sprite.y / levelProperties.grid);
+                if (ii >= 0 && ii < levelProperties.gridWidth && jj >= 0 && jj < levelProperties.gridHeight) {
+                    if (tileType.index[levelMap[ii][jj]].coll == 1) {
+                        //waves[i].sprite.visible = true;
+                    } else {
+                        //waves[i].sprite.visible = false;
+                    }
+                }
+            }
+        }
+    }
+
+    waveTimer -= delta;
+    if (waveTimer < 1) {
+        waveTimer = 100;
+        //var dir = Math.floor(Math.random() * 2) * 2 - 1;
+        var dir = -1;
+        var off = Math.floor(player.cy / levelProperties.grid) + Math.floor(Math.random() * 3) - 1;
+        //fireWave(player.cx - 7 * levelProperties.grid * dir, levelProperties.grid * (off + 0.5), 8 * dir, 0);
+        fireBullet_1(player.cx - 7 * levelProperties.grid * dir, levelProperties.grid * (off + 0.5), 8 * dir, 0, "wave 2 f1");
     }
 
     // Arrange tiles:
@@ -697,4 +737,32 @@ function fireBullet_1(x, y, vx, vy, texture) {
     bullets_1[maxId].vy = vy;
     bullets_1[maxId].age = 0;
     bullets_1[maxId].sprite.texture = PIXI.utils.TextureCache[texture];
+}
+
+function fireWave(x, y, vx, vy) {
+    var maxAge = -1;
+    var maxId = 0;
+    for (var i = 0; i < waves.length; i++) {
+        if (!waves[i].active) {
+            waves[i].active = true;
+            waves[i].sprite.visible = true;
+            waves[i].sprite.x = x;
+            waves[i].sprite.y = y;
+            waves[i].vx = vx;
+            waves[i].vy = vy;
+            waves[i].age = 0;
+            waves[i].sprite.scale.x = -Math.sign(vx);
+            break;
+        }
+        if (waves[i].age > maxAge) {
+            maxAge = waves[i].age;
+            maxId = i;
+        }
+    }
+    waves[maxId].sprite.x = x;
+    waves[maxId].sprite.y = y;
+    waves[maxId].vx = vx;
+    waves[maxId].vy = vy;
+    waves[maxId].age = 0;
+    waves[maxId].sprite.scale.x = -Math.sign(vx);
 }
