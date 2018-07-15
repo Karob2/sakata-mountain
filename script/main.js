@@ -225,4 +225,5 @@ function reloadMap() {
     script.src= 'script/levelmap.js';
     head.appendChild(script);
     importLevelMap();
+    godMode = true;
 }

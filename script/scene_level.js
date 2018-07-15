@@ -407,6 +407,7 @@ function checkWall(x, y) {
             return cw;
         }
     }
+    if (jj < 0) return 0;
     return 1;
 }
 
@@ -1038,19 +1039,16 @@ function fullHealth() {
         fairy.visible = true;
         fairy.heart.visible = true;
         fairy.texture = PIXI.utils.TextureCache["fairy"];
-        fairy.cooldown_1 = 0;
+        fairy.cooldown_1 = 100;
         fairy.cooldown_2 = 4;
         fairy.super = false;
     }
 }
 
 function loseHealth() {
-    // DEBUG:
-    if (godMode) return;
-
     if (player.invuln >= 1) return;
     if (health.lives <= 0) {
-        playerCheckpoint();
+        if (!godMode) playerCheckpoint();
         fullHealth();
         playerInvuln();
         return;
