@@ -1,3 +1,5 @@
+"use strict"
+
 var filterList = [
     "air", //0
     "backdrop",
@@ -57,6 +59,8 @@ var LMC = [
 ]
 
 function importLevelMap() {
+    var o;
+    
     for (var i = fairies.children.length - 1; i >= 0; i--) {
         objects.removeChild(fairies.children[i].heart);
         fairies.removeChild(fairies.children[i]);

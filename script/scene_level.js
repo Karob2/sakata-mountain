@@ -5,7 +5,7 @@ var levelScene;
 var spriteAtlas, tileAtlas;
 var camera;
 var objects;
-var player, fairies, bullets_1, bullets_2, waves, slashFx, checkpoints, health;
+var player, fairies, bullets_1, bullets_2, waves, slashFx, checkpoints, health, hina, hinaballs;
 var walls;
 var levelMap, graphicMap;
 var playerAnimations;
@@ -211,6 +211,11 @@ function initialize_level() {
     player.invuln = 0;
     //player.shake = 0;
 
+    // DEBUG:
+    player.px = levelProperties.width - levelProperties.grid * 11.5;
+    player.py = levelProperties.height - levelProperties.grid - 1;
+
+
     var o;
 
     fairies = new PIXI.Container();
@@ -242,6 +247,33 @@ function initialize_level() {
         objects.addChild(o.heart);
     }
 
+    hina = new PIXI.Container();
+    hina.x = levelProperties.width - levelProperties.grid * 2.5;
+    hina.y = levelProperties.height - levelProperties.grid * 3.75 - 1;
+    objects.addChild(hina);
+    o = new PIXI.Sprite(spriteAtlas["hina"]);
+    o.anchor.set(0.5, 0.5);
+    o.scale.x = -1;
+    hina.addChild(o);
+    hina.cooldown = 0;
+    hina.chain = 0;
+
+    hinaballs = new PIXI.Container();
+    hinaballs.layer1 = 6;
+    hinaballs.layer2 = 6;
+    hinaballs.layer3 = 6;
+    hinaballs.layer4 = 6;
+    hina.addChild(hinaballs);
+    for (var i = 0; i < hinaballs.layer1 + hinaballs.layer2 + hinaballs.layer3 + hinaballs.layer4; i++) {
+        o = new PIXI.Sprite(spriteAtlas["hinaball"]);
+        o.anchor.set(0.5, 0.5);
+        o.x = Math.sin(i * 2 * Math.PI / 30) * i * 6;
+        o.y = Math.cos(i * 2 * Math.PI / 30) * i * 6;
+        o.blink = 0;
+        hinaballs.addChild(o);
+    }
+    hinaballs.delta = 0;
+
     bullets_1 = [];
     for (var i = 0; i < 30; i++) {
         o = new PIXI.Sprite(spriteAtlas["bullet 1"]);
@@ -272,6 +304,7 @@ function initialize_level() {
     o.scale.x = -1;
     slashFx.addChild(o);
 
+    /*
     var wave_animation = [];
     for (var i = 1; i <= 2; i++) {
         wave_animation.push(PIXI.Texture.fromFrame('wave 2 f' + i));
@@ -287,6 +320,7 @@ function initialize_level() {
         waves.push({sprite: o, age: 0, active: false});
         objects.addChild(o);
     }
+    */
 
     camera = {};
     camera.x = player.px;
@@ -467,6 +501,9 @@ function play(delta) {
     player.vy += 0.5 * delta
     player.vx *= Math.pow(0.9, delta);
     player.vy *= Math.pow(0.99, delta);
+    if (player.cx >= 5632 && player.cy > 1088) {
+        player.vx *= Math.pow(0.85, delta);
+    }
 
     var tx = player.px;
     var ty = player.py;
@@ -557,6 +594,7 @@ function play(delta) {
     if (player.cooldown > 0) player.cooldown -= delta;
     if (player.textures != playerAnimations.knife || player.currentFrame == player.totalFrames - 1) {
         if (!player.hasSlashed && keys.a.held && player.cooldown < 1) {
+            PIXI.sound.play('sfx_slash');
             player.hasSlashed = true;
             player.cooldown = 40;
             player.textures = playerAnimations.knife;
@@ -720,6 +758,13 @@ function play(delta) {
     for (var n = 0; n < checkpoints.children.length; n++) {
         var cp = checkpoints.children[n];
         if (Math.abs(player.px - cp.x - levelProperties.grid / 2) < 48 && Math.abs(player.py - cp.y - levelProperties.grid / 2) < 80) {
+            var doSfx;
+            if (health.lives == health.maxLives) {
+                doSfx = true;
+            } else {
+                PIXI.sound.play('sfx_checkpoint');
+                doSfx = false;
+            }
             fullHealth();
             playerInvuln();
             if (cp.active == true) continue;
@@ -727,6 +772,7 @@ function play(delta) {
                 lastCheckpoint.sprite.texture = PIXI.utils.TextureCache["checkpoint"];
                 lastCheckpoint.sprite.active = false;
             }
+            if (doSfx) PIXI.sound.play('sfx_checkpoint');
             cp.active = true;
             cp.texture = PIXI.utils.TextureCache["checkpoint_active"];
             lastCheckpoint.x = cp.x + levelProperties.grid / 2;
@@ -747,6 +793,7 @@ function play(delta) {
         // Check if fairy is attacked.
         if (player.cooldown > 35) {
             if (Math.abs(player.cx - fairy.heart.x) < 72 && Math.abs(player.cy - fairy.heart.y) < 62) {
+                PIXI.sound.play('sfx_kill');
                 fairy.visible = false;
                 fairy.heart.visible = false;
                 if (fairy.heart.new) {
@@ -817,6 +864,7 @@ function play(delta) {
                             1
                         );
                     }
+                    PIXI.sound.play('sfx_bullet3');
                 } else {
                     fairy.cooldown_2--;
                     fireBullet_1(
@@ -827,6 +875,7 @@ function play(delta) {
                         "bullet 1",
                         0
                     );
+                    PIXI.sound.play('sfx_bullet1');
                     if (fairy.cooldown_2 < 1) {
                         fairy.cooldown_2 = 4 + Math.random() * 2.5;
                         fireBullet_1(
@@ -837,6 +886,7 @@ function play(delta) {
                             "bullet 2",
                             0
                         );
+                        PIXI.sound.play('sfx_bullet2');
                         fairy.texture = PIXI.utils.TextureCache["fairy"];
                     }
                 }
@@ -859,35 +909,39 @@ function play(delta) {
                         //bullets_1[i].sprite.scale.x *= -1;
                         //bullets_1[i].vx *= -1;
                         //bullets_1[i].age = 0;
+                        PIXI.sound.play('sfx_block');
                         bullets_1[i].active = false;
                         bullets_1[i].sprite.visible = false;
                     }
                 }
+                /*
                 for (var n = 0; n < waves.length; n++) {
                     if (waves[n].active && Math.abs(bullets_1[i].sprite.x - waves[n].sprite.x) < 64 && Math.abs(bullets_1[i].sprite.y - waves[n].sprite.y) < 64) {
                         bullets_1[i].active = false;
                         bullets_1[i].sprite.visible = false;
                     }
                 }
+                */
             }
             // Check if player is attacked.
             if (Math.abs(player.cx - bullets_1[i].sprite.x) < 20 && Math.abs(player.cy - bullets_1[i].sprite.y) < 48) {
-                loseHealth();
-                player.vx = bullets_1[i].vx;
-                player.vy /= 2;
-                //player.vy += bullets_1[i].vy;
-                /*
-                if (health.lives <= 0) {
-                    playerCheckpoint();
-                    fullHealth();
-                } else {
-                    if (player.invuln < 1) loseHealth();
-                    playerInvuln();
+                if (loseHealth(bullets_1[i].vx, player.vy / 2)) {
+                    //player.vx = bullets_1[i].vx;
+                    //player.vy /= 2;
+                    //player.vy += bullets_1[i].vy;
+                    /*
+                    if (health.lives <= 0) {
+                        playerCheckpoint();
+                        fullHealth();
+                    } else {
+                        if (player.invuln < 1) loseHealth();
+                        playerInvuln();
+                    }
+                    */
+                    bullets_1[i].active = false;
+                    bullets_1[i].sprite.visible = false;
+                    continue;
                 }
-                */
-                bullets_1[i].active = false;
-                bullets_1[i].sprite.visible = false;
-                continue;
             }
             bullets_1[i].sprite.x += bullets_1[i].vx * delta;
             bullets_1[i].sprite.y += bullets_1[i].vy * delta;
@@ -911,6 +965,7 @@ function play(delta) {
         }
     }
 
+/*
     for (var i = 0; i < waves.length; i++) {
         if (waves[i].active) {
             waves[i].sprite.x += waves[i].vx * delta;
@@ -932,6 +987,107 @@ function play(delta) {
             }
         }
     }
+*/
+
+    // Check if hina is attacked.
+    if (player.cooldown > 35) {
+        if (Math.abs(player.cx - hina.x) < 72 && Math.abs(player.cy - hina.y) < 62) {
+            PIXI.sound.play('sfx_kill');
+            hina.visible = false;
+        }
+    }
+
+    hinaballs.delta += delta / 30;
+    var hcl = hinaballs.children.length;
+    for (var i = 0; i < hcl; i++) {
+        var o;
+        o = hinaballs.children[i];
+        //o.x = -Math.sin(i * 2 * Math.PI / hcl + hinaballs.delta*0) * i / hcl * 200 * hinaballs.delta/20;
+        //o.y = -Math.cos(i * 2 * Math.PI / hcl + hinaballs.delta*0) * i / hcl * 200 * hinaballs.delta/20;
+        /*
+        if (i < hinaballs.layer1) {
+            o.x = Math.sin(i * 2 * Math.PI / hinaballs.layer1 + hinaballs.delta*1.0) * 64;
+            o.y = Math.cos(i * 2 * Math.PI / hinaballs.layer1 + hinaballs.delta*1.0) * 64;
+        } else if (i < hinaballs.layer1 + hinaballs.layer2) {
+            o.x = Math.sin(i * 2 * Math.PI / hinaballs.layer2 + hinaballs.delta*0.8) * 114;
+            o.y = Math.cos(i * 2 * Math.PI / hinaballs.layer2 + hinaballs.delta*0.8) * 114;
+        } else if (i < hinaballs.layer1 + hinaballs.layer2 + hinaballs.layer3) {
+            o.x = Math.sin(i * 2 * Math.PI / hinaballs.layer3 + hinaballs.delta*0.6) * 164;
+            o.y = Math.cos(i * 2 * Math.PI / hinaballs.layer3 + hinaballs.delta*0.6) * 164;
+        } else {
+            o.x = Math.sin(i * 2 * Math.PI / hinaballs.layer4 + hinaballs.delta*0.4) * 214;
+            o.y = Math.cos(i * 2 * Math.PI / hinaballs.layer4 + hinaballs.delta*0.4) * 214;
+        }
+        */
+        if (i < hinaballs.layer1) {
+            o.x = Math.sin(i * 2 * Math.PI / hinaballs.layer1 + hinaballs.delta*0.4 + Math.PI/2) * 214 + 320;
+            o.y = Math.cos(i * 2 * Math.PI / hinaballs.layer1 + hinaballs.delta*0.4 + Math.PI/2) * 214;
+        } else if (i < hinaballs.layer1 + hinaballs.layer2) {
+            o.x = Math.sin(i * 2 * Math.PI / hinaballs.layer2 + hinaballs.delta*0.4) * 214 + 160;
+            o.y = Math.cos(i * 2 * Math.PI / hinaballs.layer2 + hinaballs.delta*0.4) * 214;
+        } else if (i < hinaballs.layer1 + hinaballs.layer2 + hinaballs.layer3) {
+            o.x = Math.sin(i * 2 * Math.PI / hinaballs.layer3 + hinaballs.delta*0.4 + Math.PI/2) * 214 + 0;
+            o.y = Math.cos(i * 2 * Math.PI / hinaballs.layer3 + hinaballs.delta*0.4 + Math.PI/2) * 214;
+        } else {
+            o.x = Math.sin(i * 2 * Math.PI / hinaballs.layer4 + hinaballs.delta*0.4) * 214 - 160;
+            o.y = Math.cos(i * 2 * Math.PI / hinaballs.layer4 + hinaballs.delta*0.4) * 214;
+        }
+
+        // Check if player is attacked.
+        //o.visible = false; // DEBUG
+        if (o.blink > 0) {
+            o.blink--;
+        } else if (o.visible) {
+            o.alpha = 1;
+            if (Math.abs(player.cx - o.x - hina.x) < 30 && Math.abs(player.cy - o.y - hina.y) < 48) {
+                if (loseHealth(-2, -2)) {
+                    o.blink = 50;
+                    o.alpha = 0.5;
+                    continue;
+                }
+            }
+        }
+    }
+
+    if (player.cx >= 5632 && player.cy > 1088) {
+
+        waveTimer -= delta;
+        if (waveTimer < 1) {
+            waveTimer = 100;
+            var dir = -1;
+            for (var n = -2; n <= 2; n++) {
+                fireBullet_1(player.cx - 7 * levelProperties.grid * dir, hina.y + n * levelProperties.grid, 8 * dir, 0, "wave 3 f1", 1);
+            }
+            PIXI.sound.play('sfx_bullet1');
+        }
+
+
+        dist = Math.sqrt(Math.pow(player.cx - hina.x, 2) + Math.pow(player.cy - hina.y, 2));
+
+        if (hina.cooldown > 0) {
+            hina.cooldown -= delta;
+        }
+        if (hina.cooldown < 1) {
+            if (hina.chain < 1) {
+                hina.cooldown = 10;
+                hina.chain++;
+            } else {
+                hina.cooldown = 200;
+                hina.chain = 0;
+            }
+            
+            fireBullet_1(
+                hina.x,
+                hina.y,
+                (player.cx - hina.x) / dist * 3,
+                (player.cy - hina.y) / dist * 3,
+                "hinadoll",
+                0
+            );
+            
+            //PIXI.sound.play('sfx_bullet2');
+        }
+    }
 
     if (player.cx >= 38 * levelProperties.grid && player.cx < 62 * levelProperties.grid) {
         waveTimer -= delta;
@@ -942,6 +1098,7 @@ function play(delta) {
             var off = Math.floor(player.cy / levelProperties.grid) + Math.floor(Math.random() * 3) - 1;
             //fireWave(player.cx - 7 * levelProperties.grid * dir, levelProperties.grid * (off + 0.5), 8 * dir, 0);
             fireBullet_1(player.cx - 7 * levelProperties.grid * dir, levelProperties.grid * (off + 0.5), 8 * dir, 0, "wave 3 f1", 1);
+            PIXI.sound.play('sfx_bullet1');
         }
     }
 
@@ -1093,21 +1250,32 @@ function fullHealth() {
     }
 }
 
-function loseHealth() {
-    if (player.invuln >= 1) return;
-    if (health.lives <= 0) {
+function loseHealth(vx, vy) {
+    /*
+    if (player.invuln < 1 | player.cx >= 5632 && player.cy > 1088) {
+        player.vx = vx;
+        player.vy = vy;
+    }
+    */
+    if (player.invuln >= 1) return false;
+    player.vx = vx;
+    player.vy = vy;
+    if (health.lives <= 0 || player.cx >= 5632 - 64 && player.cy > 1088) {
         if (!godMode) playerCheckpoint();
+        PIXI.sound.play('sfx_respawn');
         fullHealth();
         playerInvuln();
-        return;
+        return true;
     }
+    PIXI.sound.play('sfx_pain');
     health.lives--;
     health.children[health.lives].visible = false;
     styleHealth();
     //camera.shake = 10;
     //player.shake = 20;
     fireBullet_2(player.cx, player.cy, 0, -1, "life", 50);
-    playerInvuln();
+    if (!(player.cx >= 5632 && player.cy > 1088)) playerInvuln();
+    return true;
 }
 
 function styleHealth() {
@@ -1130,4 +1298,11 @@ function playerCheckpoint() {
     player.py = lastCheckpoint.y;
     player.vx = 0;
     player.vy = 0;
+    waveTimer = 3;
+    hina.cooldown = 3;
+    hina.chain = 0;
+    for (var i = 0; i < bullets_1.length; i++) {
+        bullets_1[i].active = false;
+        bullets_1[i].sprite.visible = false;
+    }
 }

@@ -5,11 +5,16 @@ var textureList = [
     "img/tiles.json"
     ]
 var soundList = [
-    /*
-    ["bgm_menu", "sfx/menu.mp3"],
-    ["bgm_level", "sfx/level.mp3"],
-    ["sfx_block", "sfx/block2.wav"]
-    */
+    ["bgm_level", "sfx/crickets.mp3"],
+    ["sfx_kill", "sfx/mischit.wav"],
+    ["sfx_checkpoint", "sfx/block2.wav"],
+    ["sfx_respawn", "sfx/die.wav"],
+    ["sfx_slash", "sfx/hit1.wav"],
+    ["sfx_block", "sfx/hit2.wav"],
+    ["sfx_bullet1", "sfx/fireball.wav"],
+    ["sfx_bullet2", "sfx/ender.wav"],
+    ["sfx_bullet3", "sfx/mortar.wav"],
+    ["sfx_pain", "sfx/hitcrit.wav"]
     ]
 var loadingScene;
 function load(n) {
@@ -92,7 +97,7 @@ function initialize() {
 
 function start_stage(stageType, stageNumber) {
     if (stageType == "menu") {
-        //PIXI.sound.stop('bgm_level');
+        PIXI.sound.stop('bgm_level');
         //PIXI.sound.play('bgm_menu', {loop:true});
         menuScene.visible = true;
         levelScene.visible = false;
@@ -103,7 +108,7 @@ function start_stage(stageType, stageNumber) {
     if (stageType == "level") {
         app.renderer.backgroundColor = 0x201030;
         //PIXI.sound.stop('bgm_menu');
-        //PIXI.sound.play('bgm_level', {loop:true});
+        PIXI.sound.play('bgm_level', {loop:true});
         menuScene.visible = false;
         levelScene.visible = true;
         state = play;
