@@ -204,6 +204,7 @@ function initialize_level() {
     player.hasJumped = false;
     player.hasSlashed = false;
     player.invuln = 0;
+    //player.shake = 0;
 
     var o;
 
@@ -491,8 +492,16 @@ function play(delta) {
 
     player.x = player.px;
     player.y = player.py;
-    player.cx = player.x;
-    player.cy = player.y - levelProperties.grid / 2;
+    /*
+    if (player.shake > 0) {
+        player.x += Math.floor(Math.sin(player.shake) * player.shake / 10);
+        player.y += Math.floor(Math.cos(player.shake) * player.shake / 10);
+        player.shake -= delta;
+    }
+    */
+
+    player.cx = player.px;
+    player.cy = player.py - levelProperties.grid / 2;
 
     // DEBUG:
     gx = Math.floor(player.cx / levelProperties.grid);
@@ -981,6 +990,7 @@ function loseHealth() {
     health.children[health.lives].visible = false;
     styleHealth();
     //camera.shake = 10;
+    //player.shake = 20;
 }
 
 function styleHealth() {
