@@ -286,6 +286,7 @@ function initialize_level() {
     camera.y = player.py;
     camera.px = 0;
     camera.py = 0;
+    //camera.shake = 0;
 
     waveTimer = 10;
 
@@ -662,6 +663,14 @@ function play(delta) {
     camera.dx = Math.round(camera.x) - gameProperties.width / 2;
     camera.dy = Math.round(camera.y) - gameProperties.height / 2;
 
+    /*
+    if (camera.shake > 0) {
+        camera.dx += Math.floor(Math.sin(camera.shake) * camera.shake / 5);
+        //camera.dy += Math.floor(Math.cos(camera.shake) * camera.shake / 10);
+        camera.shake -= delta;
+    }
+    */
+
     objects.x = -camera.dx;
     objects.y = -camera.dy;
 
@@ -971,6 +980,7 @@ function loseHealth() {
     health.lives--;
     health.children[health.lives].visible = false;
     styleHealth();
+    //camera.shake = 10;
 }
 
 function styleHealth() {
