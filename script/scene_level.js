@@ -14,6 +14,7 @@ var waveTimer;
 var lastCheckpoint = {};
 // DEBUG:
 var gx, gy;
+var godMode = false;
 
 function initialize_level() {
     levelProperties = {
@@ -833,6 +834,8 @@ function play(delta) {
             }
             // Check if player is attacked.
             if (Math.abs(player.cx - bullets_1[i].sprite.x) < 32 && Math.abs(player.cy - bullets_1[i].sprite.y) < 48) {
+                loseHealth();
+                /*
                 if (health.lives <= 0) {
                     playerCheckpoint();
                     fullHealth();
@@ -840,6 +843,7 @@ function play(delta) {
                     if (player.invuln < 1) loseHealth();
                     playerInvuln();
                 }
+                */
                 bullets_1[i].active = false;
                 bullets_1[i].sprite.visible = false;
                 continue;
@@ -1039,12 +1043,23 @@ function fullHealth() {
 }
 
 function loseHealth() {
+    // DEBUG:
+    if (godMode) return;
+
+    if (player.invuln >= 1) return;
+    if (health.lives <= 0) {
+        playerCheckpoint();
+        fullHealth();
+        playerInvuln();
+        return;
+    }
     health.lives--;
     health.children[health.lives].visible = false;
     styleHealth();
     //camera.shake = 10;
     //player.shake = 20;
     fireBullet_2(player.cx, player.cy, 0, -1, "life", 50);
+    playerInvuln();
 }
 
 function styleHealth() {
