@@ -774,7 +774,8 @@ function play(delta) {
                             fairy.y,
                             Math.sin(Math.PI * j * 2 / 12) * 5,
                             Math.cos(Math.PI * j * 2 / 12) * 5,
-                            "bullet 3"
+                            "bullet 3",
+                            1
                         );
                     }
                 } else {
@@ -784,7 +785,8 @@ function play(delta) {
                         fairy.y,
                         (player.cx - fairy.x) / dist * 3,
                         (player.cy - fairy.y) / dist * 3,
-                        "bullet 1"
+                        "bullet 1",
+                        0
                     );
                     if (fairy.cooldown_2 < 1) {
                         fairy.cooldown_2 = 4 + Math.random() * 2.5;
@@ -793,7 +795,8 @@ function play(delta) {
                             fairy.y,
                             (player.cx - fairy.x) / dist * 7,
                             (player.cy - fairy.y) / dist * 7,
-                            "bullet 2"
+                            "bullet 2",
+                            0
                         );
                         fairy.texture = PIXI.utils.TextureCache["fairy"];
                     }
@@ -811,13 +814,21 @@ function play(delta) {
     for (var i = 0; i < bullets_1.length; i++) {
         if (bullets_1[i].active) {
             // Check if bullet is attacked.
-            if (player.cooldown > 35) {
-                if (Math.abs(player.cx - bullets_1[i].sprite.x) < 72 && Math.abs(player.cy - bullets_1[i].sprite.y) < 62) {
-                    bullets_1[i].sprite.scale.x *= -1;
-                    bullets_1[i].vx *= -1;
-                    bullets_1[i].age = 0;
-                    //bullets_1[i].active = false;
-                    //bullets_1[i].sprite.visible = false;
+            if (bullets_1[i].type == 1) {
+                if (player.cooldown > 35) {
+                    if (Math.abs(player.cx - bullets_1[i].sprite.x) < 72 && Math.abs(player.cy - bullets_1[i].sprite.y) < 62) {
+                        //bullets_1[i].sprite.scale.x *= -1;
+                        //bullets_1[i].vx *= -1;
+                        //bullets_1[i].age = 0;
+                        bullets_1[i].active = false;
+                        bullets_1[i].sprite.visible = false;
+                    }
+                }
+                for (var n = 0; n < waves.length; n++) {
+                    if (waves[n].active && Math.abs(bullets_1[i].sprite.x - waves[n].sprite.x) < 64 && Math.abs(bullets_1[i].sprite.y - waves[n].sprite.y) < 64) {
+                        bullets_1[i].active = false;
+                        bullets_1[i].sprite.visible = false;
+                    }
                 }
             }
             // Check if player is attacked.
@@ -885,7 +896,7 @@ function play(delta) {
         var dir = -1;
         var off = Math.floor(player.cy / levelProperties.grid) + Math.floor(Math.random() * 3) - 1;
         //fireWave(player.cx - 7 * levelProperties.grid * dir, levelProperties.grid * (off + 0.5), 8 * dir, 0);
-        fireBullet_1(player.cx - 7 * levelProperties.grid * dir, levelProperties.grid * (off + 0.5), 8 * dir, 0, "wave 2 f1");
+        fireBullet_1(player.cx - 7 * levelProperties.grid * dir, levelProperties.grid * (off + 0.5), 8 * dir, 0, "wave 2 f1", 1);
     }
 */
 
@@ -922,7 +933,7 @@ function play(delta) {
     }
 }
 
-function fireBullet_1(x, y, vx, vy, texture) {
+function fireBullet_1(x, y, vx, vy, texture, type) {
     var maxAge = -1;
     var maxId = 0;
     for (var i = 0; i < bullets_1.length; i++) {
@@ -935,6 +946,7 @@ function fireBullet_1(x, y, vx, vy, texture) {
             bullets_1[i].vy = vy;
             bullets_1[i].age = 0;
             bullets_1[i].sprite.texture = PIXI.utils.TextureCache[texture];
+            bullets_1[i].type = type;
             if (vx != 0) bullets_1[i].sprite.scale.x = -Math.sign(vx);
             return;
         }
@@ -949,6 +961,7 @@ function fireBullet_1(x, y, vx, vy, texture) {
     bullets_1[maxId].vy = vy;
     bullets_1[maxId].age = 0;
     bullets_1[maxId].sprite.texture = PIXI.utils.TextureCache[texture];
+    bullets_1[maxId].type = type;
     if (vx != 0) bullets_1[maxId].sprite.scale.x = -Math.sign(vx);
 }
 
