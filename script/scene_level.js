@@ -11,6 +11,7 @@ var levelMap, graphicMap;
 var playerAnimations;
 var tileType;
 var waveTimer;
+var checkpoint = {};
 // DEBUG:
 var gx, gy;
 
@@ -197,6 +198,8 @@ function initialize_level() {
     player.direction = 1;
     player.hasJumped = false;
     player.hasSlashed = false;
+    checkpoint.x = player.px;
+    checkpoint.y = player.py;
 
     var o;
 
@@ -744,6 +747,13 @@ function play(delta) {
                     //bullets_1[i].active = false;
                     //bullets_1[i].sprite.visible = false;
                 }
+            }
+            // Check if player is attacked.
+            if (Math.abs(player.cx - bullets_1[i].sprite.x) < 32 && Math.abs(player.cy - bullets_1[i].sprite.y) < 48) {
+                player.px = checkpoint.x;
+                player.py = checkpoint.y;
+                player.vx = 0;
+                player.vy = 0;
             }
             bullets_1[i].sprite.x += bullets_1[i].vx * delta;
             bullets_1[i].sprite.y += bullets_1[i].vy * delta;
