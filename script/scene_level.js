@@ -16,6 +16,7 @@ var lastCheckpoint = {};
 var godMode = false;
 var killCounter;
 var stopwatch = {};
+var fullscreen_object = [];
 
 function initialize_level() {
     levelProperties = {
@@ -350,6 +351,7 @@ function initialize_level() {
     styleHealth();
 
     o = new PIXI.Sprite(spriteAtlas["heart_new"]);
+    fullscreen_object.push(o);
     o.x = gameProperties.width - 32 - 10;
     o.y = 6;
     levelScene.addChild(o);
@@ -361,6 +363,7 @@ function initialize_level() {
     message.x = o.x - 4;
     message.y = o.y + 5;
     message.anchor.set(1, 0);
+    fullscreen_object.push(message);
     killCounter.addChild(message);
 
     stopwatch.started = false;
@@ -369,12 +372,18 @@ function initialize_level() {
     message = new PIXI.Text("0", style);
     message.x = 10;
     message.y = gameProperties.height - 30;
+    fullscreen_object.push(message);
     stopwatch.message = message;
     levelScene.addChild(message);
 
     importLevelMap();
 }
 
+function levelResize() {
+    fullscreen_object[0].x = gameProperties.width - 32 - 10;
+    fullscreen_object[1].x = fullscreen_object[0].x - 4;
+    fullscreen_object[2].y = gameProperties.height - 30;
+}
 /*
 function levelResize() {
     levelProperties.tileDisplayX = Math.ceil(gameProperties.width / levelProperties.grid) + 1;

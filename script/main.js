@@ -120,8 +120,7 @@ function start_stage(stageType, stageNumber) {
         levelScene.visible = true;
         //endScene.visible = false;
         state = play;
-        //sceneResizeHook = levelResize;
-        sceneResizeHook = null;
+        sceneResizeHook = levelResize;
         return;
     }
     /*
