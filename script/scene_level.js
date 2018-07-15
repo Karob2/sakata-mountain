@@ -232,10 +232,11 @@ function initialize_level() {
         o.cooldown_2 = 4;
         o.super = false;
         fairies.addChild(o);
-        o.heart = new PIXI.Sprite(spriteAtlas["fairy_heart"]);
+        o.heart = new PIXI.Sprite(spriteAtlas["heart_new"]);
         o.heart.anchor.set(0.5, 0.5);
         o.heart.x = o.x;
         o.heart.y = o.y;
+        o.heart.new = true;
         objects.addChild(o.heart);
     }
 
@@ -723,6 +724,12 @@ function play(delta) {
             if (Math.abs(player.cx - fairy.heart.x) < 72 && Math.abs(player.cy - fairy.heart.y) < 62) {
                 fairy.visible = false;
                 fairy.heart.visible = false;
+                if (fairy.heart.new) {
+                    fairy.heart.new = false;
+                    fairy.heart.texture = PIXI.utils.TextureCache["heart_old"];
+                    fireBullet_2(fairy.heart.x, fairy.heart.y, 0, -1, "heart_new", 50);
+
+                }
             }
         }
 

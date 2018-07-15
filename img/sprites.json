@@ -152,8 +152,16 @@
             "sourceSize": {"w":32, "h":32},
             "pivot": {"x":0.5, "y":0.5}
         },
-        "fairy_heart": {
-            "frame": {"x":224, "y":320, "w":32, "h":32},
+        "heart_old": {
+            "frame": {"x":448, "y":32, "w":32, "h":32},
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {"x":0, "y":0, "w":32, "h":32},
+            "sourceSize": {"w":32, "h":32},
+            "pivot": {"x":0.5, "y":0.5}
+        },
+        "heart_new": {
+            "frame": {"x":480, "y":32, "w":32, "h":32},
             "rotated": false,
             "trimmed": false,
             "spriteSourceSize": {"x":0, "y":0, "w":32, "h":32},

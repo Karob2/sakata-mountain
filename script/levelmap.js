@@ -173,10 +173,11 @@ function importLevelMap() {
     }
 
     for (var i = 0; i < fairies.children.length; i++) {
-        fairies.children[i].heart = new PIXI.Sprite(spriteAtlas["fairy_heart"]);
+        fairies.children[i].heart = new PIXI.Sprite(spriteAtlas["heart_new"]);
         fairies.children[i].heart.anchor.set(0.5, 0.5);
         fairies.children[i].heart.x = fairies.children[i].x;
         fairies.children[i].heart.y = fairies.children[i].y;
+        fairies.children[i].heart.new = true;
         objects.addChild(fairies.children[i].heart);
     }
 }
