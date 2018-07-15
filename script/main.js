@@ -86,9 +86,14 @@ function load(n) {
 }
 
 var state;
+var spriteAtlas, tileAtlas;
 function initialize() {
+    spriteAtlas = PIXI.loader.resources["img/sprites.json"].textures;
+    tileAtlas = PIXI.loader.resources["img/tiles.json"].textures;
+
     initialize_menu();
     initialize_level();
+    //initialize_end();
 
     start_stage("menu");
 
@@ -101,6 +106,7 @@ function start_stage(stageType, stageNumber) {
         //PIXI.sound.play('bgm_menu', {loop:true});
         menuScene.visible = true;
         levelScene.visible = false;
+        //endScene.visible = false;
         state = menu;
         sceneResizeHook = menuResize;
         return;
@@ -111,11 +117,24 @@ function start_stage(stageType, stageNumber) {
         PIXI.sound.play('bgm_level', {loop:true});
         menuScene.visible = false;
         levelScene.visible = true;
+        //endScene.visible = false;
         state = play;
         //sceneResizeHook = levelResize;
         sceneResizeHook = null;
         return;
     }
+    /*
+    if (stageType == "end") {
+        PIXI.sound.stop('bgm_level');
+        //PIXI.sound.play('bgm_menu', {loop:true});
+        endScene.visible = true;
+        menuScene.visible = false;
+        levelScene.visible = false;
+        state = end;
+        sceneResizeHook = endResize;
+        return;
+    }
+    */
 }
 
 function gameLoop(delta) {
@@ -130,11 +149,13 @@ function setGameSize() {
     var wWidth = window.innerWidth;
     var wHeight = window.innerHeight;
 //#ifdef debug
+/*
     app.view.style.top = "20px";
     app.view.style.left = "20px";
     wWidth = 512 * 2;
     wHeight = 384 * 2;
     document.body.style.backgroundColor = "#222"
+*/
 //#endif
     app.renderer.resize(wWidth, wHeight);
     var ratioW = wWidth / gameProperties.preferred_width;
@@ -232,3 +253,8 @@ function reloadMap() {
     importLevelMap();
     godMode = true;
 }
+
+document.body.appendChild(app.view);
+setGameSize();
+window.onresize = setGameSize;
+load(0);

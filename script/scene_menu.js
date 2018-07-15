@@ -6,7 +6,7 @@ function initialize_menu() {
     gameScene.addChild(menuScene);
 
     var style = new PIXI.TextStyle({fontFamily: "serif", fontSize: 64, fill: "white"});
-    var message = new PIXI.Text("Touhou Only Once", style);
+    var message = new PIXI.Text("Sakata Mountain", style);
     message.x = gameProperties.width / 2;
     message.y = gameProperties.height / 4;
     message.anchor.set(0.5);
@@ -26,14 +26,29 @@ function initialize_menu() {
     message.on('pointerdown', menu_down);
     message.clickAction = function(){start_stage("level", 1)};
     menuScene.addChild(message);
+
+    var o = new PIXI.Sprite(spriteAtlas["player f1"]);
+    o.x = gameProperties.width * 1 / 6;
+    o.y = gameProperties.height * 3 / 4 - 10;
+    o.anchor.set(0.5, 0.5);
+    menuScene.addChild(o);
+
+    o = new PIXI.Sprite(spriteAtlas["fairy"]);
+    o.x = gameProperties.width * 5 / 6;
+    o.y = gameProperties.height * 3 / 4;
+    o.anchor.set(0.5, 0.5);
+    menuScene.addChild(o);
 }
 
 function menuResize() {
     menuScene.children[0].x = gameProperties.width / 2;
+    menuScene.children[0].y = gameProperties.height / 4;
     menuScene.children[1].x = gameProperties.width / 2;
-    menuScene.children[1].y = gameProperties.height / 2;
-    menuScene.children[2].x = gameProperties.width / 2;
-    menuScene.children[2].y = gameProperties.height / 2 + 64;
+    menuScene.children[1].y = gameProperties.height * 3 / 5;
+    menuScene.children[2].x = gameProperties.width * 1 / 6;
+    menuScene.children[2].y = gameProperties.height * 3 / 4 - 10;
+    menuScene.children[3].x = gameProperties.width * 5 / 6;
+    menuScene.children[3].y = gameProperties.height * 3 / 4;
 }
 
 function menu_over() {

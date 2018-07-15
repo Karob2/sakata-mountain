@@ -2,7 +2,6 @@
 
 var levelProperties;
 var levelScene;
-var spriteAtlas, tileAtlas;
 var camera;
 var objects;
 var player, fairies, bullets_1, bullets_2, waves, slashFx, checkpoints, health, hina, hinaballs;
@@ -13,7 +12,7 @@ var tileType;
 var waveTimer;
 var lastCheckpoint = {};
 // DEBUG:
-var gx, gy;
+//var gx, gy;
 var godMode = false;
 var killCounter;
 var stopwatch = {};
@@ -37,9 +36,6 @@ function initialize_level() {
 
     levelScene = new PIXI.Container();
     gameScene.addChild(levelScene);
-
-    spriteAtlas = PIXI.loader.resources["img/sprites.json"].textures;
-    tileAtlas = PIXI.loader.resources["img/tiles.json"].textures;
 
     playerAnimations = {};
     playerAnimations.idle = [];
@@ -212,8 +208,8 @@ function initialize_level() {
     //player.shake = 0;
 
     // DEBUG:
-    player.px = levelProperties.width - levelProperties.grid * 11.5;
-    player.py = levelProperties.height - levelProperties.grid - 1;
+    //player.px = levelProperties.width - levelProperties.grid * 11.5;
+    //player.py = levelProperties.height - levelProperties.grid - 1;
 
 
     var o;
@@ -573,8 +569,10 @@ function play(delta) {
     player.cy = player.py - levelProperties.grid / 2;
 
     // DEBUG:
+    /*
     gx = Math.floor(player.cx / levelProperties.grid);
     gy = Math.floor(player.cy / levelProperties.grid);
+    */
 
     // Jump and run.
 
@@ -651,6 +649,7 @@ function play(delta) {
     }
 
     // DEBUG:
+    /*
     if (keys.d.held && keys.d.toggled) {
         keys.d.toggled = false;
         var tx = Math.floor(player.px / levelProperties.grid) - 1;
@@ -665,6 +664,7 @@ function play(delta) {
             tx++;
         }
     }
+    */
 
     /*
     if (keys.b.held && keys.b.toggled) {
@@ -994,6 +994,8 @@ function play(delta) {
         if (Math.abs(player.cx - hina.x) < 72 && Math.abs(player.cy - hina.y) < 62) {
             PIXI.sound.play('sfx_kill');
             hina.visible = false;
+            //start_stage("end");
+            showResults();
         }
     }
 
@@ -1304,5 +1306,53 @@ function playerCheckpoint() {
     for (var i = 0; i < bullets_1.length; i++) {
         bullets_1[i].active = false;
         bullets_1[i].sprite.visible = false;
+    }
+}
+
+var resultsPage;
+var resultsScene;
+function showResults() {
+    state = results;
+
+    resultsScene = new PIXI.Container();
+    levelScene.addChild(resultsScene);
+    resultsPage = 0;
+
+    var o;
+    o = new PIXI.Graphics();
+    o.beginFill(0x000000);
+    o.drawRect(0, 0, gameProperties.width - 64, gameProperties.height - 64);
+    o.endFill();
+    o.x = 32;
+    o.y = 32;
+    resultsScene.addChild(o);
+
+    var style = new PIXI.TextStyle({fontFamily: "serif", fontSize: 32, fill: "white"});
+    var message = new PIXI.Text("Blah blah blah.", style);
+    message.x = gameProperties.width / 2;
+    message.y = gameProperties.height / 4;
+    message.anchor.set(0.5);
+    resultsScene.addChild(message);
+}
+
+function showResults2() {
+    /*
+    var style = new PIXI.TextStyle({fontFamily: "serif", fontSize: 32, fill: "white"});
+    var message = new PIXI.Text(killCounter.kills + "out of " + fairies.children.length + " enemies defeated.", style);
+    message.x = gameProperties.width / 2;
+    message.y = gameProperties.height / 4;
+    message.anchor.set(0.5);
+    resultsScene.addChild(message);
+    */
+}
+
+function results(delta) {
+    if (keys.a.held && keys.a.toggled) {
+        keys.a.toggled = false;
+        if (resultsPage == 0) {
+            resultsPage++;
+            resultsScene.removeChild(resultsScene.children[1]);
+            showResults2();
+        }
     }
 }
