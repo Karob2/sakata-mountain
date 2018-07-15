@@ -5,7 +5,7 @@ var levelScene;
 var spriteAtlas, tileAtlas;
 var camera;
 var objects;
-var player, fairies, bullets_1, bullets_2, waves, slashFx, checkpoints;
+var player, fairies, bullets_1, bullets_2, waves, slashFx, checkpoints, health;
 var walls;
 var levelMap, graphicMap;
 var playerAnimations;
@@ -293,8 +293,21 @@ function initialize_level() {
     o.x = Math.floor(player.px / levelProperties.grid) * levelProperties.grid;
     o.y = Math.floor(player.py / levelProperties.grid) * levelProperties.grid;
     o.active = false;
-
     checkpoints.addChild(o);
+
+    health = new PIXI.Container();
+    health.x = 10;
+    health.y = 6;
+    health.maxLives = 6;
+    health.lives = health.maxLives;
+    levelScene.addChild(health);
+    for (var n = 0; n < health.maxLives; n++) {
+        o = new PIXI.Sprite(spriteAtlas["life"]);
+        o.x = n * 32;
+        o.y = 0;
+        health.addChild(o);
+    }
+    styleHealth();
 
     importLevelMap();
 }
@@ -647,8 +660,9 @@ function play(delta) {
 
     for (var n = 0; n < checkpoints.children.length; n++) {
         var cp = checkpoints.children[n];
-        if (cp.active == true) continue;
         if (Math.abs(player.px - cp.x - levelProperties.grid / 2) < 48 && Math.abs(player.py - cp.y - levelProperties.grid / 2) < 80) {
+            fullHealth();
+            if (cp.active == true) continue;
             if (lastCheckpoint.sprite != null) {
                 lastCheckpoint.sprite.texture = PIXI.utils.TextureCache["checkpoint"];
                 lastCheckpoint.sprite.active = false;
@@ -780,10 +794,18 @@ function play(delta) {
             }
             // Check if player is attacked.
             if (Math.abs(player.cx - bullets_1[i].sprite.x) < 32 && Math.abs(player.cy - bullets_1[i].sprite.y) < 48) {
-                player.px = lastCheckpoint.x;
-                player.py = lastCheckpoint.y;
-                player.vx = 0;
-                player.vy = 0;
+                if (health.lives <= 0) {
+                    player.px = lastCheckpoint.x;
+                    player.py = lastCheckpoint.y;
+                    player.vx = 0;
+                    player.vy = 0;
+                    fullHealth();
+                } else {
+                    loseHealth();
+                }
+                bullets_1[i].active = false;
+                bullets_1[i].sprite.visible = false;
+                continue;
             }
             bullets_1[i].sprite.x += bullets_1[i].vx * delta;
             bullets_1[i].sprite.y += bullets_1[i].vy * delta;
@@ -916,4 +938,29 @@ function fireWave(x, y, vx, vy) {
     waves[maxId].vy = vy;
     waves[maxId].age = 0;
     waves[maxId].sprite.scale.x = -Math.sign(vx);
+}
+
+function fullHealth() {
+    health.lives = health.maxLives;
+    for (var n = 0; n < health.maxLives; n++) {
+        health.children[n].visible = true;
+    }
+    styleHealth();
+}
+
+function loseHealth() {
+    health.lives--;
+    health.children[health.lives].visible = false;
+    styleHealth();
+}
+
+function styleHealth() {
+    for (var n = 0; n < health.maxLives; n++) {
+        if (n < health.lives) {
+            health.children[n].visible = true;
+            health.children[n].y = Math.floor(Math.sin(n * 4 * health.maxLives / health.lives) * 5);
+        } else {
+            health.children[n].visible = false;
+        }
+    }
 }
