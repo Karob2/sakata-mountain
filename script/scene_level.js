@@ -16,6 +16,7 @@ var lastCheckpoint = {};
 var gx, gy;
 var godMode = false;
 var killCounter;
+var stopwatch = {};
 
 function initialize_level() {
     levelProperties = {
@@ -331,6 +332,15 @@ function initialize_level() {
     message.y = o.y + 5;
     message.anchor.set(1, 0);
     killCounter.addChild(message);
+
+    stopwatch.started = false;
+    stopwatch.start = Date.now();
+    style = new PIXI.TextStyle({fontFamily: "Lucida Console", fontSize: 20, fill: "white"});
+    message = new PIXI.Text("0", style);
+    message.x = 10;
+    message.y = gameProperties.height - 30;
+    stopwatch.message = message;
+    levelScene.addChild(message);
 
     importLevelMap();
 }
@@ -861,7 +871,7 @@ function play(delta) {
                 }
             }
             // Check if player is attacked.
-            if (Math.abs(player.cx - bullets_1[i].sprite.x) < 32 && Math.abs(player.cy - bullets_1[i].sprite.y) < 48) {
+            if (Math.abs(player.cx - bullets_1[i].sprite.x) < 20 && Math.abs(player.cy - bullets_1[i].sprite.y) < 48) {
                 loseHealth();
                 player.vx = bullets_1[i].vx;
                 player.vy /= 2;
@@ -966,6 +976,14 @@ function play(delta) {
             }
         }
     }
+
+    if (!stopwatch.started) {
+        stopwatch.start = Date.now();
+        if (keys.up.held || keys.down.held || keys.left.held || keys.right.held || keys.b.held) {
+            stopwatch.started = true;
+        }
+    }
+    stopwatch.message.text = Math.floor((Date.now() - stopwatch.start) / 1000);
 }
 
 function fireBullet_1(x, y, vx, vy, texture, type) {
