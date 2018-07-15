@@ -247,7 +247,7 @@ function initialize_level() {
 
     bullets_2 = [];
     for (var i = 0; i < 30; i++) {
-        o = new PIXI.Sprite(spriteAtlas["bullet 3"]);
+        o = new PIXI.Sprite(spriteAtlas["wave 1"]);
         o.visible = false;
         o.anchor.set(0.5, 0.5);
         bullets_2.push({sprite: o, age: 0, active: false});
@@ -843,6 +843,18 @@ function play(delta) {
         }
     }
 
+    for (var i = 0; i < bullets_2.length; i++) {
+        if (bullets_2[i].active) {
+            bullets_2[i].sprite.x += bullets_2[i].vx * delta;
+            bullets_2[i].sprite.y += bullets_2[i].vy * delta;
+            bullets_2[i].age -= delta;
+            if (bullets_2[i].age < 1) {
+                bullets_2[i].active = false;
+                bullets_2[i].sprite.visible = false;
+            }
+        }
+    }
+
     for (var i = 0; i < waves.length; i++) {
         if (waves[i].active) {
             waves[i].sprite.x += waves[i].vx * delta;
@@ -940,6 +952,36 @@ function fireBullet_1(x, y, vx, vy, texture) {
     if (vx != 0) bullets_1[maxId].sprite.scale.x = -Math.sign(vx);
 }
 
+function fireBullet_2(x, y, vx, vy, texture, lifespan) {
+    var maxAge = -1;
+    var maxId = 0;
+    for (var i = 0; i < bullets_2.length; i++) {
+        if (!bullets_2[i].active) {
+            bullets_2[i].active = true;
+            bullets_2[i].sprite.visible = true;
+            bullets_2[i].sprite.x = x;
+            bullets_2[i].sprite.y = y;
+            bullets_2[i].vx = vx;
+            bullets_2[i].vy = vy;
+            bullets_2[i].age = lifespan;
+            bullets_2[i].sprite.texture = PIXI.utils.TextureCache[texture];
+            if (vx != 0) bullets_2[i].sprite.scale.x = -Math.sign(vx);
+            return;
+        }
+        if (bullets_2[i].age > maxAge) {
+            maxAge = bullets_2[i].age;
+            maxId = i;
+        }
+    }
+    bullets_2[maxId].sprite.x = x;
+    bullets_2[maxId].sprite.y = y;
+    bullets_2[maxId].vx = vx;
+    bullets_2[maxId].vy = vy;
+    bullets_2[maxId].age = lifespan;
+    bullets_2[maxId].sprite.texture = PIXI.utils.TextureCache[texture];
+    if (vx != 0) bullets_2[maxId].sprite.scale.x = -Math.sign(vx);
+}
+
 function fireWave(x, y, vx, vy) {
     var maxAge = -1;
     var maxId = 0;
@@ -991,6 +1033,7 @@ function loseHealth() {
     styleHealth();
     //camera.shake = 10;
     //player.shake = 20;
+    fireBullet_2(player.cx, player.cy, 0, -1, "life", 50);
 }
 
 function styleHealth() {
