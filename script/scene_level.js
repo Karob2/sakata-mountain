@@ -5,13 +5,13 @@ var levelScene;
 var spriteAtlas, tileAtlas;
 var camera;
 var objects;
-var player, fairies, bullets_1, bullets_2, waves, slashFx;
+var player, fairies, bullets_1, bullets_2, waves, slashFx, checkpoints;
 var walls;
 var levelMap, graphicMap;
 var playerAnimations;
 var tileType;
 var waveTimer;
-var checkpoint = {};
+var lastCheckpoint = {};
 // DEBUG:
 var gx, gy;
 
@@ -74,6 +74,8 @@ function initialize_level() {
     tileType.leaf = {coll: 3, name: "leaf"};
     tileType.wall_bottom_l = {coll: 1, name: "wall_bottom_l"};
     tileType.wall_bottom_r = {coll: 1, name: "wall_bottom_r"};
+    //tileType.checkpoint = {coll: 0, name: "checkpoint"};
+    //tileType.checkpoint_active = {coll: 0, name: "checkpoint_active"};
     var tileKeys = Object.keys(tileType);
     tileType.index = [];
     for (var i = 0; i < tileKeys.length; i++) {
@@ -198,8 +200,6 @@ function initialize_level() {
     player.direction = 1;
     player.hasJumped = false;
     player.hasSlashed = false;
-    checkpoint.x = player.px;
-    checkpoint.y = player.py;
 
     var o;
 
@@ -284,6 +284,17 @@ function initialize_level() {
     camera.py = 0;
 
     waveTimer = 10;
+
+    lastCheckpoint.x = player.px;
+    lastCheckpoint.y = player.py;
+    checkpoints = new PIXI.Container();
+    objects.addChild(checkpoints);
+    o = new PIXI.Sprite(tileAtlas["checkpoint"]);
+    o.x = Math.floor(player.px / levelProperties.grid) * levelProperties.grid;
+    o.y = Math.floor(player.py / levelProperties.grid) * levelProperties.grid;
+    o.active = false;
+
+    checkpoints.addChild(o);
 
     importLevelMap();
 }
@@ -537,6 +548,7 @@ function play(delta) {
         }
     }
 
+    // DEBUG:
     if (keys.d.held && keys.d.toggled) {
         keys.d.toggled = false;
         var tx = Math.floor(player.px / levelProperties.grid) - 1;
@@ -631,9 +643,27 @@ function play(delta) {
     objects.x = -camera.dx;
     objects.y = -camera.dy;
 
+    // Check checkpoints:
+
+    for (var n = 0; n < checkpoints.children.length; n++) {
+        var cp = checkpoints.children[n];
+        if (cp.active == true) continue;
+        if (Math.abs(player.px - cp.x - levelProperties.grid / 2) < 48 && Math.abs(player.py - cp.y - levelProperties.grid / 2) < 80) {
+            if (lastCheckpoint.sprite != null) {
+                lastCheckpoint.sprite.texture = PIXI.utils.TextureCache["checkpoint"];
+                lastCheckpoint.sprite.active = false;
+            }
+            cp.active = true;
+            cp.texture = PIXI.utils.TextureCache["checkpoint_active"];
+            lastCheckpoint.x = cp.x + levelProperties.grid / 2;
+            lastCheckpoint.y = cp.y + levelProperties.grid - 1;
+            lastCheckpoint.sprite = cp;
+            break;
+        }
+    }
     // Move enemies:
 
-    for (var i = 0; i < fairies.children.length; i++){
+    for (var i = 0; i < fairies.children.length; i++) {
         var dist, tx, ty;
 
         var fairy = fairies.children[i];
@@ -750,8 +780,8 @@ function play(delta) {
             }
             // Check if player is attacked.
             if (Math.abs(player.cx - bullets_1[i].sprite.x) < 32 && Math.abs(player.cy - bullets_1[i].sprite.y) < 48) {
-                player.px = checkpoint.x;
-                player.py = checkpoint.y;
+                player.px = lastCheckpoint.x;
+                player.py = lastCheckpoint.y;
                 player.vx = 0;
                 player.vy = 0;
             }

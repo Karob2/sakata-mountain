@@ -121,7 +121,7 @@
             "pivot": {"x":0.5, "y":0.5}
         },
         "wall_bottom_l": {
-            "frame": {"x":265, "y":0, "w":64, "h":64},
+            "frame": {"x":265, "y":1, "w":64, "h":64},
             "rotated": false,
             "trimmed": false,
             "spriteSourceSize": {"x":0, "y":0, "w":64, "h":64},
@@ -129,7 +129,23 @@
             "pivot": {"x":0.5, "y":0.5}
         },
         "wall_bottom_r": {
-            "frame": {"x":265, "y":66, "w":64, "h":64},
+            "frame": {"x":265, "y":67, "w":64, "h":64},
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {"x":0, "y":0, "w":64, "h":64},
+            "sourceSize": {"w":64, "h":64},
+            "pivot": {"x":0.5, "y":0.5}
+        },
+        "checkpoint": {
+            "frame": {"x":199, "y":199, "w":64, "h":64},
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {"x":0, "y":0, "w":64, "h":64},
+            "sourceSize": {"w":64, "h":64},
+            "pivot": {"x":0.5, "y":0.5}
+        },
+        "checkpoint_active": {
+            "frame": {"x":265, "y":199, "w":64, "h":64},
             "rotated": false,
             "trimmed": false,
             "spriteSourceSize": {"x":0, "y":0, "w":64, "h":64},

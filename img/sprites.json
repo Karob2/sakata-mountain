@@ -183,6 +183,14 @@
             "spriteSourceSize": {"x":0, "y":0, "w":64, "h":64},
             "sourceSize": {"w":64, "h":64},
             "pivot": {"x":0.5, "y":0.5}
+        },
+        "life": {
+            "frame": {"x":448, "y":0, "w":32, "h":32},
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {"x":0, "y":0, "w":32, "h":32},
+            "sourceSize": {"w":32, "h":32},
+            "pivot": {"x":0.5, "y":0.5}
         }
     },
     "meta": {
