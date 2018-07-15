@@ -203,7 +203,7 @@ function initialize_level() {
     objects.addChild(player);
     player.direction = 1;
     player.hasJumped = false;
-    player.hasSlashed = false;
+    player.hasSlashed = true;
     player.invuln = 0;
     //player.shake = 0;
 
@@ -1327,32 +1327,43 @@ function showResults() {
     o.y = 32;
     resultsScene.addChild(o);
 
-    var style = new PIXI.TextStyle({fontFamily: "serif", fontSize: 32, fill: "white"});
-    var message = new PIXI.Text("Blah blah blah.", style);
-    message.x = gameProperties.width / 2;
-    message.y = gameProperties.height / 4;
-    message.anchor.set(0.5);
+    var style = new PIXI.TextStyle({fontFamily: "serif", fontSize: 20, fill: "white", wordWrap: true, wordWrapWidth: gameProperties.width - 96});
+    var text = "Defeated, Hina explained that misfortune had spread over the mountain side, and that she was trying to contain it.";
+    if (killCounter.kills <= 18) {
+        text = text + " \"You defeated me, but the mountain is still covered in misfortune!\" Hina scolded.\n\nNemuno realized that it was too dangerous to go foraging right now.\n\n[BAD END]";
+    } else if (killCounter.kills < 35) {
+        text = text + " \"I see now that you've cleared away most of the misfortune,\" Hina praised. \"I was wrong to doubt you.\"\n\nThe two then teamed up to resolve the incident.\n\n[GOOD END]";
+    } else {
+        text = text + " \"Wait, where did the misfortune go?\" Hina asked. Nemuno explained that she had defeated all of it.\n\nShe then made a big pot of soup and shared it with Hina.\n\n[PERFECT END]";
+    }
+    var message = new PIXI.Text(text, style);
+    message.x = 48;
+    message.y = 48;
+    //message.anchor.set(0.5);
     resultsScene.addChild(message);
 }
 
+/*
 function showResults2() {
-    /*
     var style = new PIXI.TextStyle({fontFamily: "serif", fontSize: 32, fill: "white"});
     var message = new PIXI.Text(killCounter.kills + "out of " + fairies.children.length + " enemies defeated.", style);
     message.x = gameProperties.width / 2;
     message.y = gameProperties.height / 4;
     message.anchor.set(0.5);
     resultsScene.addChild(message);
-    */
 }
+*/
 
 function results(delta) {
+    /*
     if (keys.a.held && keys.a.toggled) {
         keys.a.toggled = false;
-        if (resultsPage == 0) {
-            resultsPage++;
-            resultsScene.removeChild(resultsScene.children[1]);
-            showResults2();
+        for (var i = gameScene.children.length - 1; i >= 0; i++) {
+            gameScene.removeChild(gameScene.children[i]);
+            console.log(1);
         }
+        setGameSize();
+        initialize();
     }
+    */
 }

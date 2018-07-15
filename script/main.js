@@ -14,7 +14,8 @@ var soundList = [
     ["sfx_bullet1", "sfx/fireball.wav"],
     ["sfx_bullet2", "sfx/ender.wav"],
     ["sfx_bullet3", "sfx/mortar.wav"],
-    ["sfx_pain", "sfx/hitcrit.wav"]
+    ["sfx_pain", "sfx/hitcrit.wav"],
+    ["sfx_menu", "sfx/tri.wav"]
     ]
 var loadingScene;
 function load(n) {

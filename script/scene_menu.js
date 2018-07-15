@@ -24,7 +24,7 @@ function initialize_menu() {
     message.on('pointerup', menu_up);
     message.on('pointerupoutside', menu_upoutside);
     message.on('pointerdown', menu_down);
-    message.clickAction = function(){start_stage("level", 1)};
+    message.clickAction = function(){showStory()};
     menuScene.addChild(message);
 
     var o = new PIXI.Sprite(spriteAtlas["player f1"]);
@@ -91,5 +91,43 @@ function menu_updateColor(o) {
 }
 
 function menu(delta) {
+    if (keys.a.held && keys.a.toggled) {
+        keys.a.toggled = false;
+        showStory();
+    }
+}
 
+var storyPage;
+var storyScene;
+function showStory() {
+    state = story;
+    PIXI.sound.play('sfx_menu');
+
+    storyScene = new PIXI.Container();
+    menuScene.addChild(storyScene);
+    storyPage = 0;
+
+    var o;
+    o = new PIXI.Graphics();
+    o.beginFill(0x000000);
+    o.drawRect(0, 0, gameProperties.width, gameProperties.height);
+    o.endFill();
+    o.x = 0;
+    o.y = 0;
+    storyScene.addChild(o);
+
+    var style = new PIXI.TextStyle({fontFamily: "serif", fontSize: 20, fill: "white", wordWrap: true, wordWrapWidth: gameProperties.width - 96});
+    var text = "When Nemuno left her house to go foraging for vegetables, she sensed something wrong with the mountain. Soon, she was attacked by strange corrupted spirits and winds trying to keep her away. So, she began her adventure further into the mountain to discover who was behind this incident.\n\n(Press the action key to continue.)";
+    var message = new PIXI.Text(text, style);
+    message.x = 48;
+    message.y = 48;
+    storyScene.addChild(message);
+}
+
+function story() {
+    if (keys.a.held && keys.a.toggled) {
+        keys.a.toggled = false;
+        start_stage("level", 1)
+        PIXI.sound.play('sfx_menu');
+    }
 }
