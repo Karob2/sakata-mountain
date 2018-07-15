@@ -547,7 +547,7 @@ function play(delta) {
             slashFx.children[1].visible = true;
             slashFx.children[1].cooldown = 5;
             */
-            fireWave(player.cx, player.cy, 8 * player.scale.x, 0);
+            //fireWave(player.cx, player.cy, 8 * player.scale.x, 0);
         } else {
             if (!grounded) {
                 player.textures = playerAnimations.jump;
