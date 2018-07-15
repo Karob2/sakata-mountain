@@ -807,10 +807,10 @@ function play(delta) {
                 n = tileType.wall.id;
             }
             var iii = Math.min(Math.max(ii, 0), levelProperties.gridWidth - 1);
-           // var jjj = Math.min(Math.max(jj, 0), levelProperties.gridHeight - 1);
+            var jjj = Math.min(Math.max(jj, 0), levelProperties.gridHeight - 1);
             //if (ii >= 0 && ii < levelProperties.gridWidth && jj >= 0 && jj < levelProperties.gridHeight)
-            if (jj >= 0 && jj < levelProperties.gridHeight)
-                n = levelMap[iii][jj];
+            if (jj < levelProperties.gridHeight)
+                n = levelMap[iii][jjj];
             if (n >= 0 && n < tileType.index.length) {
                 graphicMap[i][j].texture = PIXI.utils.TextureCache[tileType.index[n].name];
             } else {
