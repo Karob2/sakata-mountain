@@ -180,6 +180,9 @@ function initialize_level() {
     objects = new PIXI.Container();
     levelScene.addChild(objects);
 
+    checkpoints = new PIXI.Container();
+    objects.addChild(checkpoints);
+
     //player = new PIXI.Sprite(spriteAtlas["frame 1"]);
     player = new PIXI.extras.AnimatedSprite(playerAnimations.idle);
     /*
@@ -288,8 +291,6 @@ function initialize_level() {
 
     lastCheckpoint.x = player.px;
     lastCheckpoint.y = player.py;
-    checkpoints = new PIXI.Container();
-    objects.addChild(checkpoints);
     o = new PIXI.Sprite(tileAtlas["checkpoint"]);
     o.x = Math.floor(player.px / levelProperties.grid) * levelProperties.grid;
     o.y = Math.floor(player.py / levelProperties.grid) * levelProperties.grid;
