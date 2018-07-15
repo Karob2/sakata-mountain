@@ -407,8 +407,10 @@ function checkWall(x, y) {
             return cw;
         }
     }
-    if (jj < 0) return 0;
-    return 1;
+    if (ii < 0) return 1;
+    if (ii > levelProperties.gridWidth - 1) return 1;
+    if (jj > levelProperties.gridHeight - 1) return 1;
+    return 0;
 }
 
 function playerCheckWall(x, y) {
