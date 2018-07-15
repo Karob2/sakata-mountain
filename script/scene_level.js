@@ -62,20 +62,20 @@ function initialize_level() {
     tileType.backdrop = {coll: 0, name: "backdrop"};
     tileType.wall = {coll: 1, name: "wall", block: true, grass: true};
     tileType.wall_grass = {coll: 1, name: "wall_grass", block: true, grass: true};
-    tileType.ramp_l = {coll: 4, name: "ramp_l"};
-    tileType.ramp_r = {coll: 5, name: "ramp_r"};
+    tileType.ramp_l = {coll: 4, name: "ramp_l", block: true, grass: true};
+    tileType.ramp_r = {coll: 5, name: "ramp_r", block: true, grass: true};
     tileType.cap_lr = {coll: 0, name: "cap_lr", grow: true};
     tileType.cap = {coll: 0, name: "cap", grow: true};
     tileType.cap_l = {coll: 0, name: "cap_l", grow: true};
     tileType.cap_r = {coll: 0, name: "cap_r", grow: true};
-    tileType.rampcap_l = {coll: 0, name: "rampcap_l"};
-    tileType.rampcap_r = {coll: 0, name: "rampcap_r"};
+    tileType.rampcap_l = {coll: 0, name: "rampcap_l", grow: true};
+    tileType.rampcap_r = {coll: 0, name: "rampcap_r", grow: true};
     tileType.crate = {coll: 2, name: "crate", block: true};
     tileType.crate_top = {coll: 0, name: "crate_top"};
     tileType.leaf = {coll: 3, name: "leaf"};
     tileType.wall_bottom_l = {coll: 1, name: "wall_bottom_l"};
     tileType.wall_bottom_r = {coll: 1, name: "wall_bottom_r"};
-    //tileType.checkpoint = {coll: 0, name: "checkpoint"};
+    tileType.hard_air = {coll: 0, name: "hard_air"};
     //tileType.checkpoint_active = {coll: 0, name: "checkpoint_active"};
     var tileKeys = Object.keys(tileType);
     tileType.index = [];
@@ -90,6 +90,7 @@ function initialize_level() {
         });
     }
 
+/*
     levelMap = [];
     var levelMapRow;
     for (var i = 0; i < levelProperties.gridWidth; i++) {
@@ -160,6 +161,7 @@ function initialize_level() {
         levelMap[center + 2 + 8 + i][bottom - 1 - 6 + i] = tileType.ramp_r.id;
         levelMap[center + 2 + 8 + i][bottom - 1 - 6 + i - 1] = tileType.rampcap_r.id;
     }
+    */
 
     walls = new PIXI.Container();
     //walls.position.set(0, 0);
