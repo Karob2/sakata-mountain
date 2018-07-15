@@ -200,6 +200,7 @@ function initialize_level() {
     player.direction = 1;
     player.hasJumped = false;
     player.hasSlashed = false;
+    player.invuln = 0;
 
     var o;
 
@@ -561,6 +562,13 @@ function play(delta) {
         }
     }
 
+    if (player.invuln > 0) {
+        player.invuln -= delta;
+        player.alpha = 0.5;
+    } else {
+        player.alpha = 1;
+    }
+
     // DEBUG:
     if (keys.d.held && keys.d.toggled) {
         keys.d.toggled = false;
@@ -662,6 +670,7 @@ function play(delta) {
         var cp = checkpoints.children[n];
         if (Math.abs(player.px - cp.x - levelProperties.grid / 2) < 48 && Math.abs(player.py - cp.y - levelProperties.grid / 2) < 80) {
             fullHealth();
+            playerInvuln();
             if (cp.active == true) continue;
             if (lastCheckpoint.sprite != null) {
                 lastCheckpoint.sprite.texture = PIXI.utils.TextureCache["checkpoint"];
@@ -795,13 +804,11 @@ function play(delta) {
             // Check if player is attacked.
             if (Math.abs(player.cx - bullets_1[i].sprite.x) < 32 && Math.abs(player.cy - bullets_1[i].sprite.y) < 48) {
                 if (health.lives <= 0) {
-                    player.px = lastCheckpoint.x;
-                    player.py = lastCheckpoint.y;
-                    player.vx = 0;
-                    player.vy = 0;
+                    playerCheckpoint();
                     fullHealth();
                 } else {
-                    loseHealth();
+                    if (player.invuln < 1) loseHealth();
+                    playerInvuln();
                 }
                 bullets_1[i].active = false;
                 bullets_1[i].sprite.visible = false;
@@ -839,6 +846,7 @@ function play(delta) {
         }
     }
 
+/*
     waveTimer -= delta;
     if (waveTimer < 1) {
         waveTimer = 100;
@@ -848,6 +856,7 @@ function play(delta) {
         //fireWave(player.cx - 7 * levelProperties.grid * dir, levelProperties.grid * (off + 0.5), 8 * dir, 0);
         fireBullet_1(player.cx - 7 * levelProperties.grid * dir, levelProperties.grid * (off + 0.5), 8 * dir, 0, "wave 2 f1");
     }
+*/
 
     // Arrange tiles:
 
@@ -946,6 +955,15 @@ function fullHealth() {
         health.children[n].visible = true;
     }
     styleHealth();
+    for (var n = 0; n < fairies.children.length; n++) {
+        var fairy = fairies.children[n];
+        fairy.visible = true;
+        fairy.heart.visible = true;
+        fairy.texture = PIXI.utils.TextureCache["fairy"];
+        fairy.cooldown_1 = 0;
+        fairy.cooldown_2 = 4;
+        fairy.super = false;
+    }
 }
 
 function loseHealth() {
@@ -963,4 +981,15 @@ function styleHealth() {
             health.children[n].visible = false;
         }
     }
+}
+
+function playerInvuln() {
+    player.invuln = 20;
+}
+
+function playerCheckpoint() {
+    player.px = lastCheckpoint.x;
+    player.py = lastCheckpoint.y;
+    player.vx = 0;
+    player.vy = 0;
 }
