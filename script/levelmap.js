@@ -180,4 +180,6 @@ function importLevelMap() {
         fairies.children[i].heart.new = true;
         objects.addChild(fairies.children[i].heart);
     }
+    killCounter.kills = 0;
+    killCounter.children[0].text = "0/" + fairies.children.length;
 }

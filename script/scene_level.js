@@ -15,6 +15,7 @@ var lastCheckpoint = {};
 // DEBUG:
 var gx, gy;
 var godMode = false;
+var killCounter;
 
 function initialize_level() {
     levelProperties = {
@@ -316,6 +317,20 @@ function initialize_level() {
         health.addChild(o);
     }
     styleHealth();
+
+    o = new PIXI.Sprite(spriteAtlas["heart_new"]);
+    o.x = gameProperties.width - 32 - 10;
+    o.y = 6;
+    levelScene.addChild(o);
+    killCounter = new PIXI.Container();
+    levelScene.addChild(killCounter);
+    killCounter.kills = 0;
+    var style = new PIXI.TextStyle({fontFamily: "serif", fontSize: 20, fill: "white"});
+    var message = new PIXI.Text("0", style);
+    message.x = o.x - 4;
+    message.y = o.y + 5;
+    message.anchor.set(1, 0);
+    killCounter.addChild(message);
 
     importLevelMap();
 }
@@ -728,7 +743,8 @@ function play(delta) {
                     fairy.heart.new = false;
                     fairy.heart.texture = PIXI.utils.TextureCache["heart_old"];
                     fireBullet_2(fairy.heart.x, fairy.heart.y, 0, -1, "heart_new", 50);
-
+                    killCounter.kills++;
+                    killCounter.children[0].text = killCounter.kills + "/" + fairies.children.length;
                 }
             }
         }
