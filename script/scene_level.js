@@ -888,7 +888,6 @@ function play(delta) {
         }
     }
 
-/*
     waveTimer -= delta;
     if (waveTimer < 1) {
         waveTimer = 100;
@@ -896,9 +895,8 @@ function play(delta) {
         var dir = -1;
         var off = Math.floor(player.cy / levelProperties.grid) + Math.floor(Math.random() * 3) - 1;
         //fireWave(player.cx - 7 * levelProperties.grid * dir, levelProperties.grid * (off + 0.5), 8 * dir, 0);
-        fireBullet_1(player.cx - 7 * levelProperties.grid * dir, levelProperties.grid * (off + 0.5), 8 * dir, 0, "wave 2 f1", 1);
+        fireBullet_1(player.cx - 7 * levelProperties.grid * dir, levelProperties.grid * (off + 0.5), 8 * dir, 0, "wave 3 f1", 1);
     }
-*/
 
     // Arrange tiles:
 
