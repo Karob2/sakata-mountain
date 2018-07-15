@@ -840,6 +840,9 @@ function play(delta) {
             // Check if player is attacked.
             if (Math.abs(player.cx - bullets_1[i].sprite.x) < 32 && Math.abs(player.cy - bullets_1[i].sprite.y) < 48) {
                 loseHealth();
+                player.vx = bullets_1[i].vx;
+                player.vy /= 2;
+                //player.vy += bullets_1[i].vy;
                 /*
                 if (health.lives <= 0) {
                     playerCheckpoint();
