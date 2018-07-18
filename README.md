@@ -6,7 +6,13 @@ Nemuno Sakata just wants to get vegetables for soup, but there's trouble on the 
 
 This is a fan work of the Touhou Project and is not associated with the original creators.
 
-# Instructions
+# Development Instructions
+
+This project is a mass of spaghetti code and bad algorithms thrown together for a 72 hour gamejam. It needs to be largely rewritten.
+
+# Game Instructions
+
+The gimmick of this game is that any enemy can be defeated from a single attack. The challenge is in getting close enough to land the attack without taking too much damage.
 
 - Touch checkpoints to recover health and update your respawn location.
 - Avoid bullets.
@@ -14,6 +20,8 @@ This is a fan work of the Touhou Project and is not associated with the original
 - Purple enemies float around their "hearts". Attack the heart to destroy the enemy.
 - Each heart you collect increases your score. Try to get them all!
 - The screen shows health (top-left), score (top-right), and time elapsed in seconds (bottom-left).
+
+*Presently the only way to restart the game is to refresh the page.*
 
 ## Controls
 
