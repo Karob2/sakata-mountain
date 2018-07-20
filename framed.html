@@ -1,0 +1,171 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Sakata Mountain</title>
+    <style>
+    #wrapper {
+        width: 1024px;
+        /*white-space: pre-wrap;*/
+        margin: auto;
+        background-color: #444;
+    }
+    #description {
+        padding-top: 0px;
+        padding-bottom: 40px;
+        padding-left: 40px;
+        padding-right: 40px;
+        margin-top: 0px;
+        font-family: "Arial";
+    }
+    body {
+        background-color: #222;
+        color: #ccc;
+    }
+    a:link, a:visited {
+        color: #80c0ff;
+    }
+    a:hover, a:active {
+        color: #ffffff;
+    }
+/*
+body, html {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+iframe {
+    width: 500px;
+    height: 500px;
+}
+*/
+    iframe.f1x {
+        width: 512px;
+        height: 384px;
+        margin-top: 40px;
+        margin-bottom: 40px;
+        margin-left: 25%;
+        margin-right: 25%;
+    }
+    iframe.f2x {
+        width: 1024px;
+        height: 768px;
+    }
+    iframe.fullScreen {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    </style>
+</head>
+<body>
+    <script>
+    var lastRes = "f2x";
+    function getfullscreenelement(){
+        return document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement
+    }
+    function getonfullscreenevt(){
+        var root = document.documentElement
+        var fullscreenevts = {
+            'requestFullscreen': 'onfullscreenchange',
+            'webkitRequestFullscreen': 'onwebkitfullscreenchange',
+            'mozRequestFullScreen': 'onmozfullscreenchange',
+            'msRequestFullscreen': 'onmsfullscreenchange'
+        }
+         
+        for (var method in fullscreenevts){
+            if (root[method]){ // if root document object supports this requestFullscreen method
+                return fullscreenevts[method] // return corresponding onfullscreenchange event string
+            }
+        }
+        return undefined
+    }
+    //usage: var globalonfullscreenchange = getonfullscreenevt(); document[globalonfullscreenchange] = function(){...}
+    var globalonfullscreenchange = getonfullscreenevt();
+    document[globalonfullscreenchange] = pageResized;
+    function pageResized() {
+        console.log('fullscreen: ' + !(getfullscreenelement() == null));
+        if (getfullscreenelement() == null) {
+            document.getElementsByTagName("iframe")[0].className = lastRes;
+        }
+    }
+    function requestFullScreen(element) {
+        // Supports most browsers and their versions.
+        var requestMethod = element.requestFullScreen || element.webkitRequestFullScreen || element.mozRequestFullScreen || element.msRequestFullscreen;
+
+        if (requestMethod) { // Native full screen.
+            requestMethod.call(element);
+        } else if (typeof window.ActiveXObject !== "undefined") { // Older IE.
+            var wscript = new ActiveXObject("WScript.Shell");
+            if (wscript !== null) {
+                wscript.SendKeys("{F11}");
+            }
+        }
+    }
+
+    function makeFullScreen() {
+        lastRes = document.getElementsByTagName("iframe")[0].className;
+        document.getElementsByTagName("iframe")[0].className = "fullScreen";
+        var elem = document.body;
+        requestFullScreen(elem);
+    }
+    function make1x() {
+        document.getElementsByTagName("iframe")[0].className = "f1x";
+    }
+    function make2x() {
+        document.getElementsByTagName("iframe")[0].className = "f2x";
+    }
+    </script>
+    <div id="wrapper">
+        <iframe src="index.html" class="f1x" scrolling="no" frameborder="0" style=""></iframe><br/>
+        <button onclick="make1x()">Size 1x</button>
+        <button onclick="make2x()">Size 2x</button>
+        <button onclick="makeFullScreen()">Fullscreen</button>
+        <div id="description">
+            <h1>Sakata Mountain</h1>
+
+            <p>Game project for Touhou Game Jam 2, using PixiJS.</p>
+
+            <p>Nemuno Sakata just wants to get vegetables for soup, but there's trouble on the mountain. Jump and slash your way around a twisting level with enemies throughout and a mystery boss at the end.</p>
+
+            <p>This is a fan work of the Touhou Project and is not associated with the original creators.</p>
+
+            <h2>Game Instructions</h2>
+
+            <p>The gimmick of this game is that any enemy can be defeated from a single attack. The challenge is in getting close enough to land the attack without taking too much damage.</p>
+
+            <ul>
+            <li>Touch checkpoints to recover health and update your respawn location.</li>
+            <li>Avoid bullets.</li>
+            <li>Green projectiles can be destroyed with your knife attack (action key).</li>
+            <li>Purple enemies float around their "hearts". Attack the heart to destroy the enemy.</li>
+            <li>Each heart you collect increases your score. Try to get them all!</li>
+            <li>The screen shows health (top-left), score (top-right), and time elapsed in seconds (bottom-left).</li>
+            </ul>
+
+            <p><i>Presently the only way to restart the game is to refresh the page.</i></p>
+
+            <h3>Controls</h3>
+
+            <ul>
+            <li><b>Move left:</b> Left Arrow or A</li>
+            <li><b>Move right:</b> Right Arrow or D</li>
+            <li><b>Look down:</b> Down arrow or S</li>
+            <li><b>Action:</b> J, Z, or 4</li>
+            <li><b>Jump:</b> K, X or 3</li>
+            </ul>
+
+            <h2>External resources</h2>
+
+            <p>The background audio "crickets.mp3" is a derivative of "rbh crickets suburb night1.wav" by RHumphries, which is licensed under CC BY 3.0.
+            <ul>
+            <li><b>Source:</b> <a href="https://freesound.org/people/RHumphries/sounds/1053/">https://freesound.org/people/RHumphries/sounds/1053/</a></li>
+            <li><b>License:</b> <a href="https://creativecommons.org/licenses/by/3.0/">https://creativecommons.org/licenses/by/3.0/</a></li>
+            </ul>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
