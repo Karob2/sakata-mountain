@@ -2,6 +2,7 @@
 
 var textureList = [
     "img/logo.json",
+    "img/parchment.json",
     "img/sprites.json",
     "img/tiles.json"
     ]
@@ -25,23 +26,25 @@ var fontList = [
     //["Pixellari", "font/pixellari.fnt"]
 ]
 
-var state;
-var substate;
-var spriteAtlas, tileAtlas, logoAtlas;
+var spriteAtlas, tileAtlas, logoAtlas, parchmentAtlas;
 function initialize() {
     spriteAtlas = PIXI.loader.resources["img/sprites.json"].textures;
     tileAtlas = PIXI.loader.resources["img/tiles.json"].textures;
     logoAtlas = PIXI.loader.resources["img/logo.json"].textures;
+    parchmentAtlas = PIXI.loader.resources["img/parchment.json"].textures;
 
     //initialize_menu();
     initialize_level();
     //initialize_end();
 
-    start_stage("level", 0);
+    start_stage("title", 1);
 
     app.ticker.add(delta => gameLoop(delta));
 }
 
+var state;
+var substate;
+var currentStage;
 function start_stage(stageType, stageNumber) {
     substate = stageNumber;
     /*
@@ -56,25 +59,27 @@ function start_stage(stageType, stageNumber) {
         return;
     }
     */
-    if (stageType == "level") {
-        app.renderer.backgroundColor = 0x201030;
-        //PIXI.sound.stop('bgm_menu');
-        //PIXI.sound.play('bgm_level', {loop:true});
-        //menuScene.visible = false;
-        levelScene.visible = true;
-        //endScene.visible = false;
-        if (substate == 0) {
+    app.renderer.backgroundColor = 0x201030;
+    levelScene.visible = true;
+    sceneResizeHook = levelResize;
+    if (stageType == "title") {
+        if (currentStage != stageType) {
             playMusic('bgm_menu');
             gui_overlay.visible = false;
             title_overlay.visible = true;
             state = play_title;
-        } else {
+        }
+        currentStage = stageType;
+        return;
+    }
+    if (stageType == "level") {
+        if (currentStage != stageType) {
             playMusic('bgm_level');
             gui_overlay.visible = true;
             title_overlay.visible = false;
             state = play;
         }
-        sceneResizeHook = levelResize;
+        currentStage = stageType;
         return;
     }
     /*
@@ -222,6 +227,9 @@ var app = new PIXI.Application({
     backgroundColor: 0x000000
 });
 PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
+app.renderer.plugins.interaction.cursorStyles.default = "default";
+app.renderer.plugins.interaction.cursorStyles.hover = "default";
+app.renderer.plugins.interaction.cursorStyles.pointer = "default";
 
 var frameScene = new PIXI.Container();
 app.stage.addChild(frameScene);

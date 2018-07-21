@@ -1,6 +1,5 @@
-var logo;
 var title_overlay;
-
+var logo;
 function initialize_menu() {
     title_overlay = new PIXI.Container();
     levelScene.addChild(title_overlay);
@@ -14,13 +13,13 @@ function initialize_menu() {
     var logoBottom = logo.y + 115;
     var menuCenter = (gameProperties.height + logoBottom) / 2;
     message = createText("Start", gameProperties.width / 2,
-        menuCenter - 12, startLevel);
+        menuCenter - 12, startLevel, play_title);
     title_overlay.addChild(message);
     message = createText("Config", gameProperties.width / 2,
-        menuCenter + 12, startLevel);
+        menuCenter + 12, startLevel, play_title);
     title_overlay.addChild(message);
     message = createText("Credits", gameProperties.width / 2,
-        menuCenter + 36, startLevel);
+        menuCenter + 36, showCredits, play_title);
     title_overlay.addChild(message);
 
     message = createText(
@@ -103,4 +102,19 @@ function startLevel() {
     start_stage("level", 1);
     //substate = 1;
     //state = play;
+}
+
+function showCredits() {
+    var box = createPopup(levelScene, play_credits, 32, 32, gameProperties.width - 64, gameProperties.height - 64);
+    message = createText("Sakata Mountain by Karob", 50,
+        50, closePopup, play_credits);
+    message.anchor.set(0, 0);
+    message.font.size = 16;
+    box.addChild(message);
+    message = createText("Okay", gameProperties.width / 2 + 150,
+        gameProperties.height / 2 + 90, closePopup, play_credits);
+    box.addChild(message);
+}
+
+function play_credits() {
 }
