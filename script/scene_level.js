@@ -1,5 +1,7 @@
 "use strict";
 
+var logo;
+
 var levelProperties;
 var levelScene;
 var camera;
@@ -16,7 +18,7 @@ var lastCheckpoint = {};
 var godMode = false;
 var killCounter;
 var stopwatch = {};
-var fullscreen_object = [];
+//var fullscreen_object = [];
 
 function initialize_level() {
     levelProperties = {
@@ -88,79 +90,6 @@ function initialize_level() {
             grow: tileType[tileKeys[i]].grow
         });
     }
-
-/*
-    levelMap = [];
-    var levelMapRow;
-    for (var i = 0; i < levelProperties.gridWidth; i++) {
-        levelMapRow = [];
-        for (var j = 0; j < levelProperties.gridHeight; j++) {
-            if (i == 0 || i == levelProperties.gridWidth - 1 || j == 0 || j == levelProperties.gridHeight - 1 || Math.random() < 0.065)
-                levelMapRow.push(tileType.wall.id);
-            else
-                levelMapRow.push(tileType.air.id);
-        }
-        levelMap.push(levelMapRow);
-    }
-    for (var i = 0; i < levelProperties.gridWidth; i++) {
-        for (var j = 0; j < levelProperties.gridHeight; j++) {
-            if (levelMap[i][j] == tileType.air.id) {
-                if (i > 0 && levelMap[i - 1][j] == tileType.wall.id || i < levelProperties.gridWidth - 1 && levelMap[i + 1][j] == tileType.wall.id) {
-                    if (j < levelProperties.gridHeight - 1 && levelMap[i][j + 1] == tileType.air.id && j > 0 && (levelMap[i][j - 1] == tileType.air.id || levelMap[i][j - 1] == tileType.leaf.id)) {
-                        levelMap[i][j] = tileType.leaf.id;
-                    }
-                }
-                if (j < levelProperties.gridHeight - 1 && levelMap[i][j + 1] == tileType.wall.id) {
-                    if (Math.random() < 0.4) {
-                        levelMap[i][j] = tileType.crate.id;
-                        if (j > 0 && levelMap[i][j - 1] != tileType.wall.id) {
-                            levelMap[i][j - 1] = tileType.crate_top.id;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    for (var i = 0; i < levelProperties.gridWidth; i++) {
-        for (var j = 0; j < levelProperties.gridHeight - 1; j++) {
-            if (levelMap[i][j] == tileType.air.id && levelMap[i][j + 1] == tileType.wall.id) {
-                levelMap[i][j + 1] = tileType.wall_grass.id;
-                if (i > 0 && tileType.index[levelMap[i - 1][j + 1]].grass && tileType.index[levelMap[i - 1][j]].grow || tileType.index[levelMap[i - 1][j]].block) {
-                    if (i < levelProperties.gridWidth - 1 && tileType.index[levelMap[i + 1][j + 1]].grass && tileType.index[levelMap[i + 1][j]].grow || tileType.index[levelMap[i + 1][j]].block) {
-                        levelMap[i][j] = tileType.cap.id;
-                    } else {
-                        levelMap[i][j] = tileType.cap_r.id;
-                    }
-                } else {
-                    if (i < levelProperties.gridWidth - 1 && tileType.index[levelMap[i + 1][j + 1]].grass && tileType.index[levelMap[i + 1][j]].grow || tileType.index[levelMap[i + 1][j]].block) {
-                        levelMap[i][j] = tileType.cap_l.id;
-                    } else {
-                        levelMap[i][j] = tileType.cap_lr.id;
-                    }
-                }
-            }
-        }
-    }
-
-    var center = Math.floor(levelProperties.gridWidth / 2);
-    var bottom = levelProperties.gridHeight - 2;
-    levelMap[center][bottom + 1] = tileType.wall_grass.id;
-    levelMap[center][bottom] = tileType.cap.id;
-    levelMap[center + 1][bottom] = tileType.ramp_l.id;
-    levelMap[center + 1][bottom - 1] = tileType.rampcap_l.id;
-    levelMap[center + 2][bottom] = tileType.wall_grass.id;
-    levelMap[center + 2][bottom - 1] = tileType.cap.id;
-    for (var i = 0; i < 7; i++) {
-        levelMap[center + 2 + i][bottom - 1 - i] = tileType.ramp_l.id;
-        levelMap[center + 2 + i][bottom - 1 - i - 1] = tileType.rampcap_l.id;
-    }
-    levelMap[center + 9][bottom - 7] = tileType.wall_grass.id;
-    levelMap[center + 9][bottom - 8] = tileType.cap.id;
-    for (var i = 0; i < 4; i++) {
-        levelMap[center + 2 + 8 + i][bottom - 1 - 6 + i] = tileType.ramp_r.id;
-        levelMap[center + 2 + 8 + i][bottom - 1 - 6 + i - 1] = tileType.rampcap_r.id;
-    }
-    */
 
     walls = new PIXI.Container();
     //walls.position.set(0, 0);
@@ -350,39 +279,50 @@ function initialize_level() {
     }
     styleHealth();
 
+    killCounter = {};
     o = new PIXI.Sprite(spriteAtlas["heart_new"]);
-    fullscreen_object.push(o);
+    //fullscreen_object.push(o);
     o.x = gameProperties.width - 32 - 10;
     o.y = 6;
     levelScene.addChild(o);
-    killCounter = new PIXI.Container();
-    levelScene.addChild(killCounter);
+    killCounter.sprite = o;
     killCounter.kills = 0;
-    var style = new PIXI.TextStyle({fontFamily: "serif", fontSize: 20, fill: "white"});
-    var message = new PIXI.Text("0", style);
+    //var style = new PIXI.TextStyle({fontFamily: "serif", fontSize: 20, fill: "white"});
+    //var message = new PIXI.Text("0", style);
+    var message = new PIXI.extras.BitmapText("0", {font: '20px Pixellari', align: 'right', tint: '0xffffff'});
     message.x = o.x - 4;
     message.y = o.y + 5;
     message.anchor.set(1, 0);
-    fullscreen_object.push(message);
-    killCounter.addChild(message);
+    //fullscreen_object.push(message);
+    killCounter.num = message;
+    levelScene.addChild(message);    
 
     stopwatch.started = false;
     stopwatch.start = Date.now();
-    style = new PIXI.TextStyle({fontFamily: "Lucida Console", fontSize: 20, fill: "white"});
-    message = new PIXI.Text("0", style);
+    //style = new PIXI.TextStyle({fontFamily: "Lucida Console", fontSize: 20, fill: "white"});
+    //message = new PIXI.Text("0", style);
+    message = new PIXI.extras.BitmapText("0", {font: '20px Pixellari', align: 'left', tint: '0xffffff'});
     message.x = 10;
     message.y = gameProperties.height - 30;
-    fullscreen_object.push(message);
+    //fullscreen_object.push(message);
     stopwatch.message = message;
     levelScene.addChild(message);
+
+    logo = new PIXI.Sprite(logoAtlas["logo"]);
+    logo.x = gameProperties.width / 2 - 294 / 2;
+    logo.y = gameProperties.height / 4 - 115 / 2;
+    levelScene.addChild(logo);
+    //fullscreen_object.push(logo);
 
     importLevelMap();
 }
 
 function levelResize() {
-    fullscreen_object[0].x = gameProperties.width - 32 - 10;
-    fullscreen_object[1].x = fullscreen_object[0].x - 4;
-    fullscreen_object[2].y = gameProperties.height - 30;
+    killCounter.sprite.x = gameProperties.width - 32 - 10;
+    killCounter.num.x = killCounter.sprite.x - 4;
+    stopwatch.message.y = gameProperties.height - 30;
+    logo.x = gameProperties.width / 2 - 294 / 2;
+    logo.y = gameProperties.height / 4 - 115 / 2;
 }
 /*
 function levelResize() {
@@ -499,8 +439,36 @@ function playerCheckWall(x, y) {
     return 0;
 }
 
-function play(delta) {
+function play_menu(delta) {
+    health.visible = false;
+    killCounter.sprite.visible = false;
+    killCounter.num.visible = false;
+    stopwatch.message.visible = false;
+    logo.visible = true;
+    if (keys.a.held && keys.a.toggled) {
+        keys.a.toggled = false;
 
+        health.visible = true;
+        killCounter.sprite.visible = true;
+        killCounter.num.visible = true;
+        stopwatch.message.visible = true;
+        logo.visible = false;
+
+        substate = 1;
+        state = play;
+    }
+    camera.px = gameProperties.width * 1 / 3;
+    camera.py = -gameProperties.height * 1 / 3;
+    camera.x = player.px + camera.px;
+    camera.y = player.py + camera.py;
+    camera.dx = Math.round(camera.x) - gameProperties.width / 2;
+    camera.dy = Math.round(camera.y) - gameProperties.height / 2;
+    player.x = player.px;
+    player.y = player.py;
+    arrangeTiles();
+}
+
+function play(delta) {
     // Move Player:
 
     player.vy += 0.5 * delta
@@ -759,9 +727,6 @@ function play(delta) {
     }
     */
 
-    objects.x = -camera.dx;
-    objects.y = -camera.dy;
-
     // Check checkpoints:
 
     for (var n = 0; n < checkpoints.children.length; n++) {
@@ -810,7 +775,7 @@ function play(delta) {
                     fairy.heart.texture = PIXI.utils.TextureCache["heart_old"];
                     fireBullet_2(fairy.heart.x, fairy.heart.y, 0, -1, "heart_new", 50);
                     killCounter.kills++;
-                    killCounter.children[0].text = killCounter.kills + "/" + fairies.children.length;
+                    killCounter.num.text = killCounter.kills + "/" + fairies.children.length;
                 }
             }
         }
@@ -1114,6 +1079,19 @@ function play(delta) {
     }
 
     // Arrange tiles:
+    arrangeTiles();
+
+    if (!stopwatch.started) {
+        stopwatch.start = Date.now();
+        if (keys.up.held || keys.down.held || keys.left.held || keys.right.held || keys.b.held) {
+            stopwatch.started = true;
+        }
+    }
+    stopwatch.message.text = Math.floor((Date.now() - stopwatch.start) / 1000);
+}
+function arrangeTiles() {
+    objects.x = -camera.dx;
+    objects.y = -camera.dy;
 
     var tx = camera.dx;
     var ty = camera.dy;
@@ -1144,14 +1122,6 @@ function play(delta) {
             }
         }
     }
-
-    if (!stopwatch.started) {
-        stopwatch.start = Date.now();
-        if (keys.up.held || keys.down.held || keys.left.held || keys.right.held || keys.b.held) {
-            stopwatch.started = true;
-        }
-    }
-    stopwatch.message.text = Math.floor((Date.now() - stopwatch.start) / 1000);
 }
 
 function fireBullet_1(x, y, vx, vy, texture, type) {

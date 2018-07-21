@@ -1,6 +1,7 @@
 "use strict";
 
 var textureList = [
+    "img/logo.json",
     "img/sprites.json",
     "img/tiles.json"
     ]
@@ -17,16 +18,20 @@ var soundList = [
     ["sfx_pain", "sfx/hitcrit.wav"],
     ["sfx_menu", "sfx/tri.wav"]
     ]
+var fontList = [
+    //["Pixellari", "font/pixellari.fnt"]
+]
 var loadingScene;
 function load(n) {
     if (n == 0) {
         loadingScene = new PIXI.Container();
         gameScene.addChild(loadingScene);
 
-        var style = new PIXI.TextStyle({fontFamily: "serif", fontSize: 32, fill: "white"});
+        //var style = new PIXI.TextStyle({fontFamily: "serif", fontSize: 32, fill: "white"});
         var o;
 
-        o = new PIXI.Text("loading", style);
+        //o = new PIXI.Text("loading", style);
+        o = new PIXI.extras.BitmapText("loading", {font: '32px Pixellari', align: 'right', tint: '0xffffff'});
         o.x = gameProperties.width / 2;
         o.y = gameProperties.height / 2 - 24;
         o.anchor.set(0.5);
@@ -56,7 +61,7 @@ function load(n) {
     } else {
         var ttw = gameProperties.width / 2 - 1 - 2;
         var thw = gameProperties.width / 2 - ttw / 2;
-        var loadPercent = n / (textureList.length + soundList.length);
+        var loadPercent = n / (textureList.length + soundList.length + fontList.length);
         loadingScene.children[0].text = Math.floor(100 * loadPercent) + "%";
         loadingScene.children[2].width = (1 - loadPercent) * ttw;
         loadingScene.children[2].x = thw + loadPercent * ttw;
@@ -81,16 +86,25 @@ function load(n) {
         }
         return;
     }
+    nn = n - textureList.length - soundList.length;
+    if (nn < fontList.length) {
+        PIXI.loader
+            .add(fontList[nn][0], fontList[nn][1])
+            .load(function(){load(n+1)});
+        return;
+    }
 
     gameScene.removeChild(loadingScene);
     initialize();
 }
 
 var state;
-var spriteAtlas, tileAtlas;
+var substate;
+var spriteAtlas, tileAtlas, logoAtlas;
 function initialize() {
     spriteAtlas = PIXI.loader.resources["img/sprites.json"].textures;
     tileAtlas = PIXI.loader.resources["img/tiles.json"].textures;
+    logoAtlas = PIXI.loader.resources["img/logo.json"].textures;
 
     initialize_menu();
     initialize_level();
@@ -102,8 +116,9 @@ function initialize() {
 }
 
 function start_stage(stageType, stageNumber) {
+    substate = stageNumber;
     if (stageType == "menu") {
-        PIXI.sound.stop('bgm_level');
+        //PIXI.sound.stop('bgm_level');
         //PIXI.sound.play('bgm_menu', {loop:true});
         menuScene.visible = true;
         levelScene.visible = false;
@@ -115,11 +130,12 @@ function start_stage(stageType, stageNumber) {
     if (stageType == "level") {
         app.renderer.backgroundColor = 0x201030;
         //PIXI.sound.stop('bgm_menu');
-        PIXI.sound.play('bgm_level', {loop:true});
+        //PIXI.sound.play('bgm_level', {loop:true});
         menuScene.visible = false;
         levelScene.visible = true;
         //endScene.visible = false;
-        state = play;
+        if (substate == 0) state = play_menu;
+        else state = play;
         sceneResizeHook = levelResize;
         return;
     }
@@ -233,6 +249,7 @@ var app = new PIXI.Application({
     backgroundColor: 0x000000
 });
 PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
+
 var gameScene = new PIXI.Container();
 app.stage.addChild(gameScene);
 /*
@@ -257,4 +274,8 @@ function reloadMap() {
 document.body.appendChild(app.view);
 setGameSize();
 window.onresize = setGameSize;
-load(0);
+
+PIXI.loader
+    .add("Pixellari", "font/pixellari.fnt")
+    .load(function(){load(0)});
+//load(0);

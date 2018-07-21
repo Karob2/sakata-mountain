@@ -5,14 +5,14 @@ function initialize_menu() {
     menuScene = new PIXI.Container();
     gameScene.addChild(menuScene);
 
-    var style = new PIXI.TextStyle({fontFamily: "serif", fontSize: 64, fill: "white"});
-    var message = new PIXI.Text("Sakata Mountain", style);
+    var style = new PIXI.TextStyle({fontFamily: "Verdana", fontSize: 40, fill: "white"});
+    var message = new PIXI.Text("Sakata Mountain v0.1", style);
     message.x = gameProperties.width / 2;
     message.y = gameProperties.height / 4;
     message.anchor.set(0.5);
     menuScene.addChild(message);
 
-    style = new PIXI.TextStyle({fontFamily: "serif", fontSize: 32, fill: "white"});
+    style = new PIXI.TextStyle({fontFamily: "Verdana", fontSize: 32, fill: "white"});
     message = new PIXI.Text("Start", style);
     message.x = gameProperties.width / 2;
     message.y = gameProperties.height * 3 / 4;
@@ -95,6 +95,7 @@ function menu(delta) {
         keys.a.toggled = false;
         showStory();
     }
+    start_stage("level", 0);
 }
 
 var storyPage;
@@ -127,7 +128,7 @@ function showStory() {
 function story() {
     if (keys.a.held && keys.a.toggled) {
         keys.a.toggled = false;
-        start_stage("level", 1)
+        start_stage("level", 1);
         PIXI.sound.play('sfx_menu');
     }
 }
