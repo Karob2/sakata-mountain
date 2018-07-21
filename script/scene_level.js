@@ -781,7 +781,7 @@ function play(delta) {
         player.scale.x = 1;
     }
     if (keys.up.held) {
-        player.look = -1;
+        player.look = -2;
     } else if (keys.down.held) {
         player.look = 1;
     /*
@@ -819,7 +819,7 @@ function play(delta) {
     }
 
     camera.dx = Math.round(camera.x) - gameProperties.width / 2;
-    camera.dy = Math.round(camera.y) - gameProperties.height / 2;
+    camera.dy = Math.round(camera.y) - gameProperties.height / 2 - 2;
 
     /*
     if (camera.shake > 0) {

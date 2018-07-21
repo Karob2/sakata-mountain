@@ -5,7 +5,7 @@
     <title>Sakata Mountain</title>
     <style>
     #wrapper {
-        width: 1024px;
+        width: 1280px;
         /*white-space: pre-wrap;*/
         margin: auto;
         background-color: #444;
@@ -40,16 +40,16 @@ iframe {
 }
 */
     iframe.f1x {
-        width: 512px;
-        height: 384px;
+        width: 640px;
+        height: 360px;
         margin-top: 40px;
         margin-bottom: 40px;
         margin-left: 25%;
         margin-right: 25%;
     }
     iframe.f2x {
-        width: 1024px;
-        height: 768px;
+        width: 1280px;
+        height: 720px;
     }
     iframe.fullScreen {
         width: 100%;
@@ -129,23 +129,29 @@ iframe {
     }
     function reloadMap() {
         document.getElementById("gameframe").contentWindow.reloadMap();
+        setFocus();
     }
     function godmode() {
         document.getElementById("gameframe").contentWindow.godmode = true;
+        setFocus();
     }
     function muteMusic() {
         document.getElementById("gameframe").contentWindow.stopMusic();
+        setFocus();
     }
     function playEnv() {
         document.getElementById("gameframe").contentWindow.PIXI.sound.play('env_crickets', {loop:true});
+        setFocus();
     }
     function stopEnv() {
         document.getElementById("gameframe").contentWindow.PIXI.sound.stop('env_crickets');
+        setFocus();
     }
     function bossFight() {
         var gf = document.getElementById("gameframe").contentWindow;
         gf.player.px = gf.levelProperties.width - gf.levelProperties.grid * 11.5;
         gf.player.py = gf.levelProperties.height - gf.levelProperties.grid - 1;
+        setFocus();
     }
     </script>
     <div id="wrapper">
@@ -191,12 +197,21 @@ iframe {
             <ul>
             <li><b>Move left:</b> Left Arrow or A</li>
             <li><b>Move right:</b> Right Arrow or D</li>
-            <li><b>Look down:</b> Down arrow or S</li>
-            <li><b>Action:</b> J, Z, or 4</li>
+            <li><b>Look up:</b> Up Arrow or W</li>
+            <li><b>Look down:</b> Down Arrow or S</li>
+            <li><b>Attack:</b> J, Z, or 4</li>
             <li><b>Jump:</b> K, X or 3</li>
+            <li><b>Drop down:</b> Look down + Jump</li>
             </ul>
 
-            <h2>External resources</h2>
+            <h2>Credits</h2>
+
+            <p>Music
+            <ul>
+            <li><b>Arranged and sequenced by:</b> <a href="https://soundcloud.com/krichotomy">Karob</a></li>
+            <li><b>Original:</b> <a href="https://kourindou.exblog.jp/">ZUN</a></li>
+            </ul>
+            </p>
 
             <p>The background audio "crickets.mp3" is a derivative of "rbh crickets suburb night1.wav" by RHumphries, which is licensed under CC BY 3.0.
             <ul>

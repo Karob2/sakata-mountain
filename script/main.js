@@ -195,17 +195,52 @@ function setGameSize() {
     app.renderer.resize(wWidth, wHeight);
     var ratioW = wWidth / gameProperties.preferred_width;
     var ratioH = wHeight / gameProperties.preferred_height;
+    var scale;
     if (ratioW < ratioH) {
+        /*
         gameProperties.width = gameProperties.preferred_height * wWidth / wHeight;
         gameProperties.height = gameProperties.preferred_height;
         gameScene.scale.x = wWidth / gameProperties.width;
         gameScene.scale.y = gameScene.scale.x;
+        */
+        //gameProperties.frame_height = gameProperties.preferred_width * wHeight / wWidth;
+        //gameProperties.frame_width = gameProperties.preferred_width;
+        scale = wWidth / gameProperties.preferred_width;
+        gameScene.scale.x = scale;
+        gameScene.scale.y = scale;
+
+        frameScene.children[1].width = wWidth;
+        frameScene.children[1].height = (wHeight - gameProperties.preferred_height * scale) / 2;
+        frameScene.children[2].x = 0;
+        frameScene.children[2].y = wHeight - frameScene.children[1].height;
+        frameScene.children[2].width = frameScene.children[1].width;
+        frameScene.children[2].height = frameScene.children[1].height;
     } else {
+        /*
         gameProperties.height = gameProperties.preferred_width * wHeight / wWidth;
         gameProperties.width = gameProperties.preferred_width;
         gameScene.scale.x = wWidth / gameProperties.width;
         gameScene.scale.y = gameScene.scale.x;
+        */
+        //gameProperties.frame_width = gameProperties.preferred_height * wWidth / wHeight;
+        //gameProperties.frame_height = gameProperties.preferred_height;
+        scale = wHeight / gameProperties.preferred_height;
+        gameScene.scale.x = scale;
+        gameScene.scale.y = scale;
+
+        frameScene.children[1].width = (wWidth - gameProperties.preferred_width * scale) / 2;
+        frameScene.children[1].height = wHeight;
+        frameScene.children[2].x = wWidth - frameScene.children[1].width;
+        frameScene.children[2].y = 0;
+        frameScene.children[2].width = frameScene.children[1].width;
+        frameScene.children[2].height = frameScene.children[1].height;
     }
+    gameProperties.width = gameProperties.preferred_width;
+    gameProperties.height = gameProperties.preferred_height;
+    gameScene.x = wWidth / 2 - gameProperties.preferred_width * scale / 2;
+    gameScene.y = wHeight / 2 - gameProperties.preferred_height * scale / 2;
+    //frameScene.children[1].visible = false;
+    //frameScene.children[2].visible = false;
     if (sceneResizeHook != null) sceneResizeHook();
 }
 /*
@@ -250,8 +285,8 @@ if (!PIXI.utils.isWebGLSupported()) {
 PIXI.utils.sayHello(type)
 
 var gameProperties = {
-    preferred_width: 512,
-    preferred_height: 384,
+    preferred_width: 640,
+    preferred_height: 360,
     //width: 512,
     //height: 384,
     //scale: 2,
@@ -269,8 +304,28 @@ var app = new PIXI.Application({
 });
 PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 
+var frameScene = new PIXI.Container();
+app.stage.addChild(frameScene);
 var gameScene = new PIXI.Container();
-app.stage.addChild(gameScene);
+frameScene.addChild(gameScene);
+var o = new PIXI.Graphics();
+o.beginFill(0x000000);
+o.drawRect(0, 0, 1, 1);
+o.endFill();
+o.x = 0;
+o.y = 0;
+o.width = 100;
+o.height = 100;
+frameScene.addChild(o);
+var o = new PIXI.Graphics();
+o.beginFill(0x000000);
+o.drawRect(0, 0, 1, 1);
+o.endFill();
+o.x = 0;
+o.y = 0;
+o.width = 100;
+o.height = 100;
+frameScene.addChild(o);
 /*
 document.getElementById("gamebox").appendChild(app.view);
 

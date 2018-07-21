@@ -27,11 +27,17 @@ The gimmick of this game is that any enemy can be defeated from a single attack.
 
 - **Move left:** Left Arrow or A
 - **Move right:** Right Arrow or D
-- **Look down:** Down arrow or S
-- **Action:** J, Z, or 4
+- **Look up:** Up Arrow or W
+- **Look down:** Down Arrow or S
+- **Attack:** J, Z, or 4
 - **Jump:** K, X or 3
+- **Drop down:** Look down + Jump
 
-# External resources
+# Credits
+
+Music
+- **Arranged and sequenced by:** [Karob](https://soundcloud.com/krichotomy)
+- **Original:** [ZUN](https://kourindou.exblog.jp/)
 
 The background audio "crickets.mp3" is a derivative of "rbh crickets suburb night1.wav" by RHumphries, which is licensed under CC BY 3.0.
 - **Source:** https://freesound.org/people/RHumphries/sounds/1053/
