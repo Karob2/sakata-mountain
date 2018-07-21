@@ -119,7 +119,7 @@ iframe {
     }
     </script>
     <div id="wrapper">
-        <iframe src="index.html" class="f2x" scrolling="no" frameborder="0" style=""></iframe><br/>
+        <iframe src="index.html" id="gameframe" class="f2x" scrolling="no" frameborder="0" style=""></iframe><br/>
         <button onclick="make1x()">Size 1x</button>
         <button onclick="make2x()">Size 2x</button>
         <button onclick="makeFullScreen()">Fullscreen</button>
@@ -173,5 +173,15 @@ iframe {
             </p>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', setFocus);
+        function setFocus() {
+            var gameframe = document.getElementById('gameframe');
+            gameframe.focus();
+            if (document.activeElement != gameframe) {
+                window.setTimeout(setFocus, 1000);
+            }
+        }
+    </script>
 </body>
 </html>

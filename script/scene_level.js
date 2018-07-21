@@ -458,7 +458,7 @@ function play_menu(delta) {
         state = play;
     }
     camera.px = gameProperties.width * 1 / 3;
-    camera.py = -gameProperties.height * 1 / 3;
+    camera.py = -gameProperties.height * 1 / 3 + 2;
     camera.x = player.px + camera.px;
     camera.y = player.py + camera.py;
     camera.dx = Math.round(camera.x) - gameProperties.width / 2;
