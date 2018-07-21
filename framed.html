@@ -117,12 +117,20 @@ iframe {
     function make2x() {
         document.getElementsByTagName("iframe")[0].className = "f2x";
     }
+    function killGame() {
+        document.getElementById("gameframe").src = "";
+    }
+    function startGame() {
+        document.getElementById("gameframe").src = "index.html";
+    }
     </script>
     <div id="wrapper">
         <iframe src="index.html" id="gameframe" class="f2x" scrolling="no" frameborder="0" style=""></iframe><br/>
         <button onclick="make1x()">Size 1x</button>
         <button onclick="make2x()">Size 2x</button>
         <button onclick="makeFullScreen()">Fullscreen</button>
+        <button onclick="killGame()">Stop Game</button>
+        <button onclick="startGame()">Restart Game</button>
         <div id="description">
             <h1>Sakata Mountain</h1>
 
