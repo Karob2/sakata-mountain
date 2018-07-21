@@ -110,18 +110,42 @@ iframe {
         document.getElementsByTagName("iframe")[0].className = "fullScreen";
         var elem = document.body;
         requestFullScreen(elem);
+        setFocus();
     }
     function make1x() {
         document.getElementsByTagName("iframe")[0].className = "f1x";
+        setFocus();
     }
     function make2x() {
         document.getElementsByTagName("iframe")[0].className = "f2x";
+        setFocus();
     }
     function killGame() {
         document.getElementById("gameframe").src = "";
     }
     function startGame() {
         document.getElementById("gameframe").src = "index.html";
+        setFocus();
+    }
+    function reloadMap() {
+        document.getElementById("gameframe").contentWindow.reloadMap();
+    }
+    function godmode() {
+        document.getElementById("gameframe").contentWindow.godmode = true;
+    }
+    function muteMusic() {
+        document.getElementById("gameframe").contentWindow.stopMusic();
+    }
+    function playEnv() {
+        document.getElementById("gameframe").contentWindow.PIXI.sound.play('env_crickets', {loop:true});
+    }
+    function stopEnv() {
+        document.getElementById("gameframe").contentWindow.PIXI.sound.stop('env_crickets');
+    }
+    function bossFight() {
+        var gf = document.getElementById("gameframe").contentWindow;
+        gf.player.px = gf.levelProperties.width - gf.levelProperties.grid * 11.5;
+        gf.player.py = gf.levelProperties.height - gf.levelProperties.grid - 1;
     }
     </script>
     <div id="wrapper">
@@ -131,6 +155,13 @@ iframe {
         <button onclick="makeFullScreen()">Fullscreen</button>
         <button onclick="killGame()">Stop Game</button>
         <button onclick="startGame()">Restart Game</button>
+        <br>
+        <button onclick="bossFight()">Skip to Boss</button>
+        <button onclick="reloadMap()">Reload Map</button>
+        <button onclick="godmode()">Invincible</button>
+        <button onclick="muteMusic()">Stop Music</button>
+        <button onclick="playEnv()">Play Crickets</button>
+        <button onclick="stopEnv()">Stop Crickets</button>
         <div id="description">
             <h1>Sakata Mountain</h1>
 

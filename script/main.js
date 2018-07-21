@@ -6,7 +6,10 @@ var textureList = [
     "img/tiles.json"
     ]
 var soundList = [
-    ["bgm_level", "sfx/crickets.mp3"],
+    ["env_crickets", "sfx/crickets.mp3"],
+    ["bgm_menu", "sfx/bells.mp3"],
+    ["bgm_level", "sfx/mountain_wind.mp3"],
+    ["bgm_boss", "sfx/mountain_boss.mp3"],
     ["sfx_kill", "sfx/mischit.wav"],
     ["sfx_checkpoint", "sfx/block2.wav"],
     ["sfx_respawn", "sfx/die.wav"],
@@ -134,8 +137,13 @@ function start_stage(stageType, stageNumber) {
         menuScene.visible = false;
         levelScene.visible = true;
         //endScene.visible = false;
-        if (substate == 0) state = play_menu;
-        else state = play;
+        if (substate == 0) {
+            playMusic('bgm_menu');
+            state = play_title;
+        } else {
+            playMusic('bgm_level');
+            state = play;
+        }
         sceneResizeHook = levelResize;
         return;
     }
@@ -151,6 +159,17 @@ function start_stage(stageType, stageNumber) {
         return;
     }
     */
+}
+
+function playMusic(mtitle) {
+    stopMusic();
+    PIXI.sound.play(mtitle, {loop:true});
+}
+
+function stopMusic() {
+    PIXI.sound.stop('bgm_menu');
+    PIXI.sound.stop('bgm_level');
+    PIXI.sound.stop('bgm_boss');
 }
 
 function gameLoop(delta) {
@@ -268,7 +287,6 @@ function reloadMap() {
     script.src= 'script/levelmap.js';
     head.appendChild(script);
     importLevelMap();
-    godMode = true;
 }
 
 document.body.appendChild(app.view);
