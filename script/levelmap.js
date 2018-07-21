@@ -187,3 +187,11 @@ function importLevelMap() {
     killCounter.kills = 0;
     killCounter.num.text = "0/" + fairies.children.length;
 }
+
+function reloadMap() {
+    var head= document.getElementsByTagName('head')[0];
+    var script= document.createElement('script');
+    script.src= 'script/levelmap.js';
+    head.appendChild(script);
+    importLevelMap();
+}
