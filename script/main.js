@@ -109,17 +109,18 @@ function initialize() {
     tileAtlas = PIXI.loader.resources["img/tiles.json"].textures;
     logoAtlas = PIXI.loader.resources["img/logo.json"].textures;
 
-    initialize_menu();
+    //initialize_menu();
     initialize_level();
     //initialize_end();
 
-    start_stage("menu");
+    start_stage("level", 0);
 
     app.ticker.add(delta => gameLoop(delta));
 }
 
 function start_stage(stageType, stageNumber) {
     substate = stageNumber;
+    /*
     if (stageType == "menu") {
         //PIXI.sound.stop('bgm_level');
         //PIXI.sound.play('bgm_menu', {loop:true});
@@ -130,11 +131,12 @@ function start_stage(stageType, stageNumber) {
         sceneResizeHook = menuResize;
         return;
     }
+    */
     if (stageType == "level") {
         app.renderer.backgroundColor = 0x201030;
         //PIXI.sound.stop('bgm_menu');
         //PIXI.sound.play('bgm_level', {loop:true});
-        menuScene.visible = false;
+        //menuScene.visible = false;
         levelScene.visible = true;
         //endScene.visible = false;
         if (substate == 0) {
