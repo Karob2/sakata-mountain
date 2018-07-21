@@ -1,6 +1,8 @@
 "use strict";
 
 var logo;
+var gui_overlay;
+var title_overlay;
 
 var levelProperties;
 var levelScene;
@@ -265,12 +267,15 @@ function initialize_level() {
     o.active = false;
     checkpoints.addChild(o);
 
+    gui_overlay = new PIXI.Container();
+    levelScene.addChild(gui_overlay);
+
     health = new PIXI.Container();
     health.x = 10;
     health.y = 6;
     health.maxLives = 6;
     health.lives = health.maxLives;
-    levelScene.addChild(health);
+    gui_overlay.addChild(health);
     for (var n = 0; n < health.maxLives; n++) {
         o = new PIXI.Sprite(spriteAtlas["life"]);
         o.x = n * 32;
@@ -284,7 +289,7 @@ function initialize_level() {
     //fullscreen_object.push(o);
     o.x = gameProperties.width - 32 - 10;
     o.y = 6;
-    levelScene.addChild(o);
+    gui_overlay.addChild(o);
     killCounter.sprite = o;
     killCounter.kills = 0;
     //var style = new PIXI.TextStyle({fontFamily: "serif", fontSize: 20, fill: "white"});
@@ -295,7 +300,7 @@ function initialize_level() {
     message.anchor.set(1, 0);
     //fullscreen_object.push(message);
     killCounter.num = message;
-    levelScene.addChild(message);    
+    gui_overlay.addChild(message);    
 
     stopwatch.started = false;
     stopwatch.start = Date.now();
@@ -306,15 +311,58 @@ function initialize_level() {
     message.y = gameProperties.height - 30;
     //fullscreen_object.push(message);
     stopwatch.message = message;
-    levelScene.addChild(message);
+    gui_overlay.addChild(message);
+
+    title_overlay = new PIXI.Container();
+    levelScene.addChild(title_overlay);
 
     logo = new PIXI.Sprite(logoAtlas["logo"]);
     logo.x = gameProperties.width / 2 - 294 / 2;
     logo.y = gameProperties.height / 4 - 115 / 2;
-    levelScene.addChild(logo);
+    title_overlay.addChild(logo);
     //fullscreen_object.push(logo);
 
+    var logoBottom = logo.y + 115;
+    var menuCenter = (gameProperties.height + logoBottom) / 2;
+    message = createText("Start", gameProperties.width / 2,
+        menuCenter - 12, startLevel);
+    title_overlay.addChild(message);
+    message = createText("Credits", gameProperties.width / 2,
+        menuCenter + 12, startLevel);
+    title_overlay.addChild(message);
+
+    message = createText(
+        "v0.01",
+        10,
+        gameProperties.height - 10
+    );
+    message.font.size = 16;
+    message.anchor.set(0, 1);
+    title_overlay.addChild(message);
+
+    gui_overlay.visible = false;
+    title_overlay.visible = true;
+
     importLevelMap();
+}
+
+function createText (text, x, y, buttonCall) {
+    var message = new PIXI.extras.BitmapText(text, {font: '20px Pixellari', align: 'left', tint: '0xffffff'});
+    message.x = x;
+    message.y = y;
+    message.anchor.set(0.5);
+    if (buttonCall != null) {
+        message.hitArea = new PIXI.Rectangle(-40, -10, 80, 20);
+        message.interactive = true;
+        message.buttonMode = true;
+        message.on('pointerover', menu_over);
+        message.on('pointerout', menu_out);
+        message.on('pointerup', menu_up);
+        message.on('pointerupoutside', menu_upoutside);
+        message.on('pointerdown', menu_down);
+        message.clickAction = buttonCall;
+    }
+    return message;
 }
 
 function levelResize() {
@@ -323,6 +371,15 @@ function levelResize() {
     stopwatch.message.y = gameProperties.height - 30;
     logo.x = gameProperties.width / 2 - 294 / 2;
     logo.y = gameProperties.height / 4 - 115 / 2;
+    var logoBottom = logo.y + 115;
+    var menuCenter = (gameProperties.height + logoBottom) / 2;
+    title_overlay.children[1].x = gameProperties.width / 2;
+    title_overlay.children[1].y = menuCenter - 12;
+
+    title_overlay.children[2].x = gameProperties.width / 2;
+    title_overlay.children[2].y = menuCenter + 12;
+
+    title_overlay.children[3].y = gameProperties.height - 10;
 }
 /*
 function levelResize() {
@@ -440,22 +497,12 @@ function playerCheckWall(x, y) {
 }
 
 function play_menu(delta) {
-    health.visible = false;
-    killCounter.sprite.visible = false;
-    killCounter.num.visible = false;
-    stopwatch.message.visible = false;
-    logo.visible = true;
+    gui_overlay.visible = false;
+    title_overlay.visible = true;
     if (keys.a.held && keys.a.toggled) {
         keys.a.toggled = false;
-
-        health.visible = true;
-        killCounter.sprite.visible = true;
-        killCounter.num.visible = true;
-        stopwatch.message.visible = true;
-        logo.visible = false;
-
-        substate = 1;
-        state = play;
+        startLevel();
+        return;
     }
     camera.px = gameProperties.width * 1 / 3;
     camera.py = -gameProperties.height * 1 / 3 + 2;
@@ -466,6 +513,13 @@ function play_menu(delta) {
     player.x = player.px;
     player.y = player.py;
     arrangeTiles();
+}
+function startLevel() {
+    gui_overlay.visible = true;
+    title_overlay.visible = false;
+
+    substate = 1;
+    state = play;
 }
 
 function play(delta) {

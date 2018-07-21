@@ -80,14 +80,18 @@ function menu_upoutside() {
 }
 function menu_updateColor(o) {
     if (o.isPress) {
-        o.style.fill = "blue";
+        //o.style.fill = "blue";
+        o.font.tint = "0x0000ff";
+        o.updateText();
         return;
     }
     if (o.isHover) {
-        o.style.fill = "yellow";
+        o.font.tint = "0xffff00";
+        o.updateText();
         return;
     }
-    o.style.fill = "white";
+    o.font.tint = "0xffffff";
+    o.updateText();
 }
 
 function menu(delta) {
