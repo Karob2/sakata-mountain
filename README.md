@@ -32,6 +32,7 @@ The gimmick of this game is that any enemy can be defeated from a single attack.
 - **Attack:** J, Z, or 4
 - **Jump:** K, X or 3
 - **Drop down:** Look down + Jump
+- **Pause:** Escape or P
 
 # Credits
 

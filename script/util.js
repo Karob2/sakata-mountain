@@ -146,27 +146,32 @@ function menu_updateColor(o) {
 }
 
 var universalPopup = [];
-function createPopup(parent, newState, x, y, width, height) {
+function createPopup(parent, newState, width, height) {//, x, y, width, height) {
+    var o;
     var box = new PIXI.Container();
     box.x = gameProperties.width / 2;
     box.y = gameProperties.height / 2;
     parent.addChild(box);
 
-    var o = new PIXI.Sprite(parchmentAtlas["parchment"]);
-    /*
-    var o = new PIXI.Graphics();
-    o.beginFill(0x000000);
-    o.drawRect(0, 0, width, height);
-    o.endFill();
-    o.x = x;
-    o.y = y;
-    //o.width = width;
-    //o.height = height;
-    */
+    //o = new PIXI.Sprite(parchmentAtlas["parchment"]);
+    //o.anchor.set(0.5);
+
+    o = new PIXI.extras.TilingSprite(parchmentAtlas["parchment"], width, height);
     o.anchor.set(0.5);
-    universalPopup.push({obj: box, prevState: state});
     box.addChild(o);
 
+    o = new PIXI.Graphics();
+    o.beginFill(0x000000);
+    o.drawRect(0, 0, width, 1);
+    o.drawRect(0, height - 1, width, 1);
+    o.drawRect(0, 0, 1, height);
+    o.drawRect(width - 1, 0, 1, height);
+    o.endFill();
+    o.pivot.set(width / 2, height / 2);
+    box.addChild(o);
+
+    universalPopup.push({obj: box, prevState: state});
+    
     //box.pivot.set(o.width / 2, o.height / 2);
 
     state = newState;

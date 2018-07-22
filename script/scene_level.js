@@ -453,6 +453,11 @@ function playerCheckWall(x, y) {
 }
 
 function play(delta) {
+    if (keys.menu.held && keys.menu.toggled) {
+        keys.menu.toggled = false;
+        showPause();
+    }
+
     // Move Player:
 
     player.vy += 0.5 * delta

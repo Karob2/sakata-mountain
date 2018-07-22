@@ -18,7 +18,7 @@ function initialize_menu() {
     o = createText("Start", gameProperties.width / 2,
         menuCenter - 12, startLevel, play_title);
     title_overlay.addChild(o);
-    o = createText("Config", gameProperties.width / 2,
+    o = createText("Options", gameProperties.width / 2,
         menuCenter + 12, showConfig, play_title);
     title_overlay.addChild(o);
     o = createText("Credits", gameProperties.width / 2,
@@ -108,9 +108,7 @@ function startLevel() {
 }
 
 function showConfig() {
-    var box = createPopup(levelScene, play_credits); //, 32, 32, gameProperties.width - 64, gameProperties.height - 64);
-    var halfWidth = gameProperties.width / 2;
-    var halfHeight = gameProperties.height / 2;
+    var box = createPopup(levelScene, play_credits, gameProperties.preferred_width - 64, gameProperties.preferred_height - 64)//, 32, 32, gameProperties.width - 64, gameProperties.height - 64);
     var lineHeight = 20;
     var colWidth = 100;
 
@@ -148,23 +146,88 @@ function showConfig() {
     o = createBar(controls.sfx, -100, lineHeight*3 - lineHeight / 2, 200, lineHeight);
     box.addChild(o);
 
-    o = createText("Okay", 140, 90, closePopup, play_credits);
+    //o = createText("Okay", 140, 90, closePopup, play_credits);
+    o = createText("Okay", 100 - 20,
+        (gameProperties.preferred_height - 64) / 2 - 20 - 8, closePopup, play_credits);
+    //o.anchor.set(1, 1);
     box.addChild(o);
 }
 
 function showCredits() {
-    var box = createPopup(levelScene, play_credits); //, 32, 32, gameProperties.width - 64, gameProperties.height - 64);
+    var box = createPopup(levelScene, play_credits, gameProperties.preferred_width * 3 / 4, gameProperties.preferred_height - 64)//, 32, 32, gameProperties.width - 64, gameProperties.height - 64);
     var o;
-    o = createText("Sakata Mountain by Karob", 120,
-        100);
+
+    o = createText("Sakata Mountain by Karob\nCreated with PixiJS\n\nMusic: Karob\nOriginal: ZUN\n\nCricket sfx by RHumphries under CC BY 3.0\n\nFont: Pixellari by Zacchary Dempsey-Plante", -(gameProperties.preferred_width * 3 / 4) / 2 + 20, -(gameProperties.preferred_height - 64) / 2 + 20);
     o.anchor.set(0, 0);
     o.font.size = 16;
     o.font.tint = "0x000000";
     box.addChild(o);
-    o = createText("Okay", gameProperties.width / 2 + 150,
-        gameProperties.height / 2 + 90, closePopup, play_credits);
+
+    o = createText("Okay", 100 - 20,
+        (gameProperties.preferred_height - 64) / 2 - 20 - 8, closePopup, play_credits);
+    //o.anchor.set(1, 1);
     box.addChild(o);
 }
 
+function showPause() {
+    stopwatch.pause = Date.now();
+
+    var box = createPopup(levelScene, play_pause, gameProperties.preferred_width / 2, gameProperties.preferred_height * 3 / 5);
+    var lineHeight = 20;
+    var colWidth = 100;
+
+    var o;
+    o = createText("Paused", 0, lineHeight*-3);
+    //o.font.size = 16;
+    o.font.tint = "0x000000";
+    box.addChild(o);
+
+    o = createText("Options", 0, lineHeight*-1, () => showConfig(), play_pause);
+    //o.font.size = 16;
+    box.addChild(o);
+
+    o = createText("Main Menu", 0, lineHeight*0.5, () => showRestart(), play_pause);
+    //o.font.size = 16;
+    box.addChild(o);
+
+    o = createText("Resume", 0, lineHeight*2.5, () => unPause(), play_pause);
+    //o.font.size = 16;
+    box.addChild(o);
+}
+function showRestart() {
+    var box = createPopup(levelScene, play_pause, gameProperties.preferred_width * 3 / 5, gameProperties.preferred_height / 2);
+    var lineHeight = 20;
+    var colWidth = 100;
+
+    var o;
+    o = createText("Are you sure you want to restart?", 0, lineHeight*-1);
+    //o.font.size = 16;
+    o.font.tint = "0x000000";
+    box.addChild(o);
+
+    o = createText("Yes", -colWidth / 2, lineHeight*1, () => closePopup(), play_pause);
+    box.addChild(o);
+
+    o = createText("No", colWidth / 2, lineHeight*1, () => closePopup(), play_pause);
+    box.addChild(o);
+}
+function unPause() {
+    if (stopwatch.started) {
+        stopwatch.start += Date.now() - stopwatch.pause;
+        stopwatch.message.text = Math.floor((Date.now() - stopwatch.start) / 1000);
+    }
+    closePopup();
+}
+function play_pause() {
+    if (keys.menu.held && keys.menu.toggled) {
+        keys.menu.toggled = false;
+        unPause();
+    }
+}
+
 function play_credits() {
+    if (keys.menu.held && keys.menu.toggled) {
+        keys.menu.toggled = false;
+        closePopup();
+    }
 }
