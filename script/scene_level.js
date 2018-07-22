@@ -772,6 +772,7 @@ function play(delta) {
             }
         }
 
+/*
         fairy.vvx += (Math.random() - 0.5) * delta * 0.1;
         fairy.vvy += (Math.random() - 0.5) * delta * 0.1;
         dist = Math.sqrt(Math.pow(fairy.vvx, 2) + Math.pow(fairy.vvy, 2));
@@ -806,7 +807,7 @@ function play(delta) {
         // TODO: This and the player camera equivalent are supposed to be affected by delta.
         fairy.x = (fairy.x * 49 + fairy.hx) / 50;
         fairy.y = (fairy.y * 49 + fairy.hy) / 50;
-
+*/
         if (fairy.cooldown_1 > 0) {
             fairy.cooldown_1 -= delta;
         }
@@ -818,7 +819,7 @@ function play(delta) {
         }
         if ((dist < 256 || fairy.cooldown_2 < 2 || fairy.super == true) && dist > 0) { //added >0 to avoid potential divide by zero
             if (fairy.cooldown_1 < 1) {
-                fairy.cooldown_1 = 100 * (Math.random() + 0.5);
+                fairy.cooldown_1 = 100; // * (Math.random() + 0.5);
                 if (fairy.super) {
                     for (var j = 0; j < 12; j++) {
                         fireBullet_1(
@@ -833,17 +834,27 @@ function play(delta) {
                     PIXI.sound.play('sfx_bullet3');
                 } else {
                     fairy.cooldown_2--;
+                    var ptime = dist / 3;
+                    var px = player.cx; // + player.vx * 40; //ptime;
+                    var py = player.cy; // + player.vy * ptime;
+                    if (keys.left.held) {
+                        px -= dist * 3 / 4;
+                    }
+                    if (keys.right.held) {
+                        px += dist * 3 / 4;
+                    }
+                    var pdist = Math.sqrt(Math.pow(px - fairy.x, 2) + Math.pow(py - fairy.y, 2));
                     fireBullet_1(
                         fairy.x,
                         fairy.y,
-                        (player.cx - fairy.x) / dist * 3,
-                        (player.cy - fairy.y) / dist * 3,
+                        (px - fairy.x) / pdist * 3,
+                        (py - fairy.y) / pdist * 3,
                         "bullet 1",
                         0
                     );
                     PIXI.sound.play('sfx_bullet1');
                     if (fairy.cooldown_2 < 1) {
-                        fairy.cooldown_2 = 4 + Math.random() * 2.5;
+                        fairy.cooldown_2 = 5; //4 + Math.random() * 2.5;
                         fireBullet_1(
                             fairy.x,
                             fairy.y,
@@ -1063,7 +1074,7 @@ function play(delta) {
             waveTimer = 100;
             //var dir = Math.floor(Math.random() * 2) * 2 - 1;
             var dir = -1;
-            var off = Math.floor(player.cy / levelProperties.grid) + Math.floor(Math.random() * 3) - 1;
+            var off = Math.floor(player.cy / levelProperties.grid); // + Math.floor(Math.random() * 3) - 1;
             //fireWave(player.cx - 7 * levelProperties.grid * dir, levelProperties.grid * (off + 0.5), 8 * dir, 0);
             fireBullet_1(player.cx - 7 * levelProperties.grid * dir, levelProperties.grid * (off + 0.5), 8 * dir, 0, "wave 3 f1", 1);
             PIXI.sound.play('sfx_bullet1');
@@ -1215,10 +1226,10 @@ function fullHealth() {
     styleHealth();
     for (var n = 0; n < fairies.children.length; n++) {
         var fairy = fairies.children[n];
+        if (!fairy.visible) fairy.cooldown_1 = 0; //100;
         fairy.visible = true;
-        fairy.heart.visible = true;
+        //fairy.heart.visible = true;
         fairy.texture = PIXI.utils.TextureCache["fairy"];
-        fairy.cooldown_1 = 100;
         fairy.cooldown_2 = 4;
         fairy.super = false;
     }
@@ -1264,7 +1275,7 @@ function styleHealth() {
 }
 
 function playerInvuln() {
-    player.invuln = 20;
+    player.invuln = 40;
 }
 
 function playerCheckpoint() {
