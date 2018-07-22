@@ -132,7 +132,7 @@ function menu_upoutside() {
 function menu_updateColor(o) {
     if (o.isPress) {
         //o.style.fill = "blue";
-        o.font.tint = "0x0000ff";
+        o.font.tint = "0x000000";
         o.updateText();
         return;
     }
@@ -148,6 +148,10 @@ function menu_updateColor(o) {
 var universalPopup = [];
 function createPopup(parent, newState, x, y, width, height) {
     var box = new PIXI.Container();
+    box.x = gameProperties.width / 2;
+    box.y = gameProperties.height / 2;
+    parent.addChild(box);
+
     var o = new PIXI.Sprite(parchmentAtlas["parchment"]);
     /*
     var o = new PIXI.Graphics();
@@ -159,9 +163,12 @@ function createPopup(parent, newState, x, y, width, height) {
     //o.width = width;
     //o.height = height;
     */
+    o.anchor.set(0.5);
     universalPopup.push({obj: box, prevState: state});
-    parent.addChild(box);
     box.addChild(o);
+
+    //box.pivot.set(o.width / 2, o.height / 2);
+
     state = newState;
     return box;
 }
@@ -180,7 +187,12 @@ function closeAllPopups() {
 
 function saveData(key, val) {
     if (typeof(Storage) !== "undefined") {
-        localStorage.setItem(key, val);
+        try {
+            localStorage.setItem("karob:sakata-mountain-" + key, val);
+        } catch(error) {
+            console.error(error);
+            return false;
+        }
         return true;
     } else {
         return false;
@@ -189,7 +201,9 @@ function saveData(key, val) {
 
 function loadData(key, def) {
     if (typeof(Storage) !== "undefined") {
-        return localStorage.getItem(key);
+        var val = localStorage.getItem("karob:sakata-mountain-" + key);
+        if (val == null) return def;
+        else return val;
     } else {
         return def;
     }

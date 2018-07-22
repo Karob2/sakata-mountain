@@ -68,6 +68,16 @@ var controls = {
     }
 };
 
+var aspect_mode;
+function aspectMode(mode) {
+    //console.log(mode);
+    //fit, crop, stretch
+    aspect_mode = mode;
+    saveData("aspect_mode", mode);
+    setGameSize();
+}
+aspect_mode = loadData("aspect_mode", "fit");
+
 var spriteAtlas, tileAtlas, logoAtlas, parchmentAtlas;
 function initialize() {
     spriteAtlas = PIXI.loader.resources["img/sprites.json"].textures;
@@ -166,50 +176,68 @@ function setGameSize() {
     var ratioH = wHeight / gameProperties.preferred_height;
     var scale;
     if (ratioW < ratioH) {
-        /*
-        gameProperties.width = gameProperties.preferred_height * wWidth / wHeight;
+        if (aspect_mode == "crop") {
+            gameProperties.width = gameProperties.preferred_height * wWidth / wHeight;
+            gameProperties.height = gameProperties.preferred_height;
+            gameScene.scale.x = wWidth / gameProperties.width;
+            gameScene.scale.y = gameScene.scale.x;
+        } else if (aspect_mode == "fit") {
+            scale = wWidth / gameProperties.preferred_width;
+            gameScene.scale.x = scale;
+            gameScene.scale.y = scale;
+
+            frameScene.children[1].width = wWidth;
+            frameScene.children[1].height = (wHeight - gameProperties.preferred_height * scale) / 2;
+            frameScene.children[2].x = 0;
+            frameScene.children[2].y = wHeight - frameScene.children[1].height;
+            frameScene.children[2].width = frameScene.children[1].width;
+            frameScene.children[2].height = frameScene.children[1].height;
+        }
+    } else {
+        if (aspect_mode == "crop") {
+            gameProperties.height = gameProperties.preferred_width * wHeight / wWidth;
+            gameProperties.width = gameProperties.preferred_width;
+            gameScene.scale.x = wWidth / gameProperties.width;
+            gameScene.scale.y = gameScene.scale.x;
+        } else if (aspect_mode == "fit") {
+            scale = wHeight / gameProperties.preferred_height;
+            gameScene.scale.x = scale;
+            gameScene.scale.y = scale;
+
+            frameScene.children[1].width = (wWidth - gameProperties.preferred_width * scale) / 2;
+            frameScene.children[1].height = wHeight;
+            frameScene.children[2].x = wWidth - frameScene.children[1].width;
+            frameScene.children[2].y = 0;
+            frameScene.children[2].width = frameScene.children[1].width;
+            frameScene.children[2].height = frameScene.children[1].height;
+        }
+    }
+    if (aspect_mode == "crop") {
+        gameScene.x = 0;
+        gameScene.y = 0;
+        frameScene.children[1].visible = false;
+        frameScene.children[2].visible = false;
+    } else if (aspect_mode == "fit") {
+        frameScene.children[1].visible = true;
+        frameScene.children[2].visible = true;
+        gameProperties.width = gameProperties.preferred_width;
+        gameProperties.height = gameProperties.preferred_height;
+        gameScene.x = wWidth / 2 - gameProperties.preferred_width * scale / 2;
+        gameScene.y = wHeight / 2 - gameProperties.preferred_height * scale / 2;
+    } else if (aspect_mode == "stretch") {
+        gameProperties.width = gameProperties.preferred_width;
         gameProperties.height = gameProperties.preferred_height;
         gameScene.scale.x = wWidth / gameProperties.width;
-        gameScene.scale.y = gameScene.scale.x;
-        */
-        //gameProperties.frame_height = gameProperties.preferred_width * wHeight / wWidth;
-        //gameProperties.frame_width = gameProperties.preferred_width;
-        scale = wWidth / gameProperties.preferred_width;
-        gameScene.scale.x = scale;
-        gameScene.scale.y = scale;
-
-        frameScene.children[1].width = wWidth;
-        frameScene.children[1].height = (wHeight - gameProperties.preferred_height * scale) / 2;
-        frameScene.children[2].x = 0;
-        frameScene.children[2].y = wHeight - frameScene.children[1].height;
-        frameScene.children[2].width = frameScene.children[1].width;
-        frameScene.children[2].height = frameScene.children[1].height;
-    } else {
-        /*
-        gameProperties.height = gameProperties.preferred_width * wHeight / wWidth;
-        gameProperties.width = gameProperties.preferred_width;
-        gameScene.scale.x = wWidth / gameProperties.width;
-        gameScene.scale.y = gameScene.scale.x;
-        */
-        //gameProperties.frame_width = gameProperties.preferred_height * wWidth / wHeight;
-        //gameProperties.frame_height = gameProperties.preferred_height;
-        scale = wHeight / gameProperties.preferred_height;
-        gameScene.scale.x = scale;
-        gameScene.scale.y = scale;
-
-        frameScene.children[1].width = (wWidth - gameProperties.preferred_width * scale) / 2;
-        frameScene.children[1].height = wHeight;
-        frameScene.children[2].x = wWidth - frameScene.children[1].width;
-        frameScene.children[2].y = 0;
-        frameScene.children[2].width = frameScene.children[1].width;
-        frameScene.children[2].height = frameScene.children[1].height;
+        gameScene.scale.y = wHeight / gameProperties.height;
+        gameScene.x = 0;
+        gameScene.y = 0;
+        frameScene.children[1].visible = false;
+        frameScene.children[2].visible = false;
     }
-    gameProperties.width = gameProperties.preferred_width;
-    gameProperties.height = gameProperties.preferred_height;
-    gameScene.x = wWidth / 2 - gameProperties.preferred_width * scale / 2;
-    gameScene.y = wHeight / 2 - gameProperties.preferred_height * scale / 2;
-    //frameScene.children[1].visible = false;
-    //frameScene.children[2].visible = false;
+    for (var i = 0; i < universalPopup.length; i++) {
+        universalPopup[i].obj.x = gameProperties.width / 2;
+        universalPopup[i].obj.y = gameProperties.height / 2;
+    }
     if (sceneResizeHook != null) sceneResizeHook();
 }
 /*

@@ -332,7 +332,10 @@ function levelResize() {
     title_overlay.children[2].x = gameProperties.width / 2;
     title_overlay.children[2].y = menuCenter + 12;
 
-    title_overlay.children[3].y = gameProperties.height - 10;
+    title_overlay.children[3].x = gameProperties.width / 2;
+    title_overlay.children[3].y = menuCenter + 36;
+
+    title_overlay.children[4].y = gameProperties.height - 10;
 }
 /*
 function levelResize() {

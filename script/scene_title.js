@@ -115,41 +115,40 @@ function showConfig() {
     var colWidth = 100;
 
     var o;
-    o = createText("Fullscreen", halfWidth, halfHeight - lineHeight*4);
+    o = createText("Fullscreen", 0, -lineHeight*4);
     //o.font.size = 16;
     o.font.tint = "0x000000";
     box.addChild(o);
 
-    o = createText("fit", halfWidth - colWidth, halfHeight - lineHeight*3);
+    o = createText("fit", -colWidth, -lineHeight*3, () => aspectMode("fit"), play_credits);
     o.font.size = 16;
     box.addChild(o);
 
-    o = createText("crop", halfWidth, halfHeight - lineHeight*3);
+    o = createText("crop", 0, -lineHeight*3, () => aspectMode("crop"), play_credits);
     o.font.size = 16;
     box.addChild(o);
 
-    o = createText("stretch", halfWidth + colWidth, halfHeight - lineHeight*3);
+    o = createText("stretch", colWidth, -lineHeight*3, () => aspectMode("stretch"), play_credits);
     o.font.size = 16;
     box.addChild(o);
 
-    o = createText("Music", halfWidth, halfHeight - lineHeight*1);
+    o = createText("Music", 0, -lineHeight*1);
     //o.font.size = 16;
     o.font.tint = "0x000000";
     box.addChild(o);
 
-    o = createBar(controls.music, halfWidth - 100, halfHeight - lineHeight*0 - lineHeight / 2, 200, lineHeight);
+    o = createBar(controls.music, -100, -lineHeight*0 - lineHeight / 2, 200, lineHeight);
     box.addChild(o);
 
-    o = createText("Sound Effects", halfWidth, halfHeight + lineHeight*2);
+    o = createText("Sound Effects", 0, lineHeight*2);
     //o.font.size = 16;
     o.font.tint = "0x000000";
     box.addChild(o);
 
-    o = createBar(controls.sfx, halfWidth - 100, halfHeight + lineHeight*3 - lineHeight / 2, 200, lineHeight);
+    o = createBar(controls.sfx, -100, lineHeight*3 - lineHeight / 2, 200, lineHeight);
     box.addChild(o);
 
-    o = createText("Okay", gameProperties.width / 2 + 150,
-        gameProperties.height / 2 + 90, closePopup, play_credits);
+    o = createText("Okay", 140, 90, closePopup, play_credits);
     box.addChild(o);
 }
 
