@@ -26,12 +26,57 @@ var fontList = [
     //["Pixellari", "font/pixellari.fnt"]
 ]
 
+var controls = {
+    music: {
+        val: 1,
+        callback() {
+            for (var i = 0; i < soundList.length; i++) {
+                if (soundList[i][0].substring(0, 3) == "bgm") {
+                    PIXI.sound.volume(soundList[i][0], this.val);
+                }
+            }
+            saveData("music_volume", this.val);
+        },
+        setVolume(vol) {
+            this.val = vol;
+            for (var i = 0; i < soundList.length; i++) {
+                if (soundList[i][0].substring(0, 3) == "bgm") {
+                    PIXI.sound.volume(soundList[i][0], this.val);
+                }
+            }
+        }
+    },
+    sfx: {
+        val: 1,
+        callback() {
+            for (var i = 0; i < soundList.length; i++) {
+                if (soundList[i][0].substring(0, 3) == "sfx") {
+                    PIXI.sound.volume(soundList[i][0], this.val);
+                }
+            }
+            PIXI.sound.play('sfx_slash');
+            saveData("sfx_volume", this.val);
+        },
+        setVolume(vol) {
+            this.val = vol;
+            for (var i = 0; i < soundList.length; i++) {
+                if (soundList[i][0].substring(0, 3) == "sfx") {
+                    PIXI.sound.volume(soundList[i][0], this.val);
+                }
+            }
+        }
+    }
+};
+
 var spriteAtlas, tileAtlas, logoAtlas, parchmentAtlas;
 function initialize() {
     spriteAtlas = PIXI.loader.resources["img/sprites.json"].textures;
     tileAtlas = PIXI.loader.resources["img/tiles.json"].textures;
     logoAtlas = PIXI.loader.resources["img/logo.json"].textures;
     parchmentAtlas = PIXI.loader.resources["img/parchment.json"].textures;
+
+    controls.music.setVolume(loadData("music_volume", 1));
+    controls.sfx.setVolume(loadData("sfx_volume", 1));
 
     //initialize_menu();
     initialize_level();

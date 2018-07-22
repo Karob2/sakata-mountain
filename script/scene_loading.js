@@ -1,3 +1,5 @@
+"use strict"
+
 var loadingScene;
 
 function initialize_loadingscene() {

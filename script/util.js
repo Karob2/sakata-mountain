@@ -1,3 +1,5 @@
+"use strict"
+
 function playMusic(mtitle) {
     stopMusic();
     PIXI.sound.play(mtitle, {loop:true});
@@ -28,6 +30,66 @@ function createText (text, x, y, buttonCall, stateCheck) {
         message.clickAction = buttonCall;
     }
     return message;
+}
+
+function createBar (control, x, y, width, height) {
+    var bar = new PIXI.Container();
+    var o;
+
+    o = new PIXI.Graphics();
+    o.beginFill(0x000000);
+    o.drawRect(0, 0, width, 1);
+    o.drawRect(0, height - 1, width, 1);
+    o.drawRect(0, 0, 1, height);
+    o.drawRect(width - 1, 0, 1, height);
+    o.endFill();
+    o.x = x;
+    o.y = y;
+    bar.addChild(o);
+
+    o.maxWidth = width - 4;
+    o.control = control;
+    o.hitArea = new PIXI.Rectangle(2, 2, width - 4, height - 4);
+    o.interactive = true;
+    o.buttonMode = true;
+    o.on('pointerdown', bar_down);
+
+    o = new PIXI.Graphics();
+    o.beginFill(0x000000);
+    o.drawRect(0, 0, 1, 1);
+    o.endFill();
+    o.x = x + 2;
+    o.y = y + 2;
+    o.width = (width - 4) * 0.95;
+    o.height = height - 4;
+    bar.addChild(o);
+
+    o.width = (width - 4) * 0.9 * control.val + (width - 4) * 0.05;
+
+    o = new PIXI.Graphics();
+    o.beginFill(0xffffff);
+    o.drawRect(0, 0, 1, height - 4);
+    o.endFill();
+    o.x = x + 2 + (width - 4) * 0.05;
+    o.y = y + 2;
+    bar.addChild(o);
+
+    o = new PIXI.Graphics();
+    o.beginFill(0xffffff);
+    o.drawRect(0, 0, 1, height - 4);
+    o.endFill();
+    o.x = x + 2 + (width - 4) * 0.95;
+    o.y = y + 2;
+    bar.addChild(o);
+
+    return bar;
+}
+function bar_down(e) {
+    var clickPos = e.data.getLocalPosition(this);
+    this.parent.children[1].width = Math.min(Math.max(clickPos.x, this.maxWidth * 0.05), this.maxWidth * 0.95);
+    var adjust = (clickPos.x / this.maxWidth) / 0.9 - 0.05 / 0.9;
+    this.control.val = Math.min(Math.max(adjust, 0), 1);
+    this.control.callback();
 }
 
 function menu_over() {
@@ -113,5 +175,22 @@ function closePopup() {
 function closeAllPopups() {
     for (var i = universalPopup.length - 1; i >= 0; i--) {
         closePopup(i);
+    }
+}
+
+function saveData(key, val) {
+    if (typeof(Storage) !== "undefined") {
+        localStorage.setItem(key, val);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function loadData(key, def) {
+    if (typeof(Storage) !== "undefined") {
+        return localStorage.getItem(key);
+    } else {
+        return def;
     }
 }

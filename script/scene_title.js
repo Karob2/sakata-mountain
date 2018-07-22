@@ -1,3 +1,5 @@
+"use strict"
+
 var title_overlay;
 var logo;
 function initialize_menu() {
@@ -12,24 +14,25 @@ function initialize_menu() {
 
     var logoBottom = logo.y + 115;
     var menuCenter = (gameProperties.height + logoBottom) / 2;
-    message = createText("Start", gameProperties.width / 2,
+    var o;
+    o = createText("Start", gameProperties.width / 2,
         menuCenter - 12, startLevel, play_title);
-    title_overlay.addChild(message);
-    message = createText("Config", gameProperties.width / 2,
-        menuCenter + 12, startLevel, play_title);
-    title_overlay.addChild(message);
-    message = createText("Credits", gameProperties.width / 2,
+    title_overlay.addChild(o);
+    o = createText("Config", gameProperties.width / 2,
+        menuCenter + 12, showConfig, play_title);
+    title_overlay.addChild(o);
+    o = createText("Credits", gameProperties.width / 2,
         menuCenter + 36, showCredits, play_title);
-    title_overlay.addChild(message);
+    title_overlay.addChild(o);
 
-    message = createText(
+    o = createText(
         "v0.01",
         10,
         gameProperties.height - 10
     );
-    message.font.size = 16;
-    message.anchor.set(0, 1);
-    title_overlay.addChild(message);
+    o.font.size = 16;
+    o.anchor.set(0, 1);
+    title_overlay.addChild(o);
 }
 
 var elapsed = 0;
@@ -104,16 +107,64 @@ function startLevel() {
     //state = play;
 }
 
-function showCredits() {
-    var box = createPopup(levelScene, play_credits, 32, 32, gameProperties.width - 64, gameProperties.height - 64);
-    message = createText("Sakata Mountain by Karob", 50,
-        50, closePopup, play_credits);
-    message.anchor.set(0, 0);
-    message.font.size = 16;
-    box.addChild(message);
-    message = createText("Okay", gameProperties.width / 2 + 150,
+function showConfig() {
+    var box = createPopup(levelScene, play_credits); //, 32, 32, gameProperties.width - 64, gameProperties.height - 64);
+    var halfWidth = gameProperties.width / 2;
+    var halfHeight = gameProperties.height / 2;
+    var lineHeight = 20;
+    var colWidth = 100;
+
+    var o;
+    o = createText("Fullscreen", halfWidth, halfHeight - lineHeight*4);
+    //o.font.size = 16;
+    o.font.tint = "0x000000";
+    box.addChild(o);
+
+    o = createText("fit", halfWidth - colWidth, halfHeight - lineHeight*3);
+    o.font.size = 16;
+    box.addChild(o);
+
+    o = createText("crop", halfWidth, halfHeight - lineHeight*3);
+    o.font.size = 16;
+    box.addChild(o);
+
+    o = createText("stretch", halfWidth + colWidth, halfHeight - lineHeight*3);
+    o.font.size = 16;
+    box.addChild(o);
+
+    o = createText("Music", halfWidth, halfHeight - lineHeight*1);
+    //o.font.size = 16;
+    o.font.tint = "0x000000";
+    box.addChild(o);
+
+    o = createBar(controls.music, halfWidth - 100, halfHeight - lineHeight*0 - lineHeight / 2, 200, lineHeight);
+    box.addChild(o);
+
+    o = createText("Sound Effects", halfWidth, halfHeight + lineHeight*2);
+    //o.font.size = 16;
+    o.font.tint = "0x000000";
+    box.addChild(o);
+
+    o = createBar(controls.sfx, halfWidth - 100, halfHeight + lineHeight*3 - lineHeight / 2, 200, lineHeight);
+    box.addChild(o);
+
+    o = createText("Okay", gameProperties.width / 2 + 150,
         gameProperties.height / 2 + 90, closePopup, play_credits);
-    box.addChild(message);
+    box.addChild(o);
+}
+
+function showCredits() {
+    var box = createPopup(levelScene, play_credits); //, 32, 32, gameProperties.width - 64, gameProperties.height - 64);
+    var o;
+    o = createText("Sakata Mountain by Karob", 120,
+        100);
+    o.anchor.set(0, 0);
+    o.font.size = 16;
+    o.font.tint = "0x000000";
+    box.addChild(o);
+    o = createText("Okay", gameProperties.width / 2 + 150,
+        gameProperties.height / 2 + 90, closePopup, play_credits);
+    box.addChild(o);
 }
 
 function play_credits() {
