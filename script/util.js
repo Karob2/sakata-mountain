@@ -193,6 +193,7 @@ function closeAllPopups() {
 }
 
 function saveData(key, val) {
+    /*
     if (typeof(Storage) !== "undefined") {
         try {
             localStorage.setItem("karob:sakata-mountain-" + key, val);
@@ -204,9 +205,12 @@ function saveData(key, val) {
     } else {
         return false;
     }
+    */
+    setCookie(key, val, 64); //expire after two months
 }
 
 function loadData(key, def) {
+    /*
     if (typeof(Storage) !== "undefined") {
         var val = localStorage.getItem("karob:sakata-mountain-" + key);
         if (val == null) return def;
@@ -214,4 +218,31 @@ function loadData(key, def) {
     } else {
         return def;
     }
+    */
+    var val = getCookie(key);
+    if (val == null) return def;
+    else return val;
+}
+
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires;
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return null;
 }

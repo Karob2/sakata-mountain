@@ -88,8 +88,8 @@ function initialize() {
     logoAtlas = PIXI.loader.resources["img/logo.json"].textures;
     parchmentAtlas = PIXI.loader.resources["img/parchment.json"].textures;
 
-    controls.music.setVolume(loadData("music_volume", 1));
-    controls.sfx.setVolume(loadData("sfx_volume", 1));
+    controls.music.setVolume(loadData("music_volume", 0.75));
+    controls.sfx.setVolume(loadData("sfx_volume", 0.75));
 
     //initialize_menu();
     initialize_level();
