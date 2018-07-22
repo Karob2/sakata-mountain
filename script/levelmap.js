@@ -29,7 +29,7 @@ var LMC = [
     [ 2,  2,  2,  2,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 17,  2,  2,  2,  2,  2,  0,  0,  1,  0,  0,  0,  0,  0,  0,  1,  0,  0, 14,  1,  0,  0,  1, 14,  1,  0,  0,  0,  1,  0,  0,  0, 18,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  2,  2,  2,  2,  2],
     [ 2,  2,  2,  2,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  4,  2,  0,  0,  0,  0,  2,  2,  2,  2,  2,  0,  0,  1,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  1,  0,  0,  1,  0,  1,  0,  0,  0,  1,  0,  4,  2,  2,  2,  5,  0,  0,  0,  0,  0,  0,  0, 14,  2,  2,  5,  0,  0,  0, 17,  0,  0,  0,  4,  2,  0,  0,  0,  0,  0,  2,  2,  2,  2],
     [ 2,  2,  2,  2,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 17,  0,  0,  0,  4,  2,  5,  0, 18,  4,  2,  2,  2,  0,  0,  0,  2,  2,  2,  2,  2,  0,  0,  1, 14,  4,  2,  2,  2,  2, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,  1,  2,  2,  2,  2,  2,  2,  2,  2,  5,  0,  0,  0,  0, 14,  2,  2,  2,  5,  0, 17,  0, 17,  0,  4,  2,  2,  0,  0,  0,  0,  0,  2,  2,  2,  2],
-    [ 2,  2,  2,  2,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  4,  2,  2,  2,  2,  2,  2,  2,  2,  2, 12, 12, 12,  2,  2,  2,  2,  2,  0, 14,  1,  0,  2,  2,  2,  2,  2,  1,  0,  0,  0,  1,  0,  0,  1, 14,  1,  0,  0,  0,  1,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  5,  0,  0,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  0,  0,  0,  0,  0,  0,  2,  2,  2,  2],
+    [ 2,  2,  2,  2,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  4,  2,  2,  2,  2,  2,  2,  2,  2,  2,108,108,108,  2,  2,  2,  2,  2,  0, 14,  1,  0,  2,  2,  2,  2,  2,  1,  0,  0,  0,  1,  0,  0,  1, 14,  1,  0,  0,  0,  1,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  5,  0,  0,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  0,  0,  0,  0,  0,  0,  2,  2,  2,  2],
     [ 2,  2,  2,  2,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  4,  2,  2,  2,  2,  2,  2,  2,  2,  0,  0,  0,  0,  0,  2,  2,  2,  2,  2,  0,  0,  1,  0,  0,  0,  2,  2,  2,  1,  0,  0,  0,  1,  0, 14,  1,  0,  1, 14,  0,  0,  1,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  0,  0,  0,  0,  0,  0,  2,  2,  2,  2],
     [ 2,  2,  2,  2,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  4,  2,  2,  2,  2,  2,  2,  2,  2,  0,  0,  0, 18,  0,  4,  2,  2,  2,  2,  2, 12,  0,  1,  0,  0,  4,  2,  2,  2,  1,  0,  0,  0,  1,  0,  0,  1, 14,  1,  0,  0,  0,  1,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  0,  0,  0,  0,  0,  0,  2,  2,  2,  2],
     [ 2,  2,  2,  2,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  4,  2,  2,  2,  2,  2,  2,  2,  0,  0,  0,  4,  2,  2,  2,  2,  2,  2,  2,  2,  2, 12,  0,  1, 14,  0,  2,  2,  2,  2,  1, 17,  0, 14,  1, 14,  0,  1, 14,  1, 14,  0,  0,  1,  0,  0,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  0,  0,  0,  0,  0,  0,  0,  0,  0,  2,  2,  2],
@@ -84,7 +84,9 @@ function importLevelMap() {
                 }
             }
             if (n == tileType.index.length) {
-                if (filterList[LMC[j][i]] == "fairy") {
+                if (LMC[j][i] >= 100) {
+                    levelMapRow.push(tileType.barrier.id);
+                } else if (filterList[LMC[j][i]] == "fairy") {
                     levelMapRow.push(tileType.air.id);
                     o = new PIXI.Sprite(spriteAtlas["fairy"]);
                     o.anchor.set(0.5, 0.5);
@@ -155,13 +157,16 @@ function importLevelMap() {
             if (levelMap[i][j] == tileType.air.id && levelMap[i][j + 1] == tileType.crate.id) {
                 levelMap[i][j] = tileType.crate_top.id;
             }
+            if (levelMap[i][j] == tileType.air.id && levelMap[i][j + 1] == tileType.barrier.id) {
+                levelMap[i][j] = tileType.barrier_top.id;
+            }
             if (levelMap[i][j] == tileType.wall.id && levelMap[i][j + 1] != tileType.wall.id) {
                 var t1, t2;
                 if (i > 0) t1 = levelMap[i - 1][j];
                 else t1 = tileType.wall.id;
                 if (i < levelProperties.gridWidth - 1) t2 = levelMap[i + 1][j];
                 else t2 = tileType.wall.id;
-
+/*
                 if (t1 == tileType.wall.id || t1 == tileType.wall_grass.id || t1 == tileType.ramp_l.id || t1 == tileType.wall_bottom_l.id) {
                     if (t2 == tileType.wall.id || t2 == tileType.wall_grass.id || t2 == tileType.ramp_r.id || t2 == tileType.wall_bottom_r.id) {
                     } else {
@@ -169,6 +174,17 @@ function importLevelMap() {
                     }
                 } else {
                     if (t2 == tileType.wall.id || t2 == tileType.wall_grass.id || t2 == tileType.ramp_r.id || t2 == tileType.wall_bottom_r.id) {
+                        levelMap[i][j] = tileType.wall_bottom_l.id;
+                    }
+                }
+*/
+                if (tileType.index[t1].block && t1 != tileType.ramp_r.id) {
+                    if (tileType.index[t2].block && t2 != tileType.ramp_l.id) {
+                    } else {
+                        levelMap[i][j] = tileType.wall_bottom_r.id;
+                    }
+                } else {
+                    if (tileType.index[t2].block && t2 != tileType.ramp_l.id) {
                         levelMap[i][j] = tileType.wall_bottom_l.id;
                     }
                 }

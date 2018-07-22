@@ -120,6 +120,22 @@
             "sourceSize": {"w":64, "h":64},
             "pivot": {"x":0.5, "y":0.5}
         },
+        "barrier": {
+            "frame": {"x":1, "y":265, "w":64, "h":64},
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {"x":0, "y":0, "w":64, "h":64},
+            "sourceSize": {"w":64, "h":64},
+            "pivot": {"x":0.5, "y":0.5}
+        },
+        "barrier_top": {
+            "frame": {"x":67, "y":265, "w":64, "h":64},
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {"x":0, "y":0, "w":64, "h":64},
+            "sourceSize": {"w":64, "h":64},
+            "pivot": {"x":0.5, "y":0.5}
+        },
         "leaf": {
             "frame": {"x":133, "y":199, "w":64, "h":64},
             "rotated": false,
@@ -164,7 +180,7 @@
     "meta": {
         "image": "tiles.png",
         "format": "RGBA8888",
-        "size": {"w":264,"h":330},
+        "size": {"w":330,"h":330},
         "scale": "1"
     }
 }

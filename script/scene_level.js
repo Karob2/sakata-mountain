@@ -74,9 +74,11 @@ function initialize_level() {
     tileType.crate = {coll: 2, name: "crate", block: true};
     tileType.crate_top = {coll: 0, name: "crate_top"};
     tileType.leaf = {coll: 3, name: "leaf"};
-    tileType.wall_bottom_l = {coll: 1, name: "wall_bottom_l"};
-    tileType.wall_bottom_r = {coll: 1, name: "wall_bottom_r"};
+    tileType.wall_bottom_l = {coll: 1, name: "wall_bottom_l", block: true};
+    tileType.wall_bottom_r = {coll: 1, name: "wall_bottom_r", block: true};
     tileType.hard_air = {coll: 0, name: "hard_air"};
+    tileType.barrier = {coll: 1, name: "barrier", block: true};
+    tileType.barrier_top = {coll: 0, name: "barrier_top"};
     //tileType.checkpoint_active = {coll: 0, name: "checkpoint_active"};
     var tileKeys = Object.keys(tileType);
     tileType.index = [];
