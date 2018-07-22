@@ -25,6 +25,9 @@ var keys = {
     d: {
         bindings: [59, 86, 49]
     },
+    respawn: { //r
+        bindings: [82]
+    },
     menu: { //escape, p
         bindings: [27, 80]
     },

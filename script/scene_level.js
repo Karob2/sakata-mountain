@@ -139,7 +139,8 @@ function initialize_level() {
     player.hasJumped = false;
     player.hasSlashed = true;
     player.invuln = 0;
-    //player.shake = 0;
+    player.shake = 0;
+    player.respawnTimer = 0;
 
     // DEBUG:
     //player.px = levelProperties.width - levelProperties.grid * 11.5;
@@ -463,6 +464,24 @@ function play(delta) {
         showPause();
     }
 
+    if (keys.respawn.held) {
+        if (keys.respawn.toggled) {
+            keys.respawn.toggled = false;
+            player.respawnTimer = 100;
+        }
+        player.respawnTimer--;
+        if (player.respawnTimer > 0) {
+            player.shake = (100 - player.respawnTimer) / 2;
+        }
+        if (player.respawnTimer == 0) {
+            playerCheckpoint();
+            PIXI.sound.play('sfx_respawn');
+            fullHealth();
+            playerInvuln();
+            player.shake = 0;
+        }
+    }
+
     // Move Player:
 
     player.vy += 0.5 * delta
@@ -528,13 +547,16 @@ function play(delta) {
 
     player.x = player.px;
     player.y = player.py;
-    /*
+
     if (player.shake > 0) {
+        /*
         player.x += Math.floor(Math.sin(player.shake) * player.shake / 10);
         player.y += Math.floor(Math.cos(player.shake) * player.shake / 10);
         player.shake -= delta;
+        */
+        player.x += Math.floor(Math.sin(player.shake) * 2);
+        //player.y += Math.floor(Math.cos(player.shake) * 1);
     }
-    */
 
     player.cx = player.px;
     player.cy = player.py - levelProperties.grid / 2;
