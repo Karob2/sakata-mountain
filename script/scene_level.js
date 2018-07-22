@@ -572,7 +572,7 @@ function play(delta) {
     if (!keys.a.held) player.hasSlashed = false;
     if (!keys.b.held) player.hasJumped = false;
 
-    if (!player.hasJumped && grounded && keys.b.held && player.vy >= -1) {
+    if (!player.hasJumped && keys.b.held && (grounded && player.vy >= -1 || godMode && !keys.down.held)) {
         player.vy = -10;
         player.hasJumped = true;
     }
@@ -1297,11 +1297,11 @@ function loseHealth(vx, vy) {
         player.vy = vy;
     }
     */
-    if (player.invuln >= 1) return false;
+    if (player.invuln >= 1 || godMode) return false;
     player.vx = vx;
     player.vy = vy;
     if (health.lives <= 0 || player.cx >= 5632 - 64 && player.cy > 1088) {
-        if (!godMode) playerCheckpoint();
+        playerCheckpoint();
         PIXI.sound.play('sfx_respawn');
         fullHealth();
         playerInvuln();
