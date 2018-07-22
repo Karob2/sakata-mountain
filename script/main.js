@@ -20,7 +20,8 @@ var soundList = [
     ["sfx_bullet2", "sfx/ender.wav"],
     ["sfx_bullet3", "sfx/mortar.wav"],
     ["sfx_pain", "sfx/hitcrit.wav"],
-    ["sfx_menu", "sfx/tri.wav"]
+    ["sfx_menu", "sfx/tri.wav"],
+    ["sfx_close", "sfx/close.wav"]
     ]
 var fontList = [
     //["Pixellari", "font/pixellari.fnt"]
@@ -70,6 +71,8 @@ var controls = {
 
 var aspect_mode;
 function aspectMode(mode) {
+    PIXI.sound.play('sfx_menu');
+
     //console.log(mode);
     //fit, crop, stretch
     aspect_mode = mode;

@@ -959,7 +959,7 @@ function play(delta) {
     if (player.cooldown > 35) {
         if (Math.abs(player.cx - hina.x) < 72 && Math.abs(player.cy - hina.y) < 62) {
             PIXI.sound.play('sfx_kill');
-            hina.visible = false;
+            //hina.visible = false;
             //start_stage("end");
             showResults();
         }

@@ -177,7 +177,9 @@ function createPopup(parent, newState, width, height) {//, x, y, width, height) 
     state = newState;
     return box;
 }
-function closePopup() {
+function closePopup(playSound) {
+    if (playSound) PIXI.sound.play('sfx_close');
+
     var o = universalPopup[universalPopup.length - 1];
     o.obj.parent.removeChild(o);
     o.obj.destroy();
@@ -186,7 +188,7 @@ function closePopup() {
 }
 function closeAllPopups() {
     for (var i = universalPopup.length - 1; i >= 0; i--) {
-        closePopup(i);
+        closePopup(false);
     }
 }
 

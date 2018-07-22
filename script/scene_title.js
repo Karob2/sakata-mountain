@@ -108,6 +108,8 @@ function startLevel() {
 }
 
 function showConfig() {
+    PIXI.sound.play('sfx_menu');
+
     var box = createPopup(levelScene, play_credits, gameProperties.preferred_width - 64, gameProperties.preferred_height - 64)//, 32, 32, gameProperties.width - 64, gameProperties.height - 64);
     var lineHeight = 20;
     var colWidth = 100;
@@ -148,12 +150,14 @@ function showConfig() {
 
     //o = createText("Okay", 140, 90, closePopup, play_credits);
     o = createText("Okay", 100 - 20,
-        (gameProperties.preferred_height - 64) / 2 - 20 - 8, closePopup, play_credits);
+        (gameProperties.preferred_height - 64) / 2 - 20 - 8, () => {closePopup(true)}, play_credits);
     //o.anchor.set(1, 1);
     box.addChild(o);
 }
 
 function showCredits() {
+    PIXI.sound.play('sfx_menu');
+
     var box = createPopup(levelScene, play_credits, gameProperties.preferred_width * 3 / 4, gameProperties.preferred_height - 64)//, 32, 32, gameProperties.width - 64, gameProperties.height - 64);
     var o;
 
@@ -164,13 +168,15 @@ function showCredits() {
     box.addChild(o);
 
     o = createText("Okay", 100 - 20,
-        (gameProperties.preferred_height - 64) / 2 - 20 - 8, closePopup, play_credits);
+        (gameProperties.preferred_height - 64) / 2 - 20 - 8, () => {closePopup(true)}, play_credits);
     //o.anchor.set(1, 1);
     box.addChild(o);
 }
 
 function showPause() {
     stopwatch.pause = Date.now();
+    PIXI.sound.pause('bgm_level');
+    PIXI.sound.pause('bgm_boss');
 
     var box = createPopup(levelScene, play_pause, gameProperties.preferred_width / 2, gameProperties.preferred_height * 3 / 5);
     var lineHeight = 20;
@@ -195,6 +201,8 @@ function showPause() {
     box.addChild(o);
 }
 function showRestart() {
+    PIXI.sound.play('sfx_menu');
+
     var box = createPopup(levelScene, play_pause, gameProperties.preferred_width * 3 / 5, gameProperties.preferred_height / 2);
     var lineHeight = 20;
     var colWidth = 100;
@@ -205,10 +213,10 @@ function showRestart() {
     o.font.tint = "0x000000";
     box.addChild(o);
 
-    o = createText("Yes", -colWidth / 2, lineHeight*1, () => closePopup(), play_pause);
+    o = createText("Yes", -colWidth / 2, lineHeight*1, () => restartGame(), play_pause);
     box.addChild(o);
 
-    o = createText("No", colWidth / 2, lineHeight*1, () => closePopup(), play_pause);
+    o = createText("No", colWidth / 2, lineHeight*1, () => closePopup(true), play_pause);
     box.addChild(o);
 }
 function unPause() {
@@ -216,7 +224,9 @@ function unPause() {
         stopwatch.start += Date.now() - stopwatch.pause;
         stopwatch.message.text = Math.floor((Date.now() - stopwatch.start) / 1000);
     }
-    closePopup();
+    PIXI.sound.resume('bgm_level');
+    PIXI.sound.resume('bgm_boss');
+    closePopup(true);
 }
 function play_pause() {
     if (keys.menu.held && keys.menu.toggled) {
@@ -224,10 +234,61 @@ function play_pause() {
         unPause();
     }
 }
+function restartGame() {
+    PIXI.sound.play('sfx_menu');
+    closeAllPopups();
+
+    player.textures = playerAnimations.idle;
+    player.px = levelProperties.grid * 1.5;
+    player.py = levelProperties.height - levelProperties.grid - 1;
+    player.vx = 0.5;
+    player.vy = 0;
+    player.cooldown = 0;
+    player.direction = 1;
+    player.hasJumped = false;
+    player.hasSlashed = true;
+    player.invuln = 0;
+
+    //hina.visible = true;
+    hina.cooldown = 0;
+    hina.chain = 0;
+    hinaballs.delta = 0;
+
+    for (var i = 0; i < bullets_1.length; i++) {
+        bullets_1[i].active = false;
+        bullets_1[i].sprite.visible = false;
+    }
+    for (var i = 0; i < bullets_2.length; i++) {
+        bullets_2[i].active = false;
+        bullets_2[i].sprite.visible = false;
+    }
+    slashFx.children[0].visible = false;
+    slashFx.children[1].visible = false;
+
+    waveTimer = 10;
+
+    lastCheckpoint.x = player.px;
+    lastCheckpoint.y = player.py;
+
+    health.lives = health.maxLives;
+    styleHealth();
+
+    killCounter.kills = 0;
+    killCounter.num.text = "0";
+
+    stopwatch.started = false;
+    stopwatch.start = Date.now();
+    stopwatch.message.text = "0";
+
+    gui_overlay.visible = false;
+
+    importLevelMap();
+    start_stage("title", 1);
+}
 
 function play_credits() {
     if (keys.menu.held && keys.menu.toggled) {
         keys.menu.toggled = false;
-        closePopup();
+        closePopup(true);
     }
 }
