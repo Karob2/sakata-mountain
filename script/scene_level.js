@@ -168,6 +168,7 @@ function initialize_level() {
         o.cooldown_1 = 0;
         o.cooldown_2 = 4;
         o.super = false;
+        o.verydead = false;
         fairies.addChild(o);
         o.heart = new PIXI.Sprite(spriteAtlas["heart_new"]);
         o.heart.anchor.set(0.5, 0.5);
@@ -725,6 +726,15 @@ function play(delta) {
     for (var n = 0; n < checkpoints.children.length; n++) {
         var cp = checkpoints.children[n];
         if (Math.abs(player.px - cp.x - levelProperties.grid / 2) < 48 && Math.abs(player.py - cp.y - levelProperties.grid / 2) < 80) {
+            if (!cp.active) {
+                for (var n = 0; n < fairies.children.length; n++) {
+                    var fairy = fairies.children[n];
+                    if (!fairy.visible) {
+                        fairy.verydead = true;
+                        continue;
+                    }
+                }
+            }
             var doSfx;
             if (health.lives == health.maxLives) {
                 doSfx = true;
@@ -767,7 +777,7 @@ function play(delta) {
                 fairy.visible = false;
                 fairy.heart.visible = false;
                 if (fairy.heart.new) {
-                    fairy.heart.new = false;
+                    //fairy.heart.new = false;
                     fairy.heart.texture = PIXI.utils.TextureCache["heart_old"];
                     fireBullet_2(fairy.heart.x, fairy.heart.y, 0, -1, "heart_new", 50);
                     killCounter.kills++;
@@ -1241,8 +1251,13 @@ function fullHealth() {
         health.children[n].visible = true;
     }
     styleHealth();
+    killCounter.kills = 0;
     for (var n = 0; n < fairies.children.length; n++) {
         var fairy = fairies.children[n];
+        if (fairy.verydead) {
+            killCounter.kills++;
+            continue;
+        }
         if (!fairy.visible) fairy.cooldown_1 = 0; //100;
         fairy.visible = true;
         //fairy.heart.visible = true;
@@ -1250,6 +1265,7 @@ function fullHealth() {
         fairy.cooldown_2 = 4;
         fairy.super = false;
     }
+    killCounter.num.text = killCounter.kills + "/" + fairies.children.length;
 }
 
 function loseHealth(vx, vy) {

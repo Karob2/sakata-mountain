@@ -138,6 +138,7 @@ function importLevelMap() {
                     o.cooldown_1 = 0;
                     o.cooldown_2 = 4;
                     o.super = false;
+                    o.verydead = false;
                     fairies.addChild(o);
                 } else if (filterList[LMC[j][i]] == "checkpoint") {
                     levelMapRow.push(tileType.hard_air.id);
