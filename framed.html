@@ -153,6 +153,25 @@ iframe {
         gf.player.py = gf.levelProperties.height - gf.levelProperties.grid - 1;
         setFocus();
     }
+    function nextCheckpoint(direction) {
+        var gf = document.getElementById("gameframe").contentWindow;
+        var cpdist, cpydist;
+        var cpdistMax = 9999999;
+        var cpnMax = -1;
+        for (var n = 0; n < gf.checkpoints.children.length; n++) {
+            cpdist = direction * (gf.checkpoints.children[n].x - gf.player.px) - gf.levelProperties.grid;
+            cpydist = direction * (gf.player.py - gf.checkpoints.children[n].y) - gf.levelProperties.grid;
+            if ((cpdist > 0 || cpydist > 0 && cpdist > -gf.levelProperties.grid * 2) && cpdist < cpdistMax) {
+                cpnMax = n;
+                cpdistMax = cpdist;
+            }
+        }
+        if (cpnMax != -1) {
+            gf.player.px = gf.checkpoints.children[cpnMax].x + gf.levelProperties.grid / 2;
+            gf.player.py = gf.checkpoints.children[cpnMax].y + gf.levelProperties.grid - 1;
+        }
+        setFocus();
+    }
     </script>
     <div id="wrapper">
         <iframe src="index.html" id="gameframe" class="f2x" scrolling="no" frameborder="0" style=""></iframe><br/>
@@ -161,10 +180,13 @@ iframe {
         <button onclick="makeFullScreen()">Fullscreen</button>
         <button onclick="killGame()">Stop Game</button>
         <button onclick="startGame()">Restart Game</button>
-        <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <button onclick="nextCheckpoint(-1)">Previous Checkpoint</button>
+        <button onclick="nextCheckpoint(1)">Next Checkpoint</button>
         <button onclick="bossFight()">Skip to Boss</button>
-        <button onclick="reloadMap()">Reload Map</button>
         <button onclick="godmode()">Invincible</button>
+        <br>
+        <button onclick="reloadMap()">Reload Map</button>
         <button onclick="muteMusic()">Stop Music</button>
         <button onclick="playEnv()">Play Crickets</button>
         <button onclick="stopEnv()">Stop Crickets</button>

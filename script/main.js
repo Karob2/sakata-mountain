@@ -29,10 +29,11 @@ var fontList = [
 
 var controls = {
     music: {
-        val: 1,
+        val: 0.75,
         callback() {
             for (var i = 0; i < soundList.length; i++) {
                 if (soundList[i][0].substring(0, 3) == "bgm") {
+                    PIXI.sound.resume(soundList[i][0]);
                     PIXI.sound.volume(soundList[i][0], this.val);
                 }
             }
@@ -48,7 +49,7 @@ var controls = {
         }
     },
     sfx: {
-        val: 1,
+        val: 0.75,
         callback() {
             for (var i = 0; i < soundList.length; i++) {
                 if (soundList[i][0].substring(0, 3) == "sfx") {

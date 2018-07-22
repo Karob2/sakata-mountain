@@ -6,7 +6,7 @@ var levelProperties;
 var levelScene;
 var camera;
 var objects;
-var player, fairies, bullets_1, bullets_2, waves, slashFx, checkpoints, health, hina, hinaballs;
+var player, fairies, bullets_1, bullets_2, waves, slashFx, checkpoints, barriers, health, hina, hinaballs;
 var walls;
 var levelMap, graphicMap;
 var playerAnimations;
@@ -115,6 +115,8 @@ function initialize_level() {
 
     checkpoints = new PIXI.Container();
     objects.addChild(checkpoints);
+
+    barriers = [];
 
     //player = new PIXI.Sprite(spriteAtlas["frame 1"]);
     player = new PIXI.extras.AnimatedSprite(playerAnimations.idle);
@@ -770,6 +772,19 @@ function play(delta) {
                     fireBullet_2(fairy.heart.x, fairy.heart.y, 0, -1, "heart_new", 50);
                     killCounter.kills++;
                     killCounter.num.text = killCounter.kills + "/" + fairies.children.length;
+                    for (var i = 0; i < barriers.length; i++) {
+                        barriers[i].counter.text = barriers[i].strength - killCounter.kills;
+                        if (barriers[i].strength == killCounter.kills) {
+                            barriers[i].counter.visible = false;
+                            barriers[i].icon.visible = false;
+                            var tx = barriers[i].tileX;
+                            var ty = barriers[i].tileY;
+                            levelMap[tx][ty] = tileType.crate.id;
+                            if (ty > 0 && levelMap[tx][ty - 1] == tileType.barrier_top.id) {
+                                levelMap[tx][ty - 1] = tileType.crate_top.id;
+                            }
+                        }
+                    }
                 }
             }
         }
