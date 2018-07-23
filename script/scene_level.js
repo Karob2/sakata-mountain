@@ -1,6 +1,7 @@
 "use strict";
 
 var gui_overlay;
+var dialog = {};
 
 var levelProperties;
 var levelScene;
@@ -317,9 +318,36 @@ function initialize_level() {
     stopwatch.message = message;
     gui_overlay.addChild(message);
 
+    dialog.overlay = new PIXI.Container();
+    dialog.overlay.x = gameProperties.width / 2 - (gameProperties.preferred_width - 64) / 2;
+    dialog.overlay.y = gameProperties.height - 32 - 80;
+    levelScene.addChild(dialog.overlay);
+    o = new PIXI.Graphics();
+    o.beginFill(0xffffff);
+    o.drawRect(0, 0, gameProperties.preferred_width - 64, 80);
+    o.endFill();
+    o.beginFill(0x000000);
+    o.drawRect(1, 1, gameProperties.preferred_width - 64 - 2, 80 - 2);
+    o.endFill();
+    dialog.overlay.addChild(o);
+    o = new PIXI.extras.TilingSprite(spriteAtlas["player f1"], 78, 78);
+    o.x = 1;
+    o.y = 1;
+    o.tileScale.set(2);
+    o.tilePosition.set(-15, -15);
+    dialog.overlay.addChild(o);
+    o = createText("Lorem Ipsum is simply dummy text of the printing and typesettin g g g industry. Ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.", 88, 15);
+    o.font.size = 16;
+    o.font.tint = "0xffffff";
+    o.anchor.set(0);
+    o.maxWidth = gameProperties.preferred_width - 64 - 80 - 20;
+    dialog.overlay.addChild(o);
+    dialog.message = o;
+
     initialize_menu();
 
     gui_overlay.visible = false;
+    dialog.overlay.visible = false;
 
     importLevelMap();
 }
@@ -328,6 +356,7 @@ function levelResize() {
     killCounter.sprite.x = gameProperties.width - 32 - 10;
     killCounter.num.x = killCounter.sprite.x - 4;
     stopwatch.message.y = gameProperties.height - 30;
+
     logo.x = gameProperties.width / 2 - 294 / 2;
     logo.y = gameProperties.height / 4 - 115 / 2;
     var logoBottom = logo.y + 115;
@@ -342,6 +371,9 @@ function levelResize() {
     title_overlay.children[3].y = menuCenter + 36;
 
     title_overlay.children[4].y = gameProperties.height - 10;
+
+    dialog.overlay.x = gameProperties.width / 2 - (gameProperties.preferred_width - 64) / 2;
+    dialog.overlay.y = gameProperties.height - 32 - 80;
 }
 /*
 function levelResize() {
@@ -462,6 +494,13 @@ function play(delta) {
     if (keys.menu.held && keys.menu.toggled) {
         keys.menu.toggled = false;
         showPause();
+    }
+
+    if (dialog.overlay.visible) {
+        dialog.timer--;
+        if (dialog.timer <= 0) {
+            dialog.overlay.visible = false;
+        }
     }
 
     if (keys.respawn.held) {

@@ -103,6 +103,7 @@ function play_title(delta) {
 function startLevel() {
     PIXI.sound.play('sfx_menu');
     start_stage("level", 1);
+    startDialog();
     //substate = 1;
     //state = play;
 }
@@ -291,4 +292,10 @@ function play_credits() {
         keys.menu.toggled = false;
         closePopup(true);
     }
+}
+
+function startDialog() {
+    dialog.message.text = "Something is wrong on the mountain. What are those floating masses of darkness up ahead?";
+    dialog.overlay.visible = true;
+    dialog.timer = 400;
 }
