@@ -30,9 +30,11 @@ The gimmick of this game is that any enemy can be defeated from a single attack.
 - **Look up:** Up Arrow or W
 - **Look down:** Down Arrow or S
 - **Attack:** J, Z, or 4
-- **Jump:** K, X or 3
+- **Jump:** K, X, or 3
 - **Drop down:** Look down + Jump
+
 - **Respawn:** Hold R
+- **Text skip:** Semicolon, V, or 1
 - **Pause:** Escape or P
 
 # Credits

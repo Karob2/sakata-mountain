@@ -496,6 +496,7 @@ function play(delta) {
         showPause();
     }
 
+    if (keys.d.held && dialog.step == dialog.text.length) dialog.timer = 0.01;
     if (dialog.timer > 0) {
         ageDialog(delta);
     }
