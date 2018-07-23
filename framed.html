@@ -172,6 +172,12 @@ iframe {
         }
         setFocus();
     }
+    function openBarriers() {
+        var gf = document.getElementById("gameframe").contentWindow;
+        gf.killCounter.kills = 50;
+        gf.updateBarriers();
+        setFocus();
+    }
     </script>
     <div id="wrapper">
         <iframe src="index.html" id="gameframe" class="f2x" scrolling="no" frameborder="0" style=""></iframe><br/>
@@ -185,6 +191,7 @@ iframe {
         <button onclick="nextCheckpoint(1)">Next Checkpoint</button>
         <button onclick="bossFight()">Skip to Boss</button>
         <button onclick="godmode()">God Mode</button>
+        <button onclick="openBarriers()">Open Barriers</button>
         <br>
         <button onclick="reloadMap()">Reload Map</button>
         <button onclick="muteMusic()">Stop Music</button>

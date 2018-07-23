@@ -804,19 +804,7 @@ function play(delta) {
                     fireBullet_2(fairy.heart.x, fairy.heart.y, 0, -1, "heart_new", 50);
                     killCounter.kills++;
                     killCounter.num.text = killCounter.kills + "/" + fairies.children.length;
-                    for (var i = 0; i < barriers.length; i++) {
-                        barriers[i].counter.text = barriers[i].strength - killCounter.kills;
-                        if (barriers[i].strength == killCounter.kills) {
-                            barriers[i].counter.visible = false;
-                            barriers[i].icon.visible = false;
-                            var tx = barriers[i].tileX;
-                            var ty = barriers[i].tileY;
-                            levelMap[tx][ty] = tileType.crate.id;
-                            if (ty > 0 && levelMap[tx][ty - 1] == tileType.barrier_top.id) {
-                                levelMap[tx][ty - 1] = tileType.crate_top.id;
-                            }
-                        }
-                    }
+                    updateBarriers();
                 }
             }
         }
@@ -1288,6 +1276,32 @@ function fullHealth() {
         fairy.super = false;
     }
     killCounter.num.text = killCounter.kills + "/" + fairies.children.length;
+    updateBarriers();
+}
+
+function updateBarriers() {
+    for (var i = 0; i < barriers.length; i++) {
+        barriers[i].counter.text = barriers[i].strength - killCounter.kills;
+        if (barriers[i].strength <= killCounter.kills) {
+            barriers[i].counter.visible = false;
+            barriers[i].icon.visible = false;
+            var tx = barriers[i].tileX;
+            var ty = barriers[i].tileY;
+            levelMap[tx][ty] = tileType.crate.id;
+            if (ty > 0 && levelMap[tx][ty - 1] == tileType.barrier_top.id) {
+                levelMap[tx][ty - 1] = tileType.crate_top.id;
+            }
+        } else {
+            barriers[i].counter.visible = true;
+            barriers[i].icon.visible = true;
+            var tx = barriers[i].tileX;
+            var ty = barriers[i].tileY;
+            levelMap[tx][ty] = tileType.barrier.id;
+            if (ty > 0 && levelMap[tx][ty - 1] == tileType.crate_top.id) {
+                levelMap[tx][ty - 1] = tileType.barrier_top.id;
+            }
+        }
+    }
 }
 
 function loseHealth(vx, vy) {
