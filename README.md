@@ -12,9 +12,8 @@ This project is a mass of spaghetti code and bad algorithms thrown together for 
 
 # Game Instructions
 
-- Touch checkpoints to recover health and update your respawn location.
-- Avoid enemy projectiles.
-- Green "wind" projectiles can be destroyed with your melee attack.
+- Avoid enemy projectiles. (Green "wind" projectiles can be destroyed with your melee attack.)
+- Activate checkpoints along the way. (You are immune to damage while standing on checkpoints.)
 - The screen shows health (top-left), score (top-right), and time elapsed in seconds (bottom-left).
 - There are multiple endings depending on your score.
 
