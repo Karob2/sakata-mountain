@@ -316,6 +316,15 @@ var dlg_mtncalm = [
 var dlg_tunnel = [
     { message: "The kappa smuggle goods through this tunnel." }
 ]
+var dlg_relief = [
+    { message: "I'm glad that's over." }
+]
+var dlg_barrier = [
+    { message: "Whoever set up those barriers doesn't want anybody getting through.\nI don't know why, but these orbs dispel them." }
+]
+var dlg_junction = [
+    { message: "This is the sort of mess a kappa would leave behind." }
+]
 
 function delayedStartDialog(chain) {
     dialog.chain = chain;

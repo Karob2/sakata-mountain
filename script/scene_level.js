@@ -344,7 +344,7 @@ function initialize_level() {
     o.maxWidth = gameProperties.preferred_width - 128 - 80 - 20;
     dialog.overlay.addChild(o);
     dialog.message = o;
-    dialog.first = { kill: false, wind: false, climb: false, mtncalm: false, tunnel: false }
+    dialog.first = { kill: false, wind: false, climb: false, mtncalm: false, tunnel: false, relief: false, barrier: false, junction: false }
     dialog.firstKeys = Object.keys(dialog.first);
 
     initialize_menu();
@@ -529,6 +529,19 @@ function play(delta) {
         }
     }
 
+    if (player.cx >= 4288 && player.py <= 256) {
+        if (!dialog.first.relief) {
+            dialog.first.relief = true;
+            startDialog(dlg_relief);
+        }
+    }
+
+    if (player.cx >= 4288 && player.cx < 4544 && player.py >= 1088) {
+        if (!dialog.first.junction) {
+            dialog.first.junction = true;
+            startDialog(dlg_junction);
+        }
+    }
 
     // Move Player:
 
@@ -866,6 +879,12 @@ function play(delta) {
                 if (!dialog.first.kill) {
                     dialog.first.kill = true;
                     startDialog(dlg_firstkill);
+                }
+                if (killCounter.kills == 4) {
+                    if (!dialog.first.barrier) {
+                        dialog.first.barrier = true;
+                        startDialog(dlg_barrier);
+                    }
                 }
                 if (killCounter.kills == 36 && player.cx < 3520) {
                     if (!dialog.first.mtncalm) {
