@@ -103,7 +103,7 @@ function play_title(delta) {
 function startLevel() {
     PIXI.sound.play('sfx_menu');
     start_stage("level", 1);
-    startDialog();
+    startDialog(dlg_intro);
     //substate = 1;
     //state = play;
 }
@@ -294,8 +294,19 @@ function play_credits() {
     }
 }
 
-function startDialog() {
-    var message = "Something is wrong on the mountain. What are those floating masses of darkness up ahead?";
+var dlg_intro = [
+    { message: "I wanted to find some vegetables, but..." },
+    { message: "Something is wrong on the mountain. What are those floating masses of darkness up ahead?" }
+]
+
+function startDialog(chain) {
+    dialog.chain = chain;
+    dialog.chainstep = 0;
+    dialog.timer = 100;
+    showDialog();
+}
+function showDialog() {
+    var message = dialog.chain[dialog.chainstep].message;
     dialog.text = message.split(" ");
     dialog.textBuild = "";
     dialog.step = 0;
@@ -308,9 +319,7 @@ function startDialog() {
     }
     */
     //dialog.overlay.visible = true;
-    dialog.timer = 100;
 }
-
 function ageDialog(delta) {
     dialog.timer -= delta;
     if (dialog.timer <= 0) {
@@ -323,7 +332,13 @@ function ageDialog(delta) {
             if (dialog.step == dialog.text.length) dialog.timer = 400;
             dialog.overlay.visible = true;
         } else {
-            dialog.overlay.visible = false;
+            if (dialog.chainstep < dialog.chain.length - 1) {
+                dialog.chainstep++;
+                dialog.timer = 10;
+                showDialog();
+            } else {
+                dialog.overlay.visible = false;
+            }
         }
     }
 }
