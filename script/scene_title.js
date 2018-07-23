@@ -103,7 +103,7 @@ function play_title(delta) {
 function startLevel() {
     PIXI.sound.play('sfx_menu');
     start_stage("level", 1);
-    startDialog(dlg_intro);
+    delayedStartDialog(dlg_intro);
     //substate = 1;
     //state = play;
 }
@@ -281,7 +281,9 @@ function restartGame() {
     stopwatch.start = Date.now();
     stopwatch.message.text = "0";
 
+    dialog.firstkill = false;
     gui_overlay.visible = false;
+    dialog.overlay.visible = false;
 
     importLevelMap();
     start_stage("title", 1);
@@ -295,14 +297,24 @@ function play_credits() {
 }
 
 var dlg_intro = [
-    { message: "I wanted to find some vegetables, but..." },
-    { message: "Something is wrong on the mountain. What are those floating masses of darkness up ahead?" }
+    { message: "I wanted to gather some vegetables, but something is wrong on the mountain." }
 ]
 
+var dlg_firstkill = [
+    { message: "Whatever that was, it dropped a small orb.\nIt feels cold to the touch and distinctly unlucky." }
+]
+
+function delayedStartDialog(chain) {
+    dialog.chain = chain;
+    dialog.chainstep = 0;
+    dialog.timer = 50;
+    showDialog();
+}
 function startDialog(chain) {
     dialog.chain = chain;
     dialog.chainstep = 0;
-    dialog.timer = 100;
+    dialog.timer = 1;
+    dialog.overlay.visible = true;
     showDialog();
 }
 function showDialog() {

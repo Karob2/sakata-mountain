@@ -343,6 +343,7 @@ function initialize_level() {
     o.maxWidth = gameProperties.preferred_width - 64 - 80 - 20;
     dialog.overlay.addChild(o);
     dialog.message = o;
+    dialog.firstkill = false;
 
     initialize_menu();
 
@@ -851,6 +852,10 @@ function play(delta) {
                     killCounter.kills++;
                     killCounter.num.text = killCounter.kills + "/" + fairies.children.length;
                     updateBarriers();
+                }
+                if (!dialog.firstkill) {
+                    dialog.firstkill = true;
+                    startDialog(dlg_firstkill);
                 }
             }
         }
