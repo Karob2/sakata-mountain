@@ -282,6 +282,7 @@ function restartGame() {
     stopwatch.message.text = "0";
 
     dialog.firstkill = false;
+    dialog.firstwind = false;
     gui_overlay.visible = false;
     dialog.overlay.visible = false;
 
@@ -302,6 +303,10 @@ var dlg_intro = [
 
 var dlg_firstkill = [
     { message: "Whatever that was, it dropped a small orb.\nIt feels cold to the touch and distinctly unlucky." }
+]
+
+var dlg_firstwind = [
+    { message: "This forest is usually quite serene, but something has agitated it." }
 ]
 
 function delayedStartDialog(chain) {

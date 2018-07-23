@@ -344,6 +344,7 @@ function initialize_level() {
     dialog.overlay.addChild(o);
     dialog.message = o;
     dialog.firstkill = false;
+    dialog.firstwind = false;
 
     initialize_menu();
 
@@ -1157,6 +1158,10 @@ function play(delta) {
     }
 
     if (player.cx >= 38 * levelProperties.grid && player.cx < 62 * levelProperties.grid) {
+        if (!dialog.firstwind) {
+            dialog.firstwind = true;
+            startDialog(dlg_firstwind);
+        }
         waveTimer -= delta;
         if (waveTimer < 1) {
             waveTimer = 100;
