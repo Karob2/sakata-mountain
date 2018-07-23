@@ -505,6 +505,10 @@ function play(delta) {
         if (!vhit) {
             ty += tddy;
             var cw = playerCheckWall(tx, ty);
+            if (player.vy > 0 && cw == 2 && (keys.down.held && keys.b.held)) {
+                // Fix to prevent autojumping after falling through a platform.
+                player.hasJumped = true;
+            }
             if (cw == 1 || player.vy > 0 && cw == 2 && !(keys.down.held && keys.b.held) || cw == 4 || cw == 5) {
                 ty -= tddy;
                 vhit = true;
