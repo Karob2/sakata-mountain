@@ -295,7 +295,35 @@ function play_credits() {
 }
 
 function startDialog() {
-    dialog.message.text = "Something is wrong on the mountain. What are those floating masses of darkness up ahead?";
-    dialog.overlay.visible = true;
-    dialog.timer = 400;
+    var message = "Something is wrong on the mountain. What are those floating masses of darkness up ahead?";
+    dialog.text = message.split(" ");
+    dialog.textBuild = "";
+    dialog.step = 0;
+    dialog.message.text = "";
+    /*
+    if (dialog.text.length > 0) {
+        dialog.message.text = dialog.text[0];
+    } else {
+        dialog.message.text = "";
+    }
+    */
+    //dialog.overlay.visible = true;
+    dialog.timer = 100;
+}
+
+function ageDialog(delta) {
+    dialog.timer -= delta;
+    if (dialog.timer <= 0) {
+        if (dialog.step < dialog.text.length) {
+            if (dialog.step > 0) dialog.textBuild += " ";
+            dialog.textBuild += dialog.text[dialog.step];
+            dialog.message.text = dialog.textBuild;
+            dialog.step++;
+            dialog.timer = 3;
+            if (dialog.step == dialog.text.length) dialog.timer = 400;
+            dialog.overlay.visible = true;
+        } else {
+            dialog.overlay.visible = false;
+        }
+    }
 }

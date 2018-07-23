@@ -496,11 +496,8 @@ function play(delta) {
         showPause();
     }
 
-    if (dialog.overlay.visible) {
-        dialog.timer--;
-        if (dialog.timer <= 0) {
-            dialog.overlay.visible = false;
-        }
+    if (dialog.timer > 0) {
+        ageDialog(delta);
     }
 
     if (keys.respawn.held) {
