@@ -232,6 +232,7 @@ function importLevelMap() {
             }
         }
     }
+    bossCheckpoint = checkpoints.children.length - 1;
 
     for (var i = 0; i < fairies.children.length; i++) {
         fairies.children[i].heart = new PIXI.Sprite(spriteAtlas["heart_new"]);

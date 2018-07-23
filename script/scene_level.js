@@ -14,6 +14,7 @@ var playerAnimations;
 var tileType;
 var waveTimer;
 var lastCheckpoint = {};
+var bossCheckpoint;
 // DEBUG:
 //var gx, gy;
 var godMode = false;
@@ -336,14 +337,14 @@ function initialize_level() {
     o.tileScale.set(2);
     o.tilePosition.set(-15, -15);
     dialog.overlay.addChild(o);
-    o = createText("Lorem Ipsum is simply dummy text of the printing and typesettin g g g industry. Ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.", 88, 15);
+    o = createText("...", 88, 15);
     o.font.size = 16;
     o.font.tint = "0xffffff";
     o.anchor.set(0);
     o.maxWidth = gameProperties.preferred_width - 128 - 80 - 20;
     dialog.overlay.addChild(o);
     dialog.message = o;
-    dialog.first = { kill: false, wind: false, climb: false }
+    dialog.first = { kill: false, wind: false, climb: false, mtncalm: false }
     dialog.firstKeys = Object.keys(dialog.first);
 
     initialize_menu();
@@ -797,8 +798,8 @@ function play(delta) {
                 continue;
             }
             if (!cp.active) {
-                for (var n = 0; n < fairies.children.length; n++) {
-                    var fairy = fairies.children[n];
+                for (var m = 0; m < fairies.children.length; m++) {
+                    var fairy = fairies.children[m];
                     if (!fairy.visible) {
                         fairy.verydead = true;
                         continue;
@@ -820,7 +821,7 @@ function play(delta) {
                 lastCheckpoint.sprite.active = false;
             }
             if (doSfx) PIXI.sound.play('sfx_checkpoint');
-            if (n == checkpoints.children.length - 1) {
+            if (n == bossCheckpoint) {
                 playMusic('bgm_boss');
             }
             cp.active = true;
@@ -857,6 +858,17 @@ function play(delta) {
                 if (!dialog.first.kill) {
                     dialog.first.kill = true;
                     startDialog(dlg_firstkill);
+                }
+                if (killCounter.kills == 36 && player.cx < 3520) {
+                    if (!dialog.first.mtncalm) {
+                        var o = new PIXI.Sprite(tileAtlas["checkpoint"]);
+                        o.x = 2112;
+                        o.y = 1088;
+                        o.active = false;
+                        checkpoints.addChild(o);
+                        dialog.first.mtncalm = true;
+                    }
+                    startDialog(dlg_mtncalm);
                 }
             }
         }
@@ -1157,7 +1169,7 @@ function play(delta) {
         }
     }
 
-    if (player.cx >= 38 * levelProperties.grid && player.cx < 62 * levelProperties.grid) {
+    if (player.cx >= 38 * levelProperties.grid && player.cx < 62 * levelProperties.grid && killCounter.kills < 36) {
         if (!dialog.first.wind) {
             dialog.first.wind = true;
             startDialog(dlg_firstwind);
@@ -1174,8 +1186,8 @@ function play(delta) {
         }
     }
 
-    if (player.px >= 2432 && player.py <= 640) dialog.first.climb = true;
-    if (player.px >= 3648 && player.px < 3712 && player.py < 896 && player.grounded) {
+    if (player.cx >= 2432 && player.cy <= 640) dialog.first.climb = true;
+    if (player.cx >= 3648 && player.cx < 3712 && player.cy < 896 && player.grounded) {
         if (!dialog.first.climb) {
             dialog.first.climb = true;
             startDialog(dlg_firstclimb);

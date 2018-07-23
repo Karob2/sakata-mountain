@@ -314,6 +314,10 @@ var dlg_firstclimb = [
     { message: "I can't climb any higher here..." }
 ]
 
+var dlg_mtncalm = [
+    { message: "The mountain feels a lot calmer now, but I still feel a strong presence to the east." }
+]
+
 function delayedStartDialog(chain) {
     dialog.chain = chain;
     dialog.chainstep = 0;
