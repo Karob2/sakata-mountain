@@ -319,15 +319,15 @@ function initialize_level() {
     gui_overlay.addChild(message);
 
     dialog.overlay = new PIXI.Container();
-    dialog.overlay.x = gameProperties.width / 2 - (gameProperties.preferred_width - 64) / 2;
-    dialog.overlay.y = gameProperties.height - 32 - 80;
+    dialog.overlay.x = gameProperties.width / 2 - (gameProperties.preferred_width - 128) / 2;
+    dialog.overlay.y = gameProperties.height - 16 - 80;
     levelScene.addChild(dialog.overlay);
     o = new PIXI.Graphics();
     o.beginFill(0xffffff);
-    o.drawRect(0, 0, gameProperties.preferred_width - 64, 80);
+    o.drawRect(0, 0, gameProperties.preferred_width - 128, 80);
     o.endFill();
     o.beginFill(0x000000);
-    o.drawRect(1, 1, gameProperties.preferred_width - 64 - 2, 80 - 2);
+    o.drawRect(1, 1, gameProperties.preferred_width - 128 - 2, 80 - 2);
     o.endFill();
     dialog.overlay.addChild(o);
     o = new PIXI.extras.TilingSprite(spriteAtlas["player f1"], 78, 78);
@@ -340,11 +340,11 @@ function initialize_level() {
     o.font.size = 16;
     o.font.tint = "0xffffff";
     o.anchor.set(0);
-    o.maxWidth = gameProperties.preferred_width - 64 - 80 - 20;
+    o.maxWidth = gameProperties.preferred_width - 128 - 80 - 20;
     dialog.overlay.addChild(o);
     dialog.message = o;
-    dialog.firstkill = false;
-    dialog.firstwind = false;
+    dialog.first = { kill: false, wind: false, climb: false }
+    dialog.firstKeys = Object.keys(dialog.first);
 
     initialize_menu();
 
@@ -374,8 +374,8 @@ function levelResize() {
 
     title_overlay.children[4].y = gameProperties.height - 10;
 
-    dialog.overlay.x = gameProperties.width / 2 - (gameProperties.preferred_width - 64) / 2;
-    dialog.overlay.y = gameProperties.height - 32 - 80;
+    dialog.overlay.x = gameProperties.width / 2 - (gameProperties.preferred_width - 128) / 2;
+    dialog.overlay.y = gameProperties.height - 16 - 80;
 }
 /*
 function levelResize() {
@@ -537,7 +537,7 @@ function play(delta) {
     var dd = Math.sqrt(Math.pow(player.vx, 2) + Math.pow(player.vy, 2)) * delta;
     var tddx = tdx / dd;
     var tddy = tdy / dd;
-    var grounded = false;
+    player.grounded = false;
     var vhit = false;
     var hhit = false;
     for (var i = 0; i <= dd; i++) {
@@ -552,7 +552,7 @@ function play(delta) {
                 ty -= tddy;
                 vhit = true;
                 if (player.vy >= 0) {
-                    grounded = true;
+                    player.grounded = true;
                     player.vy = 1;
                     if (cw == 4 || cw == 5) player.vy = 10; //cheap hack to keep the player on the ramp going downhill
                 } else {
@@ -584,7 +584,7 @@ function play(delta) {
     }
     player.px = tx;
     player.py = ty;
-    if (grounded && !keys.left.held && !keys.right.held) {
+    if (player.grounded && !keys.left.held && !keys.right.held) {
         player.vx = 0;
     }
 
@@ -615,7 +615,7 @@ function play(delta) {
     if (!keys.a.held) player.hasSlashed = false;
     if (!keys.b.held) player.hasJumped = false;
 
-    if (!player.hasJumped && keys.b.held && (grounded && player.vy >= -1 || godMode && !keys.down.held)) {
+    if (!player.hasJumped && keys.b.held && (player.grounded && player.vy >= -1 || godMode && !keys.down.held)) {
         player.vy = -10;
         player.hasJumped = true;
     }
@@ -647,7 +647,7 @@ function play(delta) {
             */
             //fireWave(player.cx, player.cy, 8 * player.scale.x, 0);
         } else {
-            if (!grounded) {
+            if (!player.grounded) {
                 player.textures = playerAnimations.jump;
             } else if (keys.left.held || keys.right.held) {
                 if (player.textures != playerAnimations.run) {
@@ -742,7 +742,7 @@ function play(delta) {
     } else if (keys.down.held) {
         player.look = 1;
     /*
-    } else if (!grounded) {
+    } else if (!player.grounded) {
         player.look = Math.min(-1 + Math.max((player.vy - 10) / 1, 0), 1.5);
     */
     } else {
@@ -854,8 +854,8 @@ function play(delta) {
                     killCounter.num.text = killCounter.kills + "/" + fairies.children.length;
                     updateBarriers();
                 }
-                if (!dialog.firstkill) {
-                    dialog.firstkill = true;
+                if (!dialog.first.kill) {
+                    dialog.first.kill = true;
                     startDialog(dlg_firstkill);
                 }
             }
@@ -1158,8 +1158,8 @@ function play(delta) {
     }
 
     if (player.cx >= 38 * levelProperties.grid && player.cx < 62 * levelProperties.grid) {
-        if (!dialog.firstwind) {
-            dialog.firstwind = true;
+        if (!dialog.first.wind) {
+            dialog.first.wind = true;
             startDialog(dlg_firstwind);
         }
         waveTimer -= delta;
@@ -1171,6 +1171,14 @@ function play(delta) {
             //fireWave(player.cx - 7 * levelProperties.grid * dir, levelProperties.grid * (off + 0.5), 8 * dir, 0);
             fireBullet_1(player.cx - 7 * levelProperties.grid * dir, levelProperties.grid * (off + 0.5), 8 * dir, 0, "wave 3 f1", 1);
             PIXI.sound.play('sfx_bullet1');
+        }
+    }
+
+    if (player.px >= 2432 && player.py <= 640) dialog.first.climb = true;
+    if (player.px >= 3648 && player.px < 3712 && player.py < 896 && player.grounded) {
+        if (!dialog.first.climb) {
+            dialog.first.climb = true;
+            startDialog(dlg_firstclimb);
         }
     }
 

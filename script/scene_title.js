@@ -281,8 +281,9 @@ function restartGame() {
     stopwatch.start = Date.now();
     stopwatch.message.text = "0";
 
-    dialog.firstkill = false;
-    dialog.firstwind = false;
+    for (var i = 0; i < dialog.firstKeys.length; i++) {
+        dialog.first[i] = false;
+    }
     gui_overlay.visible = false;
     dialog.overlay.visible = false;
 
@@ -307,6 +308,10 @@ var dlg_firstkill = [
 
 var dlg_firstwind = [
     { message: "This forest is usually quite serene, but something has agitated it." }
+]
+
+var dlg_firstclimb = [
+    { message: "I can't climb any higher here..." }
 ]
 
 function delayedStartDialog(chain) {
