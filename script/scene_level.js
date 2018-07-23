@@ -344,7 +344,7 @@ function initialize_level() {
     o.maxWidth = gameProperties.preferred_width - 128 - 80 - 20;
     dialog.overlay.addChild(o);
     dialog.message = o;
-    dialog.first = { kill: false, wind: false, climb: false, mtncalm: false }
+    dialog.first = { kill: false, wind: false, climb: false, mtncalm: false, tunnel: false }
     dialog.firstKeys = Object.keys(dialog.first);
 
     initialize_menu();
@@ -521,6 +521,14 @@ function play(delta) {
             player.shake = 0;
         }
     }
+
+    if (Math.floor(player.cx / levelProperties.grid) == 55 && Math.floor(player.cy / levelProperties.grid) == 28) {
+        if (!dialog.first.tunnel) {
+            dialog.first.tunnel = true;
+            startDialog(dlg_tunnel);
+        }
+    }
+
 
     // Move Player:
 
@@ -1230,8 +1238,10 @@ function arrangeTiles() {
             var iii = Math.min(Math.max(ii, 0), levelProperties.gridWidth - 1);
             var jjj = Math.min(Math.max(jj, 0), levelProperties.gridHeight - 1);
             //if (ii >= 0 && ii < levelProperties.gridWidth && jj >= 0 && jj < levelProperties.gridHeight)
-            if (jj < levelProperties.gridHeight)
-                n = levelMap[iii][jjj];
+            n = levelMap[iii][jjj];
+            if (jj >= levelProperties.gridHeight) {
+                if (n == tileType.wall_grass.id || n == tileType.ramp_l.id || n == tileType.ramp_r.id) n = tileType.wall.id;
+            }
             if (n >= 0 && n < tileType.index.length) {
                 graphicMap[i][j].texture = PIXI.utils.TextureCache[tileType.index[n].name];
             } else {

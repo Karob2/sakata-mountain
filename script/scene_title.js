@@ -301,21 +301,20 @@ function play_credits() {
 var dlg_intro = [
     { message: "I wanted to gather some vegetables, but something is wrong on the mountain." }
 ]
-
 var dlg_firstkill = [
     { message: "Whatever that was, it dropped a small orb.\nIt feels cold to the touch and distinctly unlucky." }
 ]
-
 var dlg_firstwind = [
     { message: "This forest is usually quite serene, but something has agitated it." }
 ]
-
 var dlg_firstclimb = [
     { message: "I can't climb any higher here..." }
 ]
-
 var dlg_mtncalm = [
     { message: "The mountain feels a lot calmer now, but I still feel a strong presence to the east." }
+]
+var dlg_tunnel = [
+    { message: "The kappa smuggle goods through this tunnel." }
 ]
 
 function delayedStartDialog(chain) {
