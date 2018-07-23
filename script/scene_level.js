@@ -60,7 +60,7 @@ function initialize_level() {
 
     tileType = {};
     tileType.air = {coll: 0, name: "air", grow: true};
-    tileType.backdrop = {coll: 0, name: "backdrop"};
+    tileType.backdrop = {coll: 0, name: "backdrop", block: true};
     tileType.wall = {coll: 1, name: "wall", block: true, grass: true};
     tileType.wall_grass = {coll: 1, name: "wall_grass", block: true, grass: true};
     tileType.ramp_l = {coll: 4, name: "ramp_l", block: true, grass: true};
@@ -1281,6 +1281,7 @@ function fullHealth() {
 
 function updateBarriers() {
     for (var i = 0; i < barriers.length; i++) {
+        if (barriers[i].strength == 99) continue;
         barriers[i].counter.text = barriers[i].strength - killCounter.kills;
         if (barriers[i].strength <= killCounter.kills) {
             barriers[i].counter.visible = false;
