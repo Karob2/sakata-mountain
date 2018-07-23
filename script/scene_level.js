@@ -752,6 +752,11 @@ function play(delta) {
     for (var n = 0; n < checkpoints.children.length; n++) {
         var cp = checkpoints.children[n];
         if (Math.abs(player.px - cp.x - levelProperties.grid / 2) < 48 && Math.abs(player.py - cp.y - levelProperties.grid / 2) < 80) {
+            if (cp.active) {
+                // Checkpoints only heal on activation now. Use (R)espawn to force a heal/reset.
+                playerInvuln();
+                continue;
+            }
             if (!cp.active) {
                 for (var n = 0; n < fairies.children.length; n++) {
                     var fairy = fairies.children[n];
