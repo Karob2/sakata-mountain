@@ -286,6 +286,7 @@ function restartGame() {
     }
     gui_overlay.visible = false;
     dialog.overlay.visible = false;
+    bossState = 0;
 
     importLevelMap();
     start_stage("title", 1);
@@ -325,6 +326,10 @@ var dlg_barrier = [
 var dlg_junction = [
     { message: "This is the sort of mess a kappa would leave behind." }
 ]
+var dlg_boss = [
+    { message: "You're not a kappa." },
+    { message: "Neither are you.", face: 2 }
+]
 
 function delayedStartDialog(chain) {
     dialog.chain = chain;
@@ -341,10 +346,26 @@ function startDialog(chain) {
 }
 function showDialog() {
     var message = dialog.chain[dialog.chainstep].message;
+    var face = dialog.chain[dialog.chainstep].face;
     dialog.text = message.split(" ");
     dialog.textBuild = "";
     dialog.step = 0;
     dialog.message.text = "";
+    if (face == null || face == 1) {
+        /*
+        dialog.face.visible = true;
+        dialog.face2.visible = false;
+        dialog.message.x = 88;
+        */
+        dialog.face.texture = PIXI.utils.TextureCache["player f1"];
+    } else {
+        /*
+        dialog.face.visible = false;
+        dialog.face2.visible = true;
+        dialog.message.x = 15;
+        */
+        dialog.face.texture = PIXI.utils.TextureCache["hina"];
+    }
     /*
     if (dialog.text.length > 0) {
         dialog.message.text = dialog.text[0];
@@ -363,7 +384,12 @@ function ageDialog(delta) {
             dialog.message.text = dialog.textBuild;
             dialog.step++;
             dialog.timer = 3;
-            if (dialog.step == dialog.text.length) dialog.timer = 400;
+            if (dialog.step == dialog.text.length) {
+                if (dialog.chainstep < dialog.chain.length - 1)
+                    dialog.timer = 150;
+                else
+                    dialog.timer = 400;
+            }
             dialog.overlay.visible = true;
         } else {
             if (dialog.chainstep < dialog.chain.length - 1) {

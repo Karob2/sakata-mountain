@@ -20,6 +20,7 @@ var bossCheckpoint;
 var godMode = false;
 var killCounter;
 var stopwatch = {};
+var bossState;
 //var fullscreen_object = [];
 
 function initialize_level() {
@@ -331,12 +332,14 @@ function initialize_level() {
     o.drawRect(1, 1, gameProperties.preferred_width - 128 - 2, 80 - 2);
     o.endFill();
     dialog.overlay.addChild(o);
+
     o = new PIXI.extras.TilingSprite(spriteAtlas["player f1"], 78, 78);
     o.x = 1;
     o.y = 1;
     o.tileScale.set(2);
-    o.tilePosition.set(-15, -15);
+    o.tilePosition.set(-15, -25);
     dialog.overlay.addChild(o);
+    dialog.face = o;
     o = createText("...", 88, 15);
     o.font.size = 16;
     o.font.tint = "0xffffff";
@@ -344,13 +347,32 @@ function initialize_level() {
     o.maxWidth = gameProperties.preferred_width - 128 - 80 - 20;
     dialog.overlay.addChild(o);
     dialog.message = o;
-    dialog.first = { kill: false, wind: false, climb: false, mtncalm: false, tunnel: false, relief: false, barrier: false, junction: false }
+
+    /*
+    o = new PIXI.extras.TilingSprite(spriteAtlas["hina"], 78, 78);
+    o.x = gameProperties.preferred_width - 128 - 79;
+    o.y = 1;
+    o.tileScale.set(-2, 2);
+    o.tilePosition.set(-25, -25);
+    dialog.overlay.addChild(o);
+    dialog.face2 = o;
+    o = createText("...", 15, 15);
+    o.font.size = 16;
+    o.font.tint = "0xffffff";
+    o.anchor.set(0);
+    o.maxWidth = gameProperties.preferred_width - 128 - 80 - 20;
+    dialog.overlay.addChild(o);
+    dialog.message2 = o;
+    */
+
+    dialog.first = { kill: false, wind: false, climb: false, mtncalm: false, tunnel: false, relief: false, barrier: false, junction: false, boss: false }
     dialog.firstKeys = Object.keys(dialog.first);
 
     initialize_menu();
 
     gui_overlay.visible = false;
     dialog.overlay.visible = false;
+    bossState = 0;
 
     importLevelMap();
 }
@@ -540,6 +562,13 @@ function play(delta) {
         if (!dialog.first.junction) {
             dialog.first.junction = true;
             startDialog(dlg_junction);
+        }
+    }
+
+    if (player.cx >= 5728 && player.py >= 1664) {
+        if (!dialog.first.boss) {
+            dialog.first.boss = true;
+            startDialog(dlg_boss);
         }
     }
 
@@ -844,6 +873,11 @@ function play(delta) {
             if (doSfx) PIXI.sound.play('sfx_checkpoint');
             if (n == bossCheckpoint) {
                 playMusic('bgm_boss');
+                for (var m = 0; m < fairies.children.length; m++) {
+                    var fairy = fairies.children[m];
+                    fairy.visible = false;
+                }
+                bossState = 1;
             }
             cp.active = true;
             cp.texture = PIXI.utils.TextureCache["checkpoint_active"];
@@ -1366,6 +1400,7 @@ function fullHealth() {
         health.children[n].visible = true;
     }
     styleHealth();
+    if (bossState != 0) return;
     killCounter.kills = 0;
     for (var n = 0; n < fairies.children.length; n++) {
         var fairy = fairies.children[n];
