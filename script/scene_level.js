@@ -1680,4 +1680,6 @@ function bossEnd() {
     } else {
         startDialog(dlg_soupend);
     }
+    hina.children[0].texture = PIXI.utils.TextureCache["hina sit"];
+    //hina.y += 23;
 }

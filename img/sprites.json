@@ -112,6 +112,14 @@
             "sourceSize": {"w":64, "h":96},
             "pivot": {"x":0.5, "y":0.5}
         },
+        "hina sit": {
+            "frame": {"x":192, "y":192, "w":64, "h":96},
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {"x":0, "y":0, "w":64, "h":96},
+            "sourceSize": {"w":64, "h":96},
+            "pivot": {"x":0.5, "y":0.5}
+        },
         "fairy": {
             "frame": {"x":0, "y":288, "w":64, "h":64},
             "rotated": false,

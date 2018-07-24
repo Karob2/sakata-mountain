@@ -251,6 +251,7 @@ function restartGame() {
     player.invuln = 0;
 
     //hina.visible = true;
+    hina.children[0].texture = PIXI.utils.TextureCache["hina"];
     hina.cooldown = 0;
     hina.chain = 0;
     hinaballs.delta = 0;
