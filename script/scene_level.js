@@ -210,6 +210,21 @@ function initialize_level() {
     }
     hinaballs.delta = 0;
 
+    hina.maxhealth = 15;
+    hina.healthbar = [];
+    for (var i = 0; i < hina.maxhealth; i++) {
+        o = new PIXI.Sprite(spriteAtlas["hinaball"]);
+        o.anchor.set(0.5, 0.5);
+        o.scale.set(0.2);
+        var radial = Math.PI * 2 * i / hina.maxhealth;
+        o.x = Math.sin(radial) * 40;
+        o.y = Math.cos(radial) * 40;
+        o.alpha = 0.5;
+        o.visible = false;
+        hina.addChild(o);
+        hina.healthbar.push(o);
+    }
+
     bullets_1 = [];
     for (var i = 0; i < 30; i++) {
         o = new PIXI.Sprite(spriteAtlas["bullet 1"]);
@@ -1170,11 +1185,12 @@ function play(delta) {
                 hinaballs.children[i].blink = 0;
             }
             */
+            hina.health = hina.maxhealth;
         }
     }
 
     if (bossState == 3) {
-        //bossTimer += delta;
+        bossTimer += delta;
         if (hina.invuln > 0) {
             hina.invuln -= delta;
             hina.children[0].alpha = 0.5;
@@ -1185,6 +1201,7 @@ function play(delta) {
         if (player.cooldown > 35 && hina.invuln <= 0) {
             if (Math.abs(player.cx - hina.x) < 72 && Math.abs(player.cy - hina.y) < 62) {
                 PIXI.sound.play('sfx_kill');
+                hina.health--;
                 //hina.visible = false;
                 //start_stage("end");
                 //showResults();
@@ -1199,6 +1216,18 @@ function play(delta) {
                     }
                 }
             }
+        }
+        for (var i = 0; i < hina.maxhealth; i++) {
+            o = hina.healthbar[i];
+            o.scale.set(0.2);
+            o.alpha = 0.5;
+            var radial = Math.PI * 2 * i / hina.maxhealth;
+            o.x = Math.sin(radial + bossTimer / 100) * 40;
+            o.y = Math.cos(radial + bossTimer / 100) * 40;
+            if (i >= hina.health)
+                o.visible = false;
+            else
+                o.visible = true;
         }
 
         hinaballs.delta += delta / 30;
