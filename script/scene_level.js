@@ -20,7 +20,7 @@ var bossCheckpoint;
 var godMode = false;
 var killCounter;
 var stopwatch = {};
-var bossState;
+var bossState, bossTimer;
 //var fullscreen_object = [];
 
 function initialize_level() {
@@ -205,6 +205,7 @@ function initialize_level() {
         o.x = Math.sin(i * 2 * Math.PI / 30) * i * 6;
         o.y = Math.cos(i * 2 * Math.PI / 30) * i * 6;
         o.blink = 0;
+        o.visible = false;
         hinaballs.addChild(o);
     }
     hinaballs.delta = 0;
@@ -551,24 +552,29 @@ function play(delta) {
         }
     }
 
-    if (player.cx >= 4288 && player.py <= 256) {
+    if (player.cx >= 4288 && player.cy <= 256) {
         if (!dialog.first.relief) {
             dialog.first.relief = true;
             startDialog(dlg_relief);
         }
     }
 
-    if (player.cx >= 4288 && player.cx < 4544 && player.py >= 1088) {
+    if (player.cx >= 4288 && player.cx < 4544 && player.cy >= 1088) {
         if (!dialog.first.junction) {
             dialog.first.junction = true;
             startDialog(dlg_junction);
         }
     }
 
-    if (player.cx >= 5728 && player.py >= 1664) {
+    if (player.cx >= 5728 && player.cy >= 1664) {
+        if (bossState < 2) {
+            bossState = 2;
+            bossTimer = 500;
+        }
         if (!dialog.first.boss) {
             dialog.first.boss = true;
             startDialog(dlg_boss);
+            bossTimer = 0;
         }
     }
 
@@ -577,9 +583,11 @@ function play(delta) {
     player.vy += 0.5 * delta
     player.vx *= Math.pow(0.9, delta);
     player.vy *= Math.pow(0.99, delta);
+    /*
     if (player.cx >= 5632 && player.cy > 1088) {
         player.vx *= Math.pow(0.85, delta);
     }
+    */
 
     var tx = player.px;
     var ty = player.py;
@@ -815,6 +823,10 @@ function play(delta) {
 
     camera_fx = player.px + camera.px;
     camera_fy = player.py + camera.py;
+    if (bossState == 2) {
+        camera_fx = 5728 + 128;
+        camera_fy = 1919 - 32;
+    }
     camera.x = (camera.x * 9 + camera_fx) / 10;
     camera.y = (camera.y * 9 + camera_fy) / 10;
     //camera.x = camera_fx;
@@ -1084,6 +1096,9 @@ function play(delta) {
             }
             bullets_1[i].sprite.x += bullets_1[i].vx * delta;
             bullets_1[i].sprite.y += bullets_1[i].vy * delta;
+            if (bullets_1[i].type == 2) {
+                bullets_1[i].vy *= 0.98;
+            }
             bullets_1[i].age += delta;
             if (bullets_1[i].age > 400) {
                 bullets_1[i].active = false;
@@ -1128,70 +1143,100 @@ function play(delta) {
     }
 */
 
-    // Check if hina is attacked.
-    if (player.cooldown > 35) {
-        if (Math.abs(player.cx - hina.x) < 72 && Math.abs(player.cy - hina.y) < 62) {
-            PIXI.sound.play('sfx_kill');
-            //hina.visible = false;
-            //start_stage("end");
-            showResults();
-        }
-    }
-
-    hinaballs.delta += delta / 30;
-    var hcl = hinaballs.children.length;
-    for (var i = 0; i < hcl; i++) {
-        var o;
-        o = hinaballs.children[i];
-        //o.x = -Math.sin(i * 2 * Math.PI / hcl + hinaballs.delta*0) * i / hcl * 200 * hinaballs.delta/20;
-        //o.y = -Math.cos(i * 2 * Math.PI / hcl + hinaballs.delta*0) * i / hcl * 200 * hinaballs.delta/20;
-        /*
-        if (i < hinaballs.layer1) {
-            o.x = Math.sin(i * 2 * Math.PI / hinaballs.layer1 + hinaballs.delta*1.0) * 64;
-            o.y = Math.cos(i * 2 * Math.PI / hinaballs.layer1 + hinaballs.delta*1.0) * 64;
-        } else if (i < hinaballs.layer1 + hinaballs.layer2) {
-            o.x = Math.sin(i * 2 * Math.PI / hinaballs.layer2 + hinaballs.delta*0.8) * 114;
-            o.y = Math.cos(i * 2 * Math.PI / hinaballs.layer2 + hinaballs.delta*0.8) * 114;
-        } else if (i < hinaballs.layer1 + hinaballs.layer2 + hinaballs.layer3) {
-            o.x = Math.sin(i * 2 * Math.PI / hinaballs.layer3 + hinaballs.delta*0.6) * 164;
-            o.y = Math.cos(i * 2 * Math.PI / hinaballs.layer3 + hinaballs.delta*0.6) * 164;
-        } else {
-            o.x = Math.sin(i * 2 * Math.PI / hinaballs.layer4 + hinaballs.delta*0.4) * 214;
-            o.y = Math.cos(i * 2 * Math.PI / hinaballs.layer4 + hinaballs.delta*0.4) * 214;
-        }
-        */
-        if (i < hinaballs.layer1) {
-            o.x = Math.sin(i * 2 * Math.PI / hinaballs.layer1 + hinaballs.delta*0.4 + Math.PI/2) * 214 + 320;
-            o.y = Math.cos(i * 2 * Math.PI / hinaballs.layer1 + hinaballs.delta*0.4 + Math.PI/2) * 214;
-        } else if (i < hinaballs.layer1 + hinaballs.layer2) {
-            o.x = Math.sin(i * 2 * Math.PI / hinaballs.layer2 + hinaballs.delta*0.4) * 214 + 160;
-            o.y = Math.cos(i * 2 * Math.PI / hinaballs.layer2 + hinaballs.delta*0.4) * 214;
-        } else if (i < hinaballs.layer1 + hinaballs.layer2 + hinaballs.layer3) {
-            o.x = Math.sin(i * 2 * Math.PI / hinaballs.layer3 + hinaballs.delta*0.4 + Math.PI/2) * 214 + 0;
-            o.y = Math.cos(i * 2 * Math.PI / hinaballs.layer3 + hinaballs.delta*0.4 + Math.PI/2) * 214;
-        } else {
-            o.x = Math.sin(i * 2 * Math.PI / hinaballs.layer4 + hinaballs.delta*0.4) * 214 - 160;
-            o.y = Math.cos(i * 2 * Math.PI / hinaballs.layer4 + hinaballs.delta*0.4) * 214;
-        }
-
-        // Check if player is attacked.
-        //o.visible = false; // DEBUG
-        if (o.blink > 0) {
-            o.blink--;
-        } else if (o.visible) {
-            o.alpha = 1;
-            if (Math.abs(player.cx - o.x - hina.x) < 30 && Math.abs(player.cy - o.y - hina.y) < 48) {
-                if (loseHealth(-2, -2)) {
-                    o.blink = 50;
-                    o.alpha = 0.5;
-                    continue;
-                }
+    if (bossState == 2) {
+        player.px = 5728;
+        player.py = 1919;
+        player.vx = 0;
+        player.vy = 0;
+        player.textures = playerAnimations.idle;
+        player.scale.x = 1;
+        //bossTimer += delta;
+        if (bossTimer >= 400) {
+            bossState = 3;
+            bossTimer = 0;
+            hina.invuln = 0;
+            hina.cooldown = 0;
+            hina.chain = 0;
+            for (var i = 0; i < hinaballs.children.length; i++) {
+                //hinaballs.children[i].visible = true;
+                hinaballs.children[i].blink = 0;
             }
         }
     }
 
-    if (player.cx >= 5632 && player.cy > 1088) {
+    if (bossState == 3) {
+        //bossTimer += delta;
+        if (hina.invuln > 0) {
+            hina.invuln -= delta;
+            hina.children[0].alpha = 0.5;
+        } else {
+            hina.children[0].alpha = 1;
+        }
+        // Check if hina is attacked.
+        if (player.cooldown > 35 && hina.invuln <= 0) {
+            if (Math.abs(player.cx - hina.x) < 72 && Math.abs(player.cy - hina.y) < 62) {
+                PIXI.sound.play('sfx_kill');
+                //hina.visible = false;
+                //start_stage("end");
+                //showResults();
+                hina.invuln = 80;
+                for (var i = 0; i < hinaballs.children.length; i++) {
+                    if (!hinaballs.children[i].visible) {
+                        hinaballs.children[i].visible = true;
+                        hinaballs.children[i].blink = 100;
+                        hinaballs.children[i + hinaballs.layer1 + hinaballs.layer2].visible = true;
+                        hinaballs.children[i + hinaballs.layer1 + hinaballs.layer2].blink = 100;
+                        break;
+                    }
+                }
+            }
+        }
 
+        hinaballs.delta += delta / 30;
+        var hcl = hinaballs.children.length;
+        for (var i = 0; i < hcl; i++) {
+            var o;
+            o = hinaballs.children[i];
+            if (i < hinaballs.layer1) {
+                o.x = Math.sin(i * 2 * Math.PI / hinaballs.layer1 + hinaballs.delta*0.4 + Math.PI/2) * 214 + 80;
+                o.y = Math.cos(i * 2 * Math.PI / hinaballs.layer1 + hinaballs.delta*0.4 + Math.PI/2) * 214;
+                o.x += Math.sin(hinaballs.delta / 5) * 240;
+                o.y += 64;
+            } else if (i < hinaballs.layer1 + hinaballs.layer2) {
+                o.x = Math.sin(i * 2 * Math.PI / hinaballs.layer2 + hinaballs.delta*0.4) * 214 + 80;
+                o.y = Math.cos(i * 2 * Math.PI / hinaballs.layer2 + hinaballs.delta*0.4) * 214;
+                o.x += Math.sin(hinaballs.delta / 5 + Math.PI / 2) * 240;
+                o.y += 64;
+            } else if (i < hinaballs.layer1 + hinaballs.layer2 + hinaballs.layer3) {
+                o.x = Math.sin(i * 2 * Math.PI / hinaballs.layer3 + hinaballs.delta*0.4 + Math.PI/2) * 214 + 80;
+                o.y = Math.cos(i * 2 * Math.PI / hinaballs.layer3 + hinaballs.delta*0.4 + Math.PI/2) * 214;
+                o.x += Math.sin(hinaballs.delta / 5 + Math.PI) * 240;
+                o.y += 64;
+            } else {
+                o.x = Math.sin(i * 2 * Math.PI / hinaballs.layer4 + hinaballs.delta*0.4) * 214 + 80;
+                o.y = Math.cos(i * 2 * Math.PI / hinaballs.layer4 + hinaballs.delta*0.4) * 214;
+                o.x += Math.sin(hinaballs.delta / 5 + Math.PI * 3 / 2) * 240;
+                o.y += 64;
+            }
+            //o.x += Math.max(64*15 - bossTimer, 0);
+
+            // Check if player is attacked.
+            //o.visible = false; // DEBUG
+            if (o.blink > 0) {
+                o.alpha = (100 - o.blink) / 100;
+                o.blink--;
+            } else if (o.visible) {
+                o.alpha = 1;
+                if (Math.abs(player.cx - o.x - hina.x) < 30 && Math.abs(player.cy - o.y - hina.y) < 48) {
+                    if (loseHealth(-2, -2)) {
+                        o.blink = 50;
+                        continue;
+                    }
+                }
+            }
+        }
+
+        /*
         waveTimer -= delta;
         if (waveTimer < 1) {
             waveTimer = 100;
@@ -1201,7 +1246,7 @@ function play(delta) {
             }
             PIXI.sound.play('sfx_bullet1');
         }
-
+        */
 
         dist = Math.sqrt(Math.pow(player.cx - hina.x, 2) + Math.pow(player.cy - hina.y, 2));
 
@@ -1220,10 +1265,10 @@ function play(delta) {
             fireBullet_1(
                 hina.x,
                 hina.y,
-                (player.cx - hina.x) / dist * 3,
-                (player.cy - hina.y) / dist * 3,
+                -2, //(player.cx - hina.x) / dist * 3,
+                2, //(player.cy - hina.y) / dist * 3,
                 "hinadoll",
-                0
+                2
             );
             
             //PIXI.sound.play('sfx_bullet2');
@@ -1455,7 +1500,7 @@ function loseHealth(vx, vy) {
     if (player.invuln >= 1 || godMode) return false;
     player.vx = vx;
     player.vy = vy;
-    if (health.lives <= 0 || player.cx >= 5632 - 64 && player.cy > 1088) {
+    if (health.lives <= 0) {// || player.cx >= 5632 - 64 && player.cy > 1088) {
         playerCheckpoint();
         PIXI.sound.play('sfx_respawn');
         fullHealth();

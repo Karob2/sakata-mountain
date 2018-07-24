@@ -254,6 +254,9 @@ function restartGame() {
     hina.cooldown = 0;
     hina.chain = 0;
     hinaballs.delta = 0;
+    for (var i = 0; i < hinaballs.children.length; i++) {
+        hinaballs.children[i].visible = false;
+    }
 
     for (var i = 0; i < bullets_1.length; i++) {
         bullets_1[i].active = false;
@@ -398,6 +401,7 @@ function ageDialog(delta) {
                 showDialog();
             } else {
                 dialog.overlay.visible = false;
+                bossTimer = 500;
             }
         }
     }
