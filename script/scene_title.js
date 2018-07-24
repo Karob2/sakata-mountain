@@ -285,7 +285,7 @@ function restartGame() {
     stopwatch.message.text = "0";
 
     for (var i = 0; i < dialog.firstKeys.length; i++) {
-        dialog.first[i] = false;
+        dialog.first[dialog.firstKeys[i]] = false;
     }
     gui_overlay.visible = false;
     dialog.overlay.visible = false;
@@ -333,6 +333,32 @@ var dlg_boss = [
     { message: "You're not a kappa." },
     { message: "Neither are you.", face: 2 }
 ]
+var dlg_goodend = [
+    { message: "Oww...", face: 2},
+    { message: "Now tell me what you did to my mountain.", face: 1},
+    { message: "It's not safe.\nYou should go back home.", face: 2},
+    { message: "Tell me what these orbs are.", face: 1},
+    { message: "Oh, you've collected quite a lot. Those are unlucky orbs. They sometimes form when too much misfortune coalesces.", face: 2},
+    { message: "You seem capable. Can you help me collect the rest?", face: 2},
+    { message: "Nemuno spent the rest of the day restoring peace on the mountainside.\n[GOOD END]", face: 0}
+]
+var dlg_badend = [
+    { message: "Oww...", face: 2},
+    { message: "What's going on around here?", face: 1},
+    { message: "The mountain is too dangerous for you right now.", face: 2},
+    { message: "So it wasn't your fault?", face: 1},
+    { message: "It wasn't.", face: 2},
+    { message: "Ah. Sorry.", face: 1},
+    { message: "After apologizing, Nemuno went home hungry.\n[BAD END]", face: 0}
+]
+var dlg_soupend = [
+    { message: "Oww...", face: 2},
+    { message: "You deserved it.", face: 1},
+    { message: "I was only trying to keep you away from danger.\nIt's gotten awfully quiet, though.", face: 2},
+    { message: "That's because I already defeated all those things.", face: 1},
+    { message: "...!", face: 2},
+    { message: "After finally gathering her vegetables in peace, Nemuno shared a pot of soup with Hina.\n[PERFECT END]", face: 0}
+]
 
 function delayedStartDialog(chain) {
     dialog.chain = chain;
@@ -354,6 +380,13 @@ function showDialog() {
     dialog.textBuild = "";
     dialog.step = 0;
     dialog.message.text = "";
+    if (face == 0) {
+        dialog.face.visible = false;
+        dialog.message.x = 15;
+    } else {
+        dialog.face.visible = true;
+        dialog.message.x = 88;
+    }
     if (face == null || face == 1) {
         /*
         dialog.face.visible = true;
@@ -389,9 +422,9 @@ function ageDialog(delta) {
             dialog.timer = 3;
             if (dialog.step == dialog.text.length) {
                 if (dialog.chainstep < dialog.chain.length - 1)
-                    dialog.timer = 150;
+                    dialog.timer = 150 + dialog.text.length * 13;
                 else
-                    dialog.timer = 400;
+                    dialog.timer = 200 + dialog.text.length * 13;
             }
             dialog.overlay.visible = true;
         } else {

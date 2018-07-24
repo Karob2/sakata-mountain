@@ -560,45 +560,6 @@ function play(delta) {
         }
     }
 
-    if (Math.floor(player.cx / levelProperties.grid) == 55 && Math.floor(player.cy / levelProperties.grid) == 28) {
-        if (!dialog.first.tunnel) {
-            dialog.first.tunnel = true;
-            startDialog(dlg_tunnel);
-        }
-    }
-
-    if (player.cx >= 4288 && player.cy <= 256) {
-        if (!dialog.first.relief) {
-            dialog.first.relief = true;
-            startDialog(dlg_relief);
-        }
-    }
-
-    if (player.cx >= 4288 && player.cx < 4544 && player.cy >= 1088) {
-        if (!dialog.first.junction) {
-            dialog.first.junction = true;
-            startDialog(dlg_junction);
-        }
-    }
-
-    if (player.cx >= 5728 && player.cy >= 1664) {
-        if (bossState < 2) {
-            bossState = 2;
-            bossTimer = 500;
-            levelMap[87][30] = tileType.barrier.id;
-            levelMap[87][29] = tileType.barrier.id;
-            levelMap[87][28] = tileType.barrier.id;
-            levelMap[87][27] = tileType.wall.id;
-            levelMap[86][28] = tileType.wall.id;
-            PIXI.sound.play('sfx_bullet3');
-        }
-        if (!dialog.first.boss) {
-            dialog.first.boss = true;
-            startDialog(dlg_boss);
-            bossTimer = 0;
-        }
-    }
-
     // Move Player:
 
     player.vy += 0.5 * delta
@@ -683,6 +644,48 @@ function play(delta) {
 
     player.cx = player.px;
     player.cy = player.py - levelProperties.grid / 2;
+
+    if (Math.floor(player.cx / levelProperties.grid) == 55 && Math.floor(player.cy / levelProperties.grid) == 28) {
+        if (!dialog.first.tunnel) {
+            dialog.first.tunnel = true;
+            startDialog(dlg_tunnel);
+        }
+    }
+
+    if (player.cx >= 4288 && player.cy <= 256) {
+        if (!dialog.first.relief) {
+            dialog.first.relief = true;
+            startDialog(dlg_relief);
+        }
+    }
+
+    if (player.cx >= 4288 && player.cx < 4544 && player.cy >= 1088) {
+        if (!dialog.first.junction) {
+            dialog.first.junction = true;
+            startDialog(dlg_junction);
+        }
+    }
+
+    if (player.cx >= 5728 && player.cy >= 1664) {
+        if (bossState < 2) {
+            bossState = 2;
+            bossTimer = 500;
+            for (var ix = 85; ix <= 87; ix++) {
+                for (var iy = 28; iy <= 30; iy++) {
+                    levelMap[ix][iy] = tileType.barrier.id;
+                }
+            }
+            levelMap[87][27] = tileType.wall.id;
+            levelMap[85][31] = tileType.wall.id;
+            levelMap[86][31] = tileType.wall.id;
+            PIXI.sound.play('sfx_bullet3');
+        }
+        if (!dialog.first.boss) {
+            dialog.first.boss = true;
+            startDialog(dlg_boss);
+            bossTimer = 0;
+        }
+    }
 
     // DEBUG:
     /*
@@ -1205,6 +1208,7 @@ function play(delta) {
                 //hina.visible = false;
                 //start_stage("end");
                 //showResults();
+                if (hina.health <= 0) bossEnd();
                 hina.invuln = 80;
                 for (var i = 0; i < hinaballs.children.length; i++) {
                     if (!hinaballs.children[i].visible) {
@@ -1586,8 +1590,8 @@ function playerCheckpoint() {
     player.vx = 0;
     player.vy = 0;
     waveTimer = 3;
-    hina.cooldown = 3;
-    hina.chain = 0;
+    //hina.cooldown = 3;
+    //hina.chain = 0;
     for (var i = 0; i < bullets_1.length; i++) {
         bullets_1[i].active = false;
         bullets_1[i].sprite.visible = false;
@@ -1651,4 +1655,27 @@ function results(delta) {
         initialize();
     }
     */
+}
+
+function bossEnd() {
+    PIXI.sound.play('sfx_bullet3');
+    stopMusic();
+    bossState = 4;
+    for (var i = 0; i < hinaballs.children.length; i++) {
+        hinaballs.children[i].visible = false;
+    }
+    for (var i = 0; i < hina.maxhealth; i++) {
+        hina.healthbar[i].visible = false;
+    }
+    for (var i = 0; i < bullets_1.length; i++) {
+        bullets_1[i].active = false;
+        bullets_1[i].sprite.visible = false;
+    }
+    if (killCounter.kills <= 30) {
+        startDialog(dlg_badend);
+    } else if (killCounter.kills < fairies.children.length) {
+        startDialog(dlg_goodend);
+    } else {
+        startDialog(dlg_soupend);
+    }
 }
