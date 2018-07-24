@@ -365,7 +365,7 @@ var dlg_kappaend = [
     { message: "Kappa?", face: 2},
     { message: "KAPPA KAPPA KAPPA.", face: 1},
     { message: "I don't understand.", face: 2},
-    { message: "KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA", face: 1},
+    { message: "KAPPA KAPPA KAPPA.", face: 1},
     { message: "[KAPPA END]", face: 0}
 ]
 

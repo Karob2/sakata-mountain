@@ -213,9 +213,9 @@ function initialize_level() {
     hina.maxhealth = 15;
     hina.healthbar = [];
     for (var i = 0; i < hina.maxhealth; i++) {
-        o = new PIXI.Sprite(spriteAtlas["hinaball"]);
+        o = new PIXI.Sprite(spriteAtlas["hinadoll"]);
         o.anchor.set(0.5, 0.5);
-        o.scale.set(0.2);
+        o.scale.set(0.5);
         var radial = Math.PI * 2 * i / hina.maxhealth;
         o.x = Math.sin(radial) * 40;
         o.y = Math.cos(radial) * 40;
@@ -1223,8 +1223,8 @@ function play(delta) {
         }
         for (var i = 0; i < hina.maxhealth; i++) {
             o = hina.healthbar[i];
-            o.scale.set(0.2);
-            o.alpha = 0.5;
+            //o.scale.set(0.2);
+            //o.alpha = 0.5;
             var radial = Math.PI * 2 * i / hina.maxhealth;
             o.x = Math.sin(radial + bossTimer / 100) * 40;
             o.y = Math.cos(radial + bossTimer / 100) * 40;
