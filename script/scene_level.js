@@ -527,7 +527,7 @@ function play(delta) {
         ageDialog(delta);
     }
 
-    if (keys.respawn.held) {
+    if (keys.respawn.held && bossState == 0) {
         if (keys.respawn.toggled) {
             keys.respawn.toggled = false;
             player.respawnTimer = 100;
@@ -570,6 +570,12 @@ function play(delta) {
         if (bossState < 2) {
             bossState = 2;
             bossTimer = 500;
+            levelMap[87][30] = tileType.barrier.id;
+            levelMap[87][29] = tileType.barrier.id;
+            levelMap[87][28] = tileType.barrier.id;
+            levelMap[87][27] = tileType.wall.id;
+            levelMap[86][28] = tileType.wall.id;
+            PIXI.sound.play('sfx_bullet3');
         }
         if (!dialog.first.boss) {
             dialog.first.boss = true;
@@ -686,7 +692,7 @@ function play(delta) {
 
     if (player.cooldown > 0) player.cooldown -= delta;
     if (player.textures != playerAnimations.knife || player.currentFrame == player.totalFrames - 1) {
-        if (!player.hasSlashed && keys.a.held && player.cooldown < 1) {
+        if (!player.hasSlashed && keys.a.held && player.cooldown < 1 && bossState != 2) {
             PIXI.sound.play('sfx_slash');
             player.hasSlashed = true;
             player.cooldown = 40;
@@ -884,12 +890,12 @@ function play(delta) {
             }
             if (doSfx) PIXI.sound.play('sfx_checkpoint');
             if (n == bossCheckpoint) {
-                playMusic('bgm_boss');
                 for (var m = 0; m < fairies.children.length; m++) {
                     var fairy = fairies.children[m];
                     fairy.visible = false;
                 }
                 bossState = 1;
+                stopMusic();
             }
             cp.active = true;
             cp.texture = PIXI.utils.TextureCache["checkpoint_active"];
@@ -1152,15 +1158,18 @@ function play(delta) {
         player.scale.x = 1;
         //bossTimer += delta;
         if (bossTimer >= 400) {
+            playMusic('bgm_boss');
             bossState = 3;
             bossTimer = 0;
             hina.invuln = 0;
-            hina.cooldown = 0;
+            hina.cooldown = 100;
             hina.chain = 0;
+            /*
             for (var i = 0; i < hinaballs.children.length; i++) {
-                //hinaballs.children[i].visible = true;
+                hinaballs.children[i].visible = false;
                 hinaballs.children[i].blink = 0;
             }
+            */
         }
     }
 
@@ -1270,6 +1279,7 @@ function play(delta) {
                 "hinadoll",
                 2
             );
+            PIXI.sound.play('sfx_block');
             
             //PIXI.sound.play('sfx_bullet2');
         }
@@ -1501,6 +1511,14 @@ function loseHealth(vx, vy) {
     player.vx = vx;
     player.vy = vy;
     if (health.lives <= 0) {// || player.cx >= 5632 - 64 && player.cy > 1088) {
+        if (bossState > 0) {
+            bossState = 2;
+            bossTimer = 500;
+            for (var i = 0; i < hinaballs.children.length; i++) {
+                hinaballs.children[i].visible = false;
+                hinaballs.children[i].blink = 0;
+            }
+        }
         playerCheckpoint();
         PIXI.sound.play('sfx_respawn');
         fullHealth();

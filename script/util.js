@@ -1,8 +1,11 @@
 "use strict"
 
 function playMusic(mtitle) {
-    stopMusic();
-    PIXI.sound.play(mtitle, {loop:true});
+    var snd = PIXI.sound.find(mtitle);
+    if (!snd.isPlaying) {
+        stopMusic();
+        PIXI.sound.play(mtitle, {loop:true});
+    }
 }
 
 function stopMusic() {
