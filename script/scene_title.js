@@ -285,7 +285,9 @@ function restartGame() {
     }
     gui_overlay.visible = false;
     dialog.overlay.visible = false;
+    results.overlay.visible = false;
     bossState = 0;
+    walls.alpha = 1;
 
     importLevelMap();
     start_stage("title", 1);
@@ -336,7 +338,7 @@ var dlg_goodend = [
     { message: "Tell me what these orbs are.", face: 1},
     { message: "Oh, you've collected quite a lot. Those are unlucky orbs. They sometimes form when too much misfortune coalesces.", face: 2},
     { message: "You seem capable. Can you help me collect the rest?", face: 2},
-    { message: "Nemuno spent the rest of the day restoring peace on the mountainside.\n[GOOD END]", face: 0}
+    { message: "Nemuno spent the rest of the day restoring peace on the mountainside.", face: 0}
 ]
 var dlg_badend = [
     { message: "Oww...", face: 2},
@@ -345,7 +347,7 @@ var dlg_badend = [
     { message: "So it wasn't your fault?", face: 1},
     { message: "It wasn't.", face: 2},
     { message: "Ah. Sorry.", face: 1},
-    { message: "After apologizing, Nemuno went home hungry.\n[BAD END]", face: 0}
+    { message: "After apologizing, Nemuno went home hungry.", face: 0}
 ]
 var dlg_soupend = [
     { message: "Oww...", face: 2},
@@ -353,7 +355,7 @@ var dlg_soupend = [
     { message: "I was only trying to keep you away from danger.\nIt's gotten awfully quiet, though.", face: 2},
     { message: "That's because I already defeated all those things.", face: 1},
     { message: "...!", face: 2},
-    { message: "After finally gathering her vegetables in peace, Nemuno shared a pot of soup with Hina.\n[PERFECT END]", face: 0}
+    { message: "After finally gathering her vegetables in peace, Nemuno shared a pot of soup with Hina.", face: 0}
 ]
 var dlg_kappaend = [
     { message: "Oww...", face: 2},
@@ -361,8 +363,8 @@ var dlg_kappaend = [
     { message: "Kappa?", face: 2},
     { message: "KAPPA KAPPA KAPPA.", face: 1},
     { message: "I don't understand.", face: 2},
-    { message: "KAPPA KAPPA KAPPA.", face: 1},
-    { message: "[KAPPA END]", face: 0}
+    { message: "KAPPA KAPPA KAPPA.", face: 1}
+    //{ message: "[KAPPA END]", face: 0}
 ]
 
 function delayedStartDialog(chain) {
@@ -439,7 +441,8 @@ function ageDialog(delta) {
                 showDialog();
             } else {
                 dialog.overlay.visible = false;
-                bossTimer = 500;
+                if (bossState == 2) bossTimer = 500;
+                if (bossState == 4) bossState = 5;
             }
         }
     }

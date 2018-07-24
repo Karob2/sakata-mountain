@@ -292,15 +292,15 @@ function readStopwatch(index = 0) {
     if (!stopwatch[index].started) {
         return 0;
     } else if (stopwatch[index].paused) {
-        return Math.floor((stopwatch[index].end - stopwatch[index].start) / 1000);
+        return (stopwatch[index].end - stopwatch[index].start) / 1000.0;
     } else {
-        return Math.floor((Date.now() - stopwatch[index].start) / 1000);
+        return (Date.now() - stopwatch[index].start) / 1000.0;
     }
 }
 function getStopwatchText() {
-    var message = readStopwatch(0);
+    var message = Math.floor(readStopwatch(0));
     if (stopwatch[1].started) {
-        message += " +" + readStopwatch(1);
+        message += " +" + Math.floor(readStopwatch(1));
     }
     return message;
 }

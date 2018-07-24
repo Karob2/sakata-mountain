@@ -2,6 +2,7 @@
 
 var gui_overlay;
 var dialog = {};
+var results = {};
 
 var levelProperties;
 var levelScene;
@@ -383,10 +384,61 @@ function initialize_level() {
     dialog.first = { kill: false, wind: false, climb: false, mtncalm: false, tunnel: false, relief: false, barrier: false, junction: false, boss: false }
     dialog.firstKeys = Object.keys(dialog.first);
 
+    results.num = [];
+    var lineHeight = 20;
+    results.overlay = new PIXI.Container();
+    results.overlay.x = gameProperties.width / 2;
+    results.overlay.y = lineHeight * 2;
+    levelScene.addChild(results.overlay);
+    o = createText("[GOOD END]", 0, 0);
+    o.font.size = 16;
+    o.font.tint = "0xffffff";
+    o.anchor.set(0.5, 0);
+    results.overlay.addChild(o);
+    results.num.push(o);
+    o = createText("Score", 0, lineHeight * 2);
+    o.font.size = 16;
+    o.font.tint = "0xffffff";
+    o.anchor.set(0.5, 0);
+    results.overlay.addChild(o);
+    o = createText("10", 0, lineHeight * 3);
+    o.font.size = 16;
+    o.font.tint = "0xffff00";
+    o.anchor.set(0.5, 0);
+    results.overlay.addChild(o);
+    results.num.push(o);
+    o = createText("Stage Time", 0, lineHeight * 5);
+    o.font.size = 16;
+    o.font.tint = "0xffffff";
+    o.anchor.set(0.5, 0);
+    results.overlay.addChild(o);
+    o = createText("85.263s", 0, lineHeight * 6);
+    o.font.size = 16;
+    o.font.tint = "0xffff00";
+    o.anchor.set(0.5, 0);
+    results.overlay.addChild(o);
+    results.num.push(o);
+    o = createText("Boss Time", 0, lineHeight * 8);
+    o.font.size = 16;
+    o.font.tint = "0xffffff";
+    o.anchor.set(0.5, 0);
+    results.overlay.addChild(o);
+    o = createText("553.20s", 0, lineHeight * 9);
+    o.font.size = 16;
+    o.font.tint = "0xffff00";
+    o.anchor.set(0.5, 0);
+    results.overlay.addChild(o);
+    results.num.push(o);
+    o = createText("Restart", 0, lineHeight*12, () => restartGame(), play);
+    o.font.size = 16;
+    o.anchor.set(0.5, 0);
+    results.overlay.addChild(o);
+
     initialize_menu();
 
     gui_overlay.visible = false;
     dialog.overlay.visible = false;
+    results.overlay.visible = false;
     bossState = 0;
 
     importLevelMap();
@@ -414,6 +466,8 @@ function levelResize() {
 
     dialog.overlay.x = gameProperties.width / 2 - (gameProperties.preferred_width - 128) / 2;
     dialog.overlay.y = gameProperties.height - 16 - 80;
+
+    results.overlay.x = gameProperties.width / 2;
 }
 /*
 function levelResize() {
@@ -541,7 +595,7 @@ function play(delta) {
         ageDialog(delta);
     }
 
-    if (keys.respawn.held && bossState == 0) {
+    if (keys.respawn.held && (bossState == 0 || bossState == 3)) {
         if (keys.respawn.toggled) {
             keys.respawn.toggled = false;
             player.respawnTimer = 100;
@@ -551,6 +605,14 @@ function play(delta) {
             player.shake = (100 - player.respawnTimer) / 2;
         }
         if (player.respawnTimer == 0) {
+            if (bossState == 3) {
+                bossState = 2;
+                bossTimer = 500;
+                for (var i = 0; i < hinaballs.children.length; i++) {
+                    hinaballs.children[i].visible = false;
+                    hinaballs.children[i].blink = 0;
+                }
+            }
             playerCheckpoint();
             PIXI.sound.play('sfx_respawn');
             fullHealth();
@@ -709,7 +771,7 @@ function play(delta) {
 
     if (player.cooldown > 0) player.cooldown -= delta;
     if (player.textures != playerAnimations.knife || player.currentFrame == player.totalFrames - 1) {
-        if (!player.hasSlashed && keys.a.held && player.cooldown < 1 && bossState != 2) {
+        if (!player.hasSlashed && keys.a.held && player.cooldown < 1 && bossState != 2 && bossState < 4) {
             PIXI.sound.play('sfx_slash');
             player.hasSlashed = true;
             player.cooldown = 40;
@@ -849,9 +911,20 @@ function play(delta) {
     if (bossState == 2) {
         camera_fx = 5728 + 128;
         camera_fy = 1919 - 32;
+    } else if (bossState == 4) {
+        camera_fx = 5728 + 128;
+        camera_fy = 1919 - 64;
+    } else if (bossState == 5) {
+        camera_fx = 5728 + 128;
+        camera_fy = 1919 - 156;
     }
-    camera.x = (camera.x * 9 + camera_fx) / 10;
-    camera.y = (camera.y * 9 + camera_fy) / 10;
+    if (bossState == 2 || bossState >= 4) {
+        camera.x = (camera.x * 29 + camera_fx) / 30;
+        camera.y = (camera.y * 29 + camera_fy) / 30;
+    } else {
+        camera.x = (camera.x * 9 + camera_fx) / 10;
+        camera.y = (camera.y * 9 + camera_fy) / 10;
+    }
     //camera.x = camera_fx;
     //camera.y = camera_fy;
 
@@ -1167,7 +1240,7 @@ function play(delta) {
     }
 */
 
-    if (bossState == 2) {
+    if (bossState == 2 || bossState >= 4) {
         player.px = 5728;
         player.py = 1919;
         player.vx = 0;
@@ -1175,7 +1248,7 @@ function play(delta) {
         player.textures = playerAnimations.idle;
         player.scale.x = 1;
         //bossTimer += delta;
-        if (bossTimer >= 400) {
+        if (bossTimer >= 400 && bossState == 2) {
             playMusic('bgm_boss');
             startStopwatch(1);
             bossState = 3;
@@ -1205,10 +1278,7 @@ function play(delta) {
         if (player.cooldown > 35 && hina.invuln <= 0) {
             if (Math.abs(player.cx - hina.x) < 72 && Math.abs(player.cy - hina.y) < 62) {
                 PIXI.sound.play('sfx_kill');
-                hina.health -= 20;
-                //hina.visible = false;
-                //start_stage("end");
-                //showResults();
+                hina.health--;
                 if (hina.health <= 0) bossEnd();
                 hina.invuln = 80;
                 for (var i = 0; i < hinaballs.children.length; i++) {
@@ -1317,6 +1387,14 @@ function play(delta) {
             
             //PIXI.sound.play('sfx_bullet2');
         }
+    }
+
+    if (bossState == 5) {
+        hina.children[0].texture = PIXI.utils.TextureCache["hina"];
+        bossTimer += delta;
+        walls.alpha = Math.max((100 - bossTimer) / 100, 0);
+        results.overlay.alpha = Math.max(bossTimer / 100, 0);
+        results.overlay.visible = true;
     }
 
     if (player.cx >= 38 * levelProperties.grid && player.cx < 62 * levelProperties.grid && killCounter.kills < 36) {
@@ -1598,70 +1676,12 @@ function playerCheckpoint() {
     }
 }
 
-var resultsPage;
-var resultsScene;
-function showResults() {
-    state = results;
-
-    resultsScene = new PIXI.Container();
-    levelScene.addChild(resultsScene);
-    resultsPage = 0;
-
-    var o;
-    o = new PIXI.Graphics();
-    o.beginFill(0x000000);
-    o.drawRect(0, 0, gameProperties.width - 64, gameProperties.height - 64);
-    o.endFill();
-    o.x = 32;
-    o.y = 32;
-    resultsScene.addChild(o);
-
-    var style = new PIXI.TextStyle({fontFamily: "serif", fontSize: 20, fill: "white", wordWrap: true, wordWrapWidth: gameProperties.width - 96});
-    var text = "Defeated, Hina explained that misfortune had spread over the mountain side, and that she was trying to contain it.";
-    if (killCounter.kills <= 18) {
-        text = text + " \"You defeated me, but the mountain is still covered in misfortune!\" Hina scolded.\n\nNemuno realized that it was too dangerous to go foraging right now.\n\n[BAD END]";
-    } else if (killCounter.kills < 35) {
-        text = text + " \"I see now that you've cleared away most of the misfortune,\" Hina praised. \"I was wrong to doubt you.\"\n\nThe two then teamed up to resolve the incident.\n\n[GOOD END]";
-    } else {
-        text = text + " \"Wait, where did the misfortune go?\" Hina asked. Nemuno explained that she had defeated all of it.\n\nShe then made a big pot of soup and shared it with Hina.\n\n[PERFECT END]";
-    }
-    var message = new PIXI.Text(text, style);
-    message.x = 48;
-    message.y = 48;
-    //message.anchor.set(0.5);
-    resultsScene.addChild(message);
-}
-
-/*
-function showResults2() {
-    var style = new PIXI.TextStyle({fontFamily: "serif", fontSize: 32, fill: "white"});
-    var message = new PIXI.Text(killCounter.kills + "out of " + fairies.children.length + " enemies defeated.", style);
-    message.x = gameProperties.width / 2;
-    message.y = gameProperties.height / 4;
-    message.anchor.set(0.5);
-    resultsScene.addChild(message);
-}
-*/
-
-function results(delta) {
-    /*
-    if (keys.a.held && keys.a.toggled) {
-        keys.a.toggled = false;
-        for (var i = gameScene.children.length - 1; i >= 0; i++) {
-            gameScene.removeChild(gameScene.children[i]);
-            console.log(1);
-        }
-        setGameSize();
-        initialize();
-    }
-    */
-}
-
 function bossEnd() {
     PIXI.sound.play('sfx_bullet3');
     stopMusic();
     pauseStopwatch();
     bossState = 4;
+    bossTimer = 0;
     for (var i = 0; i < hinaballs.children.length; i++) {
         hinaballs.children[i].visible = false;
     }
@@ -1674,13 +1694,21 @@ function bossEnd() {
     }
     if (killCounter.kills <= 8) {
         startDialog(dlg_kappaend);
+        results.num[0].text = "[KAPPA END]"
     } else if (killCounter.kills <= 30) {
         startDialog(dlg_badend);
+        results.num[0].text = "[BAD END]"
     } else if (killCounter.kills < fairies.children.length) {
         startDialog(dlg_goodend);
+        results.num[0].text = "[GOOD END]"
     } else {
         startDialog(dlg_soupend);
+        results.num[0].text = "[PERFECT END]"
     }
+    results.num[1].text = killCounter.kills;
+    results.num[2].text = Math.floor(readStopwatch(0) * 1000) / 1000 + "s";
+    results.num[3].text = Math.floor(readStopwatch(1) * 1000) / 1000 + "s";
     hina.children[0].texture = PIXI.utils.TextureCache["hina sit"];
     //hina.y += 23;
+    gui_overlay.visible = false;
 }
