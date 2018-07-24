@@ -249,3 +249,58 @@ function getCookie(cname) {
     }
     return null;
 }
+
+var stopwatch = new Array(2);
+for (var i = 0; i < stopwatch.length; i++) {
+    stopwatch[i] = {};
+}
+function resetStopwatch(index) {
+    if (index == null) {
+        resetStopwatch(0);
+        resetStopwatch(1);
+        return;
+    }
+    stopwatch[index].started = false;
+}
+function startStopwatch(index) {
+    if (stopwatch[index].started) return;
+    stopwatch[index].started = true;
+    stopwatch[index].paused = false;
+    stopwatch[index].start = Date.now();
+}
+function pauseStopwatch(index) {
+    if (index == null) {
+        index = getActiveStopwatch();
+    }
+    stopwatch[index].paused = true;
+    stopwatch[index].end = Date.now();
+}
+function unpauseStopwatch(index) {
+    if (index == null) {
+        index = getActiveStopwatch();
+    }
+    stopwatch[index].paused = false;
+    if (stopwatch[index].started) {
+        stopwatch[index].start += Date.now() - stopwatch[index].end;
+    }
+}
+function getActiveStopwatch() {
+    if (stopwatch[1].started) return 1;
+    return 0;
+}
+function readStopwatch(index = 0) {
+    if (!stopwatch[index].started) {
+        return 0;
+    } else if (stopwatch[index].paused) {
+        return Math.floor((stopwatch[index].end - stopwatch[index].start) / 1000);
+    } else {
+        return Math.floor((Date.now() - stopwatch[index].start) / 1000);
+    }
+}
+function getStopwatchText() {
+    var message = readStopwatch(0);
+    if (stopwatch[1].started) {
+        message += " +" + readStopwatch(1);
+    }
+    return message;
+}

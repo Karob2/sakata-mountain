@@ -175,7 +175,7 @@ function showCredits() {
 }
 
 function showPause() {
-    stopwatch.pause = Date.now();
+    pauseStopwatch();
     PIXI.sound.pause('bgm_level');
     PIXI.sound.pause('bgm_boss');
 
@@ -221,10 +221,7 @@ function showRestart() {
     box.addChild(o);
 }
 function unPause() {
-    if (stopwatch.started) {
-        stopwatch.start += Date.now() - stopwatch.pause;
-        stopwatch.message.text = Math.floor((Date.now() - stopwatch.start) / 1000);
-    }
+    unpauseStopwatch();
     PIXI.sound.resume('bgm_level');
     PIXI.sound.resume('bgm_boss');
     closePopup(true);
@@ -281,9 +278,7 @@ function restartGame() {
     killCounter.kills = 0;
     killCounter.num.text = "0";
 
-    stopwatch.started = false;
-    stopwatch.start = Date.now();
-    stopwatch.message.text = "0";
+    resetStopwatch();
 
     for (var i = 0; i < dialog.firstKeys.length; i++) {
         dialog.first[dialog.firstKeys[i]] = false;

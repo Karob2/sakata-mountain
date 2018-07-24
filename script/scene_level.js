@@ -19,7 +19,7 @@ var bossCheckpoint;
 //var gx, gy;
 var godMode = false;
 var killCounter;
-var stopwatch = {};
+var stopwatch_message;
 var bossState, bossTimer;
 //var fullscreen_object = [];
 
@@ -325,15 +325,14 @@ function initialize_level() {
     killCounter.num = message;
     gui_overlay.addChild(message);    
 
-    stopwatch.started = false;
-    stopwatch.start = Date.now();
+    resetStopwatch();
     //style = new PIXI.TextStyle({fontFamily: "Lucida Console", fontSize: 20, fill: "white"});
     //message = new PIXI.Text("0", style);
     message = new PIXI.extras.BitmapText("0", {font: '20px Pixellari', align: 'left', tint: '0xffffff'});
     message.x = 10;
     message.y = gameProperties.height - 30;
     //fullscreen_object.push(message);
-    stopwatch.message = message;
+    stopwatch_message = message;
     gui_overlay.addChild(message);
 
     dialog.overlay = new PIXI.Container();
@@ -396,7 +395,7 @@ function initialize_level() {
 function levelResize() {
     killCounter.sprite.x = gameProperties.width - 32 - 10;
     killCounter.num.x = killCounter.sprite.x - 4;
-    stopwatch.message.y = gameProperties.height - 30;
+    stopwatch_message.y = gameProperties.height - 30;
 
     logo.x = gameProperties.width / 2 - 294 / 2;
     logo.y = gameProperties.height / 4 - 115 / 2;
@@ -914,6 +913,7 @@ function play(delta) {
                 }
                 bossState = 1;
                 stopMusic();
+                pauseStopwatch(0);
             }
             cp.active = true;
             cp.texture = PIXI.utils.TextureCache["checkpoint_active"];
@@ -1177,6 +1177,7 @@ function play(delta) {
         //bossTimer += delta;
         if (bossTimer >= 400) {
             playMusic('bgm_boss');
+            startStopwatch(1);
             bossState = 3;
             bossTimer = 0;
             hina.invuln = 0;
@@ -1204,7 +1205,7 @@ function play(delta) {
         if (player.cooldown > 35 && hina.invuln <= 0) {
             if (Math.abs(player.cx - hina.x) < 72 && Math.abs(player.cy - hina.y) < 62) {
                 PIXI.sound.play('sfx_kill');
-                hina.health--;
+                hina.health -= 20;
                 //hina.visible = false;
                 //start_stage("end");
                 //showResults();
@@ -1346,14 +1347,13 @@ function play(delta) {
     // Arrange tiles:
     arrangeTiles();
 
-    if (!stopwatch.started) {
-        stopwatch.start = Date.now();
+    if (!stopwatch[0].started) {
         if (keys.up.held || keys.down.held || keys.left.held || keys.right.held || keys.b.held) {
-            stopwatch.started = true;
+            startStopwatch(0);
             //playMusic('bgm_level');
         }
     }
-    stopwatch.message.text = Math.floor((Date.now() - stopwatch.start) / 1000);
+    stopwatch_message.text = getStopwatchText();
 }
 function arrangeTiles() {
     objects.x = -camera.dx;
@@ -1660,6 +1660,7 @@ function results(delta) {
 function bossEnd() {
     PIXI.sound.play('sfx_bullet3');
     stopMusic();
+    pauseStopwatch();
     bossState = 4;
     for (var i = 0; i < hinaballs.children.length; i++) {
         hinaballs.children[i].visible = false;
