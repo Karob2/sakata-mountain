@@ -1671,7 +1671,9 @@ function bossEnd() {
         bullets_1[i].active = false;
         bullets_1[i].sprite.visible = false;
     }
-    if (killCounter.kills <= 30) {
+    if (killCounter.kills <= 8) {
+        startDialog(dlg_kappaend);
+    } else if (killCounter.kills <= 30) {
         startDialog(dlg_badend);
     } else if (killCounter.kills < fairies.children.length) {
         startDialog(dlg_goodend);

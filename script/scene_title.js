@@ -359,6 +359,15 @@ var dlg_soupend = [
     { message: "...!", face: 2},
     { message: "After finally gathering her vegetables in peace, Nemuno shared a pot of soup with Hina.\n[PERFECT END]", face: 0}
 ]
+var dlg_kappaend = [
+    { message: "Oww...", face: 2},
+    { message: "Kappa.", face: 1},
+    { message: "Kappa?", face: 2},
+    { message: "KAPPA KAPPA KAPPA.", face: 1},
+    { message: "I don't understand.", face: 2},
+    { message: "KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA KAPPA", face: 1},
+    { message: "[KAPPA END]", face: 0}
+]
 
 function delayedStartDialog(chain) {
     dialog.chain = chain;

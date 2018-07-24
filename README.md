@@ -15,7 +15,7 @@ This project is a mass of spaghetti code and bad algorithms thrown together for 
 - Avoid enemy projectiles. (Green "wind" projectiles can be destroyed with your melee attack.)
 - Activate checkpoints along the way. (You are immune to damage while standing on checkpoints.)
 - The screen shows health (top-left), score (top-right), and time elapsed in seconds (bottom-left).
-- There are multiple endings depending on your score.
+- The ending depends on your score (below 31, 31-40, or 41).
 
 ## Controls
 
