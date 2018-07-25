@@ -6,6 +6,7 @@ var titlemenu = [];
 var activeTitlemenu = 0;
 var configTitlemenu;
 var fullscreenSelector;
+var musicControl, sfxControl;
 function initialize_menu() {
     title_overlay = new PIXI.Container();
     levelScene.addChild(title_overlay);
@@ -193,19 +194,21 @@ function showConfig() {
     //o.font.size = 16;
     o.font.tint = "0x000000";
     box.addChild(o);
-    newTitlemenu.menu.push({name: "Music", display: o, action: null});
+    newTitlemenu.menu.push({name: "Music", display: o, leftAction: musicVolumeDown, rightAction: musicVolumeUp});
 
     o = createBar(controls.music, -100, -lineHeight*0 - lineHeight / 2, 200, lineHeight);
     box.addChild(o);
+    musicControl = o;
 
     o = createText("Sound Effects", 0, lineHeight*2);
     //o.font.size = 16;
     o.font.tint = "0x000000";
     box.addChild(o);
-    newTitlemenu.menu.push({name: "Sound Effects", display: o, action: null});
+    newTitlemenu.menu.push({name: "Sound Effects", display: o, leftAction: sfxVolumeDown, rightAction: sfxVolumeUp});
 
     o = createBar(controls.sfx, -100, lineHeight*3 - lineHeight / 2, 200, lineHeight);
     box.addChild(o);
+    sfxControl = o;
 
     //o = createText("Okay", 140, 90, closePopup, play_config);
     o = createText("Okay", 100 - 20,

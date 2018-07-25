@@ -77,6 +77,34 @@ var controls = {
         }
     }
 };
+function musicVolumeDown() {
+    controls.music.val = Math.max(0, controls.music.val - 0.1);
+    updateMusicSlider();
+}
+function musicVolumeUp() {
+    controls.music.val = Math.min(1, controls.music.val + 0.1);
+    updateMusicSlider();
+}
+function sfxVolumeDown() {
+    controls.sfx.val = Math.max(0, controls.sfx.val - 0.1);
+    updateSfxSlider();
+}
+function sfxVolumeUp() {
+    controls.sfx.val = Math.min(1, controls.sfx.val + 0.1);
+    updateSfxSlider();
+}
+function updateMusicSlider() {
+    var o1 = musicControl.children[0];
+    var o2 = musicControl.children[1];
+    o2.width = o1.maxWidth * 0.9 * controls.music.val + o1.maxWidth * 0.05;
+    controls.music.callback();
+}
+function updateSfxSlider() {
+    var o1 = sfxControl.children[0];
+    var o2 = sfxControl.children[1];
+    o2.width = o1.maxWidth * 0.9 * controls.sfx.val + o1.maxWidth * 0.05;
+    controls.sfx.callback();
+}
 
 var aspect_mode;
 function aspectMode(mode) {
@@ -101,7 +129,7 @@ function aspectMode(mode) {
     saveData("aspect_mode", mode);
     setGameSize();
 }
-aspect_mode = loadData("aspect_mode", 0);
+aspect_mode = parseInt(loadData("aspect_mode", 0));
 
 var spriteAtlas, tileAtlas, logoAtlas, parchmentAtlas;
 function initialize() {
@@ -110,8 +138,8 @@ function initialize() {
     logoAtlas = PIXI.loader.resources["img/logo.json"].textures;
     parchmentAtlas = PIXI.loader.resources["img/parchment.json"].textures;
 
-    controls.music.setVolume(loadData("music_volume", 0.75));
-    controls.sfx.setVolume(loadData("sfx_volume", 0.75));
+    controls.music.setVolume(parseFloat(loadData("music_volume", 0.75)));
+    controls.sfx.setVolume(parseFloat(loadData("sfx_volume", 0.75)));
 
     //initialize_menu();
     initialize_level();
