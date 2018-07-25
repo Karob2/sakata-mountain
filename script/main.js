@@ -82,13 +82,26 @@ var aspect_mode;
 function aspectMode(mode) {
     PIXI.sound.play('sfx_menu');
 
+    if (mode == -1) {
+        aspect_mode--;
+    } else if (mode == -2) {
+        aspect_mode++;
+    } else {
+        aspect_mode = mode;
+    }
+    if (aspect_mode < 0) aspect_mode = 2;
+    if (aspect_mode > 2) aspect_mode = 0;
+
+    if (fullscreenSelector != null)
+        fullscreenSelector.x = (aspect_mode - 1) * 100 - 32;
+
     //console.log(mode);
     //fit, crop, stretch
-    aspect_mode = mode;
+    //aspect_mode = mode;
     saveData("aspect_mode", mode);
     setGameSize();
 }
-aspect_mode = loadData("aspect_mode", "fit");
+aspect_mode = loadData("aspect_mode", 0);
 
 var spriteAtlas, tileAtlas, logoAtlas, parchmentAtlas;
 function initialize() {
@@ -188,12 +201,12 @@ function setGameSize() {
     var ratioH = wHeight / gameProperties.preferred_height;
     var scale;
     if (ratioW < ratioH) {
-        if (aspect_mode == "crop") {
+        if (aspect_mode == 1) { //crop
             gameProperties.width = gameProperties.preferred_height * wWidth / wHeight;
             gameProperties.height = gameProperties.preferred_height;
             gameScene.scale.x = wWidth / gameProperties.width;
             gameScene.scale.y = gameScene.scale.x;
-        } else if (aspect_mode == "fit") {
+        } else if (aspect_mode == 0) { //fit
             scale = wWidth / gameProperties.preferred_width;
             gameScene.scale.x = scale;
             gameScene.scale.y = scale;
@@ -206,12 +219,12 @@ function setGameSize() {
             frameScene.children[2].height = frameScene.children[1].height;
         }
     } else {
-        if (aspect_mode == "crop") {
+        if (aspect_mode == 1) { //crop
             gameProperties.height = gameProperties.preferred_width * wHeight / wWidth;
             gameProperties.width = gameProperties.preferred_width;
             gameScene.scale.x = wWidth / gameProperties.width;
             gameScene.scale.y = gameScene.scale.x;
-        } else if (aspect_mode == "fit") {
+        } else if (aspect_mode == 0) { //fit
             scale = wHeight / gameProperties.preferred_height;
             gameScene.scale.x = scale;
             gameScene.scale.y = scale;
@@ -224,19 +237,19 @@ function setGameSize() {
             frameScene.children[2].height = frameScene.children[1].height;
         }
     }
-    if (aspect_mode == "crop") {
+    if (aspect_mode == 1) { //crop
         gameScene.x = 0;
         gameScene.y = 0;
         frameScene.children[1].visible = false;
         frameScene.children[2].visible = false;
-    } else if (aspect_mode == "fit") {
+    } else if (aspect_mode == 0) { //fit
         frameScene.children[1].visible = true;
         frameScene.children[2].visible = true;
         gameProperties.width = gameProperties.preferred_width;
         gameProperties.height = gameProperties.preferred_height;
         gameScene.x = wWidth / 2 - gameProperties.preferred_width * scale / 2;
         gameScene.y = wHeight / 2 - gameProperties.preferred_height * scale / 2;
-    } else if (aspect_mode == "stretch") {
+    } else if (aspect_mode == 2) { //stretch
         gameProperties.width = gameProperties.preferred_width;
         gameProperties.height = gameProperties.preferred_height;
         gameScene.scale.x = wWidth / gameProperties.width;

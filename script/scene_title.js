@@ -3,6 +3,9 @@
 var title_overlay;
 var logo;
 var titlemenu = [];
+var activeTitlemenu = 0;
+var configTitlemenu;
+var fullscreenSelector;
 function initialize_menu() {
     title_overlay = new PIXI.Container();
     levelScene.addChild(title_overlay);
@@ -15,23 +18,24 @@ function initialize_menu() {
 
     var logoBottom = logo.y + 115;
     var menuCenter = (gameProperties.height + logoBottom) / 2;
-    titlemenu.push({});
-    titlemenu[0].menu = [];
-    titlemenu[0].active = 0;
+    var newTitlemenu = {menu: [], active: 0};
     var o;
     o = createText("Start", gameProperties.width / 2,
         menuCenter - 12, startLevel, play_title);
     title_overlay.addChild(o);
-    titlemenu[0].menu.push({name: "Start", display: o, action: startLevel});
+    newTitlemenu.menu.push({name: "Start", display: o, action: startLevel});
     o = createText("Options", gameProperties.width / 2,
         menuCenter + 12, showConfig, play_title);
     title_overlay.addChild(o);
-    titlemenu[0].menu.push({name: "Options", display: o, action: showConfig});
+    newTitlemenu.menu.push({name: "Options", display: o, action: showConfig});
     o = createText("Credits", gameProperties.width / 2,
         menuCenter + 36, showCredits, play_title);
     title_overlay.addChild(o);
-    titlemenu[0].menu.push({name: "Credits", display: o, action: showCredits});
-    updateTitlemenu(0);
+    newTitlemenu.menu.push({name: "Credits", display: o, action: showCredits});
+    titlemenu.push(newTitlemenu);
+    configTitlemenu = titlemenu.length;
+    titlemenu.push({menu: [], active: 0});
+    activateTitlemenu(0, 0);
     /*
     o = new PIXI.Sprite(spriteAtlas["bullet 1"]);
     o.anchor.set(0.5, 0.5);
@@ -50,29 +54,55 @@ function initialize_menu() {
     title_overlay.addChild(o);
 }
 
-var elapsed = 0;
-var titleCamera = {x: 0, y: 0, hx: 0, hy: 0, vx: 0, vy: 0, vvx: 0, vvy: 0, timer: 9999, ticker: 0};
-function play_title(delta) {
+function activateTitlemenu(n, selected) {
+    if (selected != null) titlemenu[n].active = selected;
+    updateTitlemenu(n);
+    activeTitlemenu = n;
+}
+function initTitlemenu(n, selected) {
+    if (selected != null) titlemenu[n].active = selected;
+    updateTitlemenu(n);
+}
+
+function runTitlemenu(n) {
+    var tm = titlemenu[n];
     if (keys.up.held && keys.up.toggled) {
         keys.up.toggled = false;
-        if (titlemenu[0].active > 0) {
-            titlemenu[0].active--;
-            updateTitlemenu(0);
+        if (tm.active > 0) {
+            tm.active--;
+        } else {
+            tm.active = tm.menu.length - 1;
         }
+        PIXI.sound.play('sfx_menu');
+        updateTitlemenu(n);
     }
     if (keys.down.held && keys.down.toggled) {
         keys.down.toggled = false;
-        if (titlemenu[0].active < titlemenu[0].menu.length - 1) {
-            titlemenu[0].active++;
-            updateTitlemenu(0);
+        if (tm.active < tm.menu.length - 1) {
+            tm.active++;
+        } else {
+            tm.active = 0;
         }
+        PIXI.sound.play('sfx_menu');
+        updateTitlemenu(n);
     }
-    if (keys.a.held && keys.a.toggled) {
+    if (keys.a.held && keys.a.toggled && tm.menu[tm.active].action != null) {
         keys.a.toggled = false;
-        titlemenu[0].menu[titlemenu[0].active].action();
-        return;
+        tm.menu[tm.active].action();
     }
+    if (keys.left.held && keys.left.toggled && tm.menu[tm.active].leftAction != null) {
+        keys.left.toggled = false;
+        tm.menu[tm.active].leftAction();
+    }
+    if (keys.right.held && keys.right.toggled && tm.menu[tm.active].rightAction != null) {
+        keys.right.toggled = false;
+        tm.menu[tm.active].rightAction();
+    }
+}
 
+var elapsed = 0;
+var titleCamera = {x: 0, y: 0, hx: 0, hy: 0, vx: 0, vy: 0, vvx: 0, vvy: 0, timer: 9999, ticker: 0};
+function play_title(delta) {
     var dist, tx, ty;
 
     elapsed += delta;
@@ -99,6 +129,8 @@ function play_title(delta) {
     player.x = player.px;
     player.y = player.py;
     arrangeTiles();
+
+    runTitlemenu(activeTitlemenu);
 }
 
 function startLevel() {
@@ -112,32 +144,56 @@ function startLevel() {
 function showConfig() {
     PIXI.sound.play('sfx_menu');
 
-    var box = createPopup(levelScene, play_credits, gameProperties.preferred_width - 64, gameProperties.preferred_height - 64)//, 32, 32, gameProperties.width - 64, gameProperties.height - 64);
+    var box = createPopup(levelScene, play_config, gameProperties.preferred_width - 64, gameProperties.preferred_height - 64)//, 32, 32, gameProperties.width - 64, gameProperties.height - 64);
     var lineHeight = 20;
     var colWidth = 100;
+
+    var newTitlemenu = {menu: [], active: 0};
 
     var o;
     o = createText("Fullscreen", 0, -lineHeight*4);
     //o.font.size = 16;
     o.font.tint = "0x000000";
     box.addChild(o);
+    newTitlemenu.menu.push({name: "Fullscreen", display: o, leftAction: () => aspectMode(-1), rightAction: () => aspectMode(-2)});
 
-    o = createText("fit", -colWidth, -lineHeight*3, () => aspectMode("fit"), play_credits);
+    o = createText("fit", -colWidth, -lineHeight*3, () => aspectMode(0), play_config);
     o.font.size = 16;
     box.addChild(o);
 
-    o = createText("crop", 0, -lineHeight*3, () => aspectMode("crop"), play_credits);
+    o = createText("crop", 0, -lineHeight*3, () => aspectMode(1), play_config);
     o.font.size = 16;
     box.addChild(o);
 
-    o = createText("stretch", colWidth, -lineHeight*3, () => aspectMode("stretch"), play_credits);
+    o = createText("stretch", colWidth, -lineHeight*3, () => aspectMode(2), play_config);
     o.font.size = 16;
     box.addChild(o);
+
+    /*
+    o = new PIXI.Sprite(spriteAtlas["bullet 1"]);
+    o.anchor.set(0.5, 0.5);
+    o.x = -colWidth;
+    o.y = -lineHeight*3 + 16;
+    box.addChild(o);
+    */
+    o = new PIXI.Graphics();
+    o.beginFill(0xffffff);
+    o.drawRect(0, 0, 64, 1);
+    o.drawRect(0, 19, 64, 1);
+    o.drawRect(0, 0, 1, 20);
+    o.drawRect(63, 0, 1, 20);
+    o.endFill();
+    //o.x = -colWidth - 32;
+    o.x = (aspect_mode - 1) * 100 - 32;
+    o.y = -lineHeight*3 - 11;
+    box.addChild(o);
+    fullscreenSelector = o;
 
     o = createText("Music", 0, -lineHeight*1);
     //o.font.size = 16;
     o.font.tint = "0x000000";
     box.addChild(o);
+    newTitlemenu.menu.push({name: "Music", display: o, action: null});
 
     o = createBar(controls.music, -100, -lineHeight*0 - lineHeight / 2, 200, lineHeight);
     box.addChild(o);
@@ -146,15 +202,20 @@ function showConfig() {
     //o.font.size = 16;
     o.font.tint = "0x000000";
     box.addChild(o);
+    newTitlemenu.menu.push({name: "Sound Effects", display: o, action: null});
 
     o = createBar(controls.sfx, -100, lineHeight*3 - lineHeight / 2, 200, lineHeight);
     box.addChild(o);
 
-    //o = createText("Okay", 140, 90, closePopup, play_credits);
+    //o = createText("Okay", 140, 90, closePopup, play_config);
     o = createText("Okay", 100 - 20,
-        (gameProperties.preferred_height - 64) / 2 - 20 - 8, () => {closePopup(true)}, play_credits);
+        (gameProperties.preferred_height - 64) / 2 - 20 - 8, () => {closePopup(true)}, play_config);
     //o.anchor.set(1, 1);
     box.addChild(o);
+    newTitlemenu.menu.push({name: "Okay", display: o, action: () => {closePopup(true)}});
+
+    titlemenu[configTitlemenu] = newTitlemenu;
+    initTitlemenu(configTitlemenu, 0);
 }
 
 function showCredits() {
@@ -231,11 +292,16 @@ function play_pause() {
     if (keys.menu.held && keys.menu.toggled) {
         keys.menu.toggled = false;
         unPause();
+    } else if (keys.b.held && keys.b.toggled) {
+        keys.b.toggled = false;
+        player.hasJumped = true; //prevent unintentional jump after unpause
+        unPause();
     }
 }
 function restartGame() {
     PIXI.sound.play('sfx_menu');
     closeAllPopups();
+    activateTitlemenu(0, 0);
 
     player.textures = playerAnimations.idle;
     player.px = levelProperties.grid * 1.5;
@@ -295,9 +361,23 @@ function restartGame() {
     start_stage("title", 1);
 }
 
-function play_credits() {
+function play_config() {
+    runTitlemenu(configTitlemenu);
     if (keys.menu.held && keys.menu.toggled) {
         keys.menu.toggled = false;
+        closePopup(true);
+    } else if (keys.b.held && keys.b.toggled) {
+        keys.b.toggled = false;
+        closePopup(true);
+    }
+}
+function play_credits() {
+    //runTitlemenu(creditsTitlemenu);
+    if (keys.menu.held && keys.menu.toggled) {
+        keys.menu.toggled = false;
+        closePopup(true);
+    } else if (keys.b.held && keys.b.toggled) {
+        keys.b.toggled = false;
         closePopup(true);
     }
 }

@@ -2,26 +2,35 @@
 
 var keys = {
     up: {
+        // Up, W
         bindings: [38, 87]
     },
     down: {
+        // Down, S
         bindings: [40, 83]
     },
     left: {
+        // Left, A
         bindings: [37, 65]
     },
     right: {
+        // Right, D
         bindings: [39, 68]
     },
+    // Attack
     a: {
-        bindings: [74, 90, 52]
+        // J, Z, 4, Enter
+        bindings: [74, 90, 52, 13]
     },
-    b: {
-        bindings: [75, 88, 51]
+    // Jump
+    b: { // K, X, 3, Backspace
+        bindings: [75, 88, 51, 8]
     },
+    // ?
     c: {
         bindings: [76, 67, 50]
     },
+    // Skip text
     d: {
         bindings: [59, 86, 49]
     },
@@ -30,9 +39,6 @@ var keys = {
     },
     menu: { //escape, p
         bindings: [27, 80]
-    },
-    cancels: { //cancel response to spacebar
-        bindings: [32]
     }
 }
 var keyskeys = Object.keys(keys);
@@ -45,17 +51,19 @@ function checkKey(key, k, state) {
         }
     }
     if (!found) return;
-    k.preventDefault();
+    //k.preventDefault();
     if (key.held != state) key.toggled = true;
     key.held = state
 }
 document.onkeydown = function(k) {
     //console.log(k.which);
+    k.preventDefault();
     for (var i = 0; i < keyskeys.length; i++ ) {
         checkKey(keys[keyskeys[i]], k, true);
     }
 }
 document.onkeyup = function(k) {
+    k.preventDefault();
     for (var i = 0; i < keyskeys.length; i++ ) {
         checkKey(keys[keyskeys[i]], k, false);
     }
