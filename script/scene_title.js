@@ -1,6 +1,6 @@
 "use strict"
 
-var title_overlay;
+var title_overlay, menu_first, menu_difficulty, menu_verbose;
 var logo;
 var titlemenu = [];
 var activeTitlemenu = 0;
@@ -19,21 +19,59 @@ function initialize_menu() {
 
     var logoBottom = logo.y + 115;
     var menuCenter = (gameProperties.height + logoBottom) / 2;
-    var newTitlemenu = {menu: [], active: 0};
+    var newTitlemenu;
     var o;
-    o = createText("Start", gameProperties.width / 2,
-        menuCenter - 12, startLevel, play_title);
-    title_overlay.addChild(o);
-    newTitlemenu.menu.push({name: "Start", display: o, action: startLevel});
-    o = createText("Options", gameProperties.width / 2,
-        menuCenter + 12, showConfig, play_title);
-    title_overlay.addChild(o);
+
+    menu_first = new PIXI.Container();
+    menu_first.x = gameProperties.width / 2;
+    menu_first.y = menuCenter + 12;
+    title_overlay.addChild(menu_first);
+    newTitlemenu = {menu: [], active: 0, container: menu_first, state: play_title};
+    o = createText("Start", 0, -24, chooseDifficulty, play_title);
+    menu_first.addChild(o);
+    newTitlemenu.menu.push({name: "Start", display: o, action: chooseDifficulty});
+    o = createText("Options", 0, 0, showConfig, play_title);
+    menu_first.addChild(o);
     newTitlemenu.menu.push({name: "Options", display: o, action: showConfig});
-    o = createText("Credits", gameProperties.width / 2,
-        menuCenter + 36, showCredits, play_title);
-    title_overlay.addChild(o);
+    o = createText("Credits", 0, 24, showCredits, play_title);
+    menu_first.addChild(o);
     newTitlemenu.menu.push({name: "Credits", display: o, action: showCredits});
     titlemenu.push(newTitlemenu);
+
+    menu_difficulty = new PIXI.Container();
+    menu_difficulty.x = gameProperties.width / 2;
+    menu_difficulty.y = menuCenter + 12;
+    title_overlay.addChild(menu_difficulty);
+    newTitlemenu = {menu: [], active: 1, container: menu_difficulty, state: play_difficulty};
+    o = createText("Easy", 0, -36, chooseVerbose, play_difficulty);
+    menu_difficulty.addChild(o);
+    newTitlemenu.menu.push({name: "Easy", display: o, action: chooseVerbose});
+    o = createText("Normal", 0, -12, chooseVerbose, play_difficulty);
+    menu_difficulty.addChild(o);
+    newTitlemenu.menu.push({name: "Normal", display: o, action: chooseVerbose});
+    o = createText("Hard", 0, 12, chooseVerbose, play_difficulty);
+    menu_difficulty.addChild(o);
+    newTitlemenu.menu.push({name: "Hard", display: o, action: chooseVerbose});
+    o = createText("Lunatic", 0, 36, chooseVerbose, play_difficulty);
+    menu_difficulty.addChild(o);
+    newTitlemenu.menu.push({name: "Lunatic", display: o, action: chooseVerbose});
+    titlemenu.push(newTitlemenu);
+    menu_difficulty.visible = false;
+
+    menu_verbose = new PIXI.Container();
+    menu_verbose.x = gameProperties.width / 2;
+    menu_verbose.y = menuCenter + 12;
+    title_overlay.addChild(menu_verbose);
+    newTitlemenu = {menu: [], active: 0, container: menu_verbose, state: play_verbose};
+    o = createText("Show Dialog", 0, -12, startLevel, play_verbose);
+    menu_verbose.addChild(o);
+    newTitlemenu.menu.push({name: "Show Dialog", display: o, action: startLevel});
+    o = createText("Skip Dialog", 0, 12, startLevel, play_verbose);
+    menu_verbose.addChild(o);
+    newTitlemenu.menu.push({name: "Skip Dialog", display: o, action: startLevel});
+    titlemenu.push(newTitlemenu);
+    menu_verbose.visible = false;
+
     configTitlemenu = titlemenu.length;
     titlemenu.push({menu: [], active: 0});
     creditsTitlemenu = titlemenu.length;
@@ -64,9 +102,15 @@ function initialize_menu() {
 }
 
 function activateTitlemenu(n, selected) {
+    if (n == null) n = activeTitlemenu;
     if (selected != null) titlemenu[n].active = selected;
     updateTitlemenu(n);
     activeTitlemenu = n;
+    titlemenu[0].container.visible = false;
+    titlemenu[1].container.visible = false;
+    titlemenu[2].container.visible = false;
+    titlemenu[n].container.visible = true;
+    state = titlemenu[n].state;
 }
 function initTitlemenu(n, selected) {
     if (selected != null) titlemenu[n].active = selected;
@@ -114,6 +158,30 @@ function runTitlemenu(n, delta) {
 
 var elapsed = 0;
 var titleCamera = {x: 0, y: 0, hx: 0, hy: 0, vx: 0, vy: 0, vvx: 0, vvy: 0, timer: 9999, ticker: 0};
+function previousTitlemenu() {
+    activeTitlemenu--;
+    if (activeTitlemenu < 0) activeTitlemenu = 0;
+    activateTitlemenu();
+}
+function chooseDifficulty() {
+    activateTitlemenu(1);
+}
+function chooseVerbose() {
+    activateTitlemenu(2);
+}
+function play_difficulty(delta) {
+    play_title(delta);
+    if (keys.b.held && keys.b.toggled) {
+        keys.b.toggled = false;
+        previousTitlemenu();
+    } else if (keys.menu.held && keys.menu.toggled) {
+        keys.menu.toggled = false;
+        previousTitlemenu();
+    }
+}
+function play_verbose(delta) {
+    play_difficulty(delta);
+}
 function play_title(delta) {
     var dist, tx, ty;
 

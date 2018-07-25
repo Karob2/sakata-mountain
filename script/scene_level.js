@@ -473,14 +473,12 @@ function levelResize() {
     logo.y = gameProperties.height / 4 - 115 / 2;
     var logoBottom = logo.y + 115;
     var menuCenter = (gameProperties.height + logoBottom) / 2;
-    title_overlay.children[1].x = gameProperties.width / 2;
-    title_overlay.children[1].y = menuCenter - 12;
-
-    title_overlay.children[2].x = gameProperties.width / 2;
-    title_overlay.children[2].y = menuCenter + 12;
-
-    title_overlay.children[3].x = gameProperties.width / 2;
-    title_overlay.children[3].y = menuCenter + 36;
+    menu_first.x = gameProperties.width / 2;
+    menu_first.y = menuCenter + 12;
+    menu_difficulty.x = menu_first.x;
+    menu_difficulty.y = menu_first.y;
+    menu_verbose.x = menu_first.x;
+    menu_verbose.y = menu_first.y;
 
     title_overlay.children[4].y = gameProperties.height - 10;
 
