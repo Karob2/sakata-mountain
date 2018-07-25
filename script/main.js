@@ -31,7 +31,7 @@ var fontList = [
 
 var controls = {
     music: {
-        val: 0.75,
+        val: 0.7,
         callback() {
             for (var i = 0; i < soundList.length; i++) {
                 if (soundList[i][0].substring(0, 3) == "bgm") {
@@ -57,7 +57,7 @@ var controls = {
         }
     },
     sfx: {
-        val: 0.75,
+        val: 0.7,
         callback() {
             for (var i = 0; i < soundList.length; i++) {
                 if (soundList[i][0].substring(0, 3) == "sfx") {
@@ -138,8 +138,8 @@ function initialize() {
     logoAtlas = PIXI.loader.resources["img/logo.json"].textures;
     parchmentAtlas = PIXI.loader.resources["img/parchment.json"].textures;
 
-    controls.music.setVolume(parseFloat(loadData("music_volume", 0.75)));
-    controls.sfx.setVolume(parseFloat(loadData("sfx_volume", 0.75)));
+    controls.music.setVolume(parseFloat(loadData("music_volume", 0.7)));
+    controls.sfx.setVolume(parseFloat(loadData("sfx_volume", 0.7)));
 
     //initialize_menu();
     initialize_level();

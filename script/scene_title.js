@@ -4,7 +4,7 @@ var title_overlay;
 var logo;
 var titlemenu = [];
 var activeTitlemenu = 0;
-var configTitlemenu;
+var configTitlemenu, creditsTitlemenu, pauseTitlemenu, restartTitlemenu; //, resultsTitlemenu;
 var fullscreenSelector;
 var musicControl, sfxControl;
 function initialize_menu() {
@@ -36,6 +36,14 @@ function initialize_menu() {
     titlemenu.push(newTitlemenu);
     configTitlemenu = titlemenu.length;
     titlemenu.push({menu: [], active: 0});
+    creditsTitlemenu = titlemenu.length;
+    titlemenu.push({menu: [], active: 0});
+    pauseTitlemenu = titlemenu.length;
+    titlemenu.push({menu: [], active: 0});
+    restartTitlemenu = titlemenu.length;
+    titlemenu.push({menu: [], active: 0});
+    //resultsTitlemenu = titlemenu.length;
+    //titlemenu.push({menu: [], active: 0});
     activateTitlemenu(0, 0);
     /*
     o = new PIXI.Sprite(spriteAtlas["bullet 1"]);
@@ -64,9 +72,12 @@ function initTitlemenu(n, selected) {
     if (selected != null) titlemenu[n].active = selected;
     updateTitlemenu(n);
 }
-
-function runTitlemenu(n) {
+function runTitlemenu(n, delta) {
     var tm = titlemenu[n];
+    if (delta != null) {
+        tm.active = Math.min(Math.max(tm.active + delta, 0), tm.menu.length - 1);
+        updateTitlemenu(n);
+    }
     if (keys.up.held && keys.up.toggled) {
         keys.up.toggled = false;
         if (tm.active > 0) {
@@ -227,6 +238,8 @@ function showCredits() {
     var box = createPopup(levelScene, play_credits, gameProperties.preferred_width * 3 / 4, gameProperties.preferred_height - 64)//, 32, 32, gameProperties.width - 64, gameProperties.height - 64);
     var o;
 
+    var newTitlemenu = {menu: [], active: 0};
+
     o = createText("Sakata Mountain by Karob\nPowered by PixiJS\n\nMusic: Karob\nOriginal: ZUN\n\nCricket sfx by RHumphries under CC BY 3.0\n\nFont: Pixellari by Zacchary Dempsey-Plante", -(gameProperties.preferred_width * 3 / 4) / 2 + 20, -(gameProperties.preferred_height - 64) / 2 + 20);
     o.anchor.set(0, 0);
     o.font.size = 16;
@@ -237,6 +250,10 @@ function showCredits() {
         (gameProperties.preferred_height - 64) / 2 - 20 - 8, () => {closePopup(true)}, play_credits);
     //o.anchor.set(1, 1);
     box.addChild(o);
+    newTitlemenu.menu.push({name: "Okay", display: o, action: () => {closePopup(true)}});
+
+    titlemenu[creditsTitlemenu] = newTitlemenu;
+    initTitlemenu(creditsTitlemenu, 0);
 }
 
 function showPause() {
@@ -248,6 +265,8 @@ function showPause() {
     var lineHeight = 20;
     var colWidth = 100;
 
+    var newTitlemenu = {menu: [], active: 0};
+
     var o;
     o = createText("Paused", 0, lineHeight*-3);
     //o.font.size = 16;
@@ -257,21 +276,29 @@ function showPause() {
     o = createText("Options", 0, lineHeight*-1, () => showConfig(), play_pause);
     //o.font.size = 16;
     box.addChild(o);
+    newTitlemenu.menu.push({name: "Options", display: o, action: showConfig});
 
     o = createText("Main Menu", 0, lineHeight*0.5, () => showRestart(), play_pause);
     //o.font.size = 16;
     box.addChild(o);
+    newTitlemenu.menu.push({name: "Main Menu", display: o, action: showRestart});
 
     o = createText("Resume", 0, lineHeight*2.5, () => unPause(), play_pause);
     //o.font.size = 16;
     box.addChild(o);
+    newTitlemenu.menu.push({name: "Resume", display: o, action: unPause});
+
+    titlemenu[pauseTitlemenu] = newTitlemenu;
+    initTitlemenu(pauseTitlemenu, 0);
 }
 function showRestart() {
     PIXI.sound.play('sfx_menu');
 
-    var box = createPopup(levelScene, play_pause, gameProperties.preferred_width * 3 / 5, gameProperties.preferred_height / 2);
+    var box = createPopup(levelScene, play_restart, gameProperties.preferred_width * 3 / 5, gameProperties.preferred_height / 2);
     var lineHeight = 20;
     var colWidth = 100;
+
+    var newTitlemenu = {menu: [], active: 0};
 
     var o;
     o = createText("Are you sure you want to restart?", 0, lineHeight*-1);
@@ -279,25 +306,42 @@ function showRestart() {
     o.font.tint = "0x000000";
     box.addChild(o);
 
-    o = createText("Yes", -colWidth / 2, lineHeight*1, () => restartGame(), play_pause);
+    o = createText("Yes", -colWidth / 2, lineHeight*1, () => restartGame(), play_restart);
     box.addChild(o);
+    newTitlemenu.menu.push({name: "Yes", display: o, action: restartGame, rightAction: () => {runTitlemenu(restartTitlemenu, 1)}});
 
-    o = createText("No", colWidth / 2, lineHeight*1, () => closePopup(true), play_pause);
+    o = createText("No", colWidth / 2, lineHeight*1, () => closePopup(true), play_restart);
     box.addChild(o);
+    newTitlemenu.menu.push({name: "No", display: o, action: () => closePopup(true), leftAction: () => {runTitlemenu(restartTitlemenu, -1)}});
+
+    titlemenu[restartTitlemenu] = newTitlemenu;
+    initTitlemenu(restartTitlemenu, 0);
 }
 function unPause() {
+    player.hasJumped = true; //prevent unintentional jump after unpause
+    player.hasSlashed = true;
     unpauseStopwatch();
     PIXI.sound.resume('bgm_level');
     PIXI.sound.resume('bgm_boss');
     closePopup(true);
 }
 function play_pause() {
+    runTitlemenu(pauseTitlemenu);
     if (keys.menu.held && keys.menu.toggled) {
         keys.menu.toggled = false;
         unPause();
     } else if (keys.b.held && keys.b.toggled) {
         keys.b.toggled = false;
-        player.hasJumped = true; //prevent unintentional jump after unpause
+        unPause();
+    }
+}
+function play_restart() {
+    runTitlemenu(restartTitlemenu);
+    if (keys.menu.held && keys.menu.toggled) {
+        keys.menu.toggled = false;
+        unPause();
+    } else if (keys.b.held && keys.b.toggled) {
+        keys.b.toggled = false;
         unPause();
     }
 }
@@ -375,7 +419,7 @@ function play_config() {
     }
 }
 function play_credits() {
-    //runTitlemenu(creditsTitlemenu);
+    runTitlemenu(creditsTitlemenu);
     if (keys.menu.held && keys.menu.toggled) {
         keys.menu.toggled = false;
         closePopup(true);

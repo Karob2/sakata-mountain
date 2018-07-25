@@ -443,9 +443,9 @@ function initialize_level() {
     o.anchor.set(0.5, 0);
     results.overlay.addChild(o);
     results.num.push(o);
-    o = createText("Restart", gameProperties.width / 2 - 64, gameProperties.height - lineHeight * 5, () => restartGame(), play);
+    o = createText("> Restart <", gameProperties.width / 2 - 64 - 30, gameProperties.height - lineHeight * 5 + 10, /*() => restartGame()*/ () => showRestart(), play);
     o.font.size = 16;
-    o.anchor.set(1, 0);
+    o.anchor.set(0.5, 0.5);
     results.overlay.addChild(o);
     results.restart = o;
     o = createText(version_number, -gameProperties.width / 2 + 10, gameProperties.height - lineHeight * 2 - 10);
@@ -488,8 +488,8 @@ function levelResize() {
     dialog.overlay.y = gameProperties.height - 16 - 80;
 
     results.overlay.x = gameProperties.width / 2;
-    results.restart.x = gameProperties.width / 2 - 64;
-    results.restart.y = gameProperties.height - 20 * 5;
+    results.restart.x = gameProperties.width / 2 - 64 - 30;
+    results.restart.y = gameProperties.height - 20 * 5 + 10;
     results.version.x = -gameProperties.width / 2 + 10;
     results.version.y = gameProperties.height - 20 * 2 - 10
 }
@@ -1420,6 +1420,10 @@ function play(delta) {
         walls.alpha = Math.max((100 - bossTimer) / 100, 0);
         results.overlay.alpha = Math.max(bossTimer / 100, 0);
         results.overlay.visible = true;
+        if (keys.a.held && keys.a.toggled) {
+            keys.a.toggled = false;
+            showRestart();
+        }
     }
 
     if (player.cx >= 38 * levelProperties.grid && player.cx < 62 * levelProperties.grid && killCounter.kills < 36) {
