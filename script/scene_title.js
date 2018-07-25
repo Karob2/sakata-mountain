@@ -2,6 +2,7 @@
 
 var title_overlay;
 var logo;
+var titlemenu = [];
 function initialize_menu() {
     title_overlay = new PIXI.Container();
     levelScene.addChild(title_overlay);
@@ -14,16 +15,30 @@ function initialize_menu() {
 
     var logoBottom = logo.y + 115;
     var menuCenter = (gameProperties.height + logoBottom) / 2;
+    titlemenu.push({});
+    titlemenu[0].menu = [];
+    titlemenu[0].active = 0;
     var o;
     o = createText("Start", gameProperties.width / 2,
         menuCenter - 12, startLevel, play_title);
     title_overlay.addChild(o);
+    titlemenu[0].menu.push({name: "Start", display: o, action: startLevel});
     o = createText("Options", gameProperties.width / 2,
         menuCenter + 12, showConfig, play_title);
     title_overlay.addChild(o);
+    titlemenu[0].menu.push({name: "Options", display: o, action: showConfig});
     o = createText("Credits", gameProperties.width / 2,
         menuCenter + 36, showCredits, play_title);
     title_overlay.addChild(o);
+    titlemenu[0].menu.push({name: "Credits", display: o, action: showCredits});
+    updateTitlemenu(0);
+    /*
+    o = new PIXI.Sprite(spriteAtlas["bullet 1"]);
+    o.anchor.set(0.5, 0.5);
+    o.x = gameProperties.width / 2 - 40;
+    o.y = menuCenter - 12;
+    title_overlay.addChild(o);
+    */
 
     o = createText(
         version_number,
@@ -38,43 +53,27 @@ function initialize_menu() {
 var elapsed = 0;
 var titleCamera = {x: 0, y: 0, hx: 0, hy: 0, vx: 0, vy: 0, vvx: 0, vvy: 0, timer: 9999, ticker: 0};
 function play_title(delta) {
-    var dist, tx, ty;
-
-    /*
-    titleCamera.timer += delta;
-    if (titleCamera.timer > 400) {
-        titleCamera.timer = 0;
-        //var tdir = Math.random() * 2 * Math.PI;
-        //titleCamera.hx = Math.sin(tdir) * 6;
-        //titleCamera.hy = Math.cos(tdir) * 6;
-        titleCamera.ticker++;
-        if (titleCamera.ticker >= 4) titleCamera.ticker = 0;
-        dist = 10;
-        titleCamera.hx = dist;
-        if (titleCamera.ticker < 2) titleCamera.hx = -dist;
-        titleCamera.hy = dist;
-        if (titleCamera.ticker % 2) titleCamera.hy = -dist;
+    if (keys.up.held && keys.up.toggled) {
+        keys.up.toggled = false;
+        if (titlemenu[0].active > 0) {
+            titlemenu[0].active--;
+            updateTitlemenu(0);
+        }
     }
-    */
+    if (keys.down.held && keys.down.toggled) {
+        keys.down.toggled = false;
+        if (titlemenu[0].active < titlemenu[0].menu.length - 1) {
+            titlemenu[0].active++;
+            updateTitlemenu(0);
+        }
+    }
+    if (keys.a.held && keys.a.toggled) {
+        keys.a.toggled = false;
+        titlemenu[0].menu[titlemenu[0].active].action();
+        return;
+    }
 
-    /*
-    tx = titleCamera.hx - titleCamera.x;
-    ty = titleCamera.hy - titleCamera.y;
-    //dist = Math.sqrt(Math.pow(tx, 2) + Math.pow(ty, 2));
-    //var damp = Math.min(dist, 5) / 5;
-    titleCamera.vvx = tx / 1000;
-    titleCamera.vvy = ty / 1000;
-
-    titleCamera.vx += titleCamera.vvx * delta / 10;
-    titleCamera.vy += titleCamera.vvy * delta / 10;
-
-    titleCamera.x += titleCamera.vx * delta;
-    titleCamera.y += titleCamera.vy * delta;
-
-    dist = Math.sqrt(Math.pow(titleCamera.x, 2) + Math.pow(titleCamera.y, 2));
-    titleCamera.vx /= 1 + (dist / 1000);
-    titleCamera.vy /= 1 + (dist / 1000);
-    */
+    var dist, tx, ty;
 
     elapsed += delta;
     titleCamera.x = Math.cos(elapsed / 200) * 6 + 6;
@@ -82,11 +81,13 @@ function play_title(delta) {
 
     gui_overlay.visible = false;
     title_overlay.visible = true;
+    /*
     if (keys.a.held && keys.a.toggled) {
         keys.a.toggled = false;
         startLevel();
         return;
     }
+    */
     camera.px = gameProperties.width * 1 / 3;
     camera.py = -gameProperties.height * 1 / 3 + 2;
     camera.px += titleCamera.x;
@@ -162,7 +163,7 @@ function showCredits() {
     var box = createPopup(levelScene, play_credits, gameProperties.preferred_width * 3 / 4, gameProperties.preferred_height - 64)//, 32, 32, gameProperties.width - 64, gameProperties.height - 64);
     var o;
 
-    o = createText("Sakata Mountain by Karob\nCreated with PixiJS\n\nMusic: Karob\nOriginal: ZUN\n\nCricket sfx by RHumphries under CC BY 3.0\n\nFont: Pixellari by Zacchary Dempsey-Plante", -(gameProperties.preferred_width * 3 / 4) / 2 + 20, -(gameProperties.preferred_height - 64) / 2 + 20);
+    o = createText("Sakata Mountain by Karob\nPowered by PixiJS\n\nMusic: Karob\nOriginal: ZUN\n\nCricket sfx by RHumphries under CC BY 3.0\n\nFont: Pixellari by Zacchary Dempsey-Plante", -(gameProperties.preferred_width * 3 / 4) / 2 + 20, -(gameProperties.preferred_height - 64) / 2 + 20);
     o.anchor.set(0, 0);
     o.font.size = 16;
     o.font.tint = "0x000000";
@@ -445,6 +446,17 @@ function ageDialog(delta) {
                 if (bossState == 2) bossTimer = 500;
                 if (bossState == 4) bossState = 5;
             }
+        }
+    }
+}
+
+function updateTitlemenu(n) {
+    var tm = titlemenu[n];
+    for (var i = 0; i < tm.menu.length; i++) {
+        if (i == tm.active) {
+            tm.menu[i].display.text = "> " + tm.menu[i].name + " <";
+        } else {
+            tm.menu[i].display.text = tm.menu[i].name;
         }
     }
 }
