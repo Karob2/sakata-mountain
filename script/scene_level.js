@@ -20,6 +20,7 @@ var bossCheckpoint;
 //var gx, gy;
 var godMode = false;
 var killCounter;
+var painCounter;
 var stopwatch_message;
 var bossState, bossTimer;
 //var fullscreen_object = [];
@@ -326,6 +327,8 @@ function initialize_level() {
     killCounter.num = message;
     gui_overlay.addChild(message);    
 
+    painCounter = 0;
+
     resetStopwatch();
     //style = new PIXI.TextStyle({fontFamily: "Lucida Console", fontSize: 20, fill: "white"});
     //message = new PIXI.Text("0", style);
@@ -390,7 +393,7 @@ function initialize_level() {
     results.overlay.x = gameProperties.width / 2;
     results.overlay.y = lineHeight * 2;
     levelScene.addChild(results.overlay);
-    o = createText("[GOOD END]", 0, 0);
+    o = createText("[END]", 0, 0);
     o.font.size = 16;
     o.font.tint = "0xffffff";
     o.anchor.set(0.5, 0);
@@ -401,38 +404,55 @@ function initialize_level() {
     o.font.tint = "0xffffff";
     o.anchor.set(0.5, 0);
     results.overlay.addChild(o);
-    o = createText("10", 0, lineHeight * 3);
+    o = createText("0", 0, lineHeight * 3);
     o.font.size = 16;
     o.font.tint = "0xffff00";
     o.anchor.set(0.5, 0);
     results.overlay.addChild(o);
     results.num.push(o);
-    o = createText("Stage Time", 0, lineHeight * 5);
+    o = createText("Hits Taken", 0, lineHeight * 5);
     o.font.size = 16;
     o.font.tint = "0xffffff";
     o.anchor.set(0.5, 0);
     results.overlay.addChild(o);
-    o = createText("85.263s", 0, lineHeight * 6);
+    o = createText("0", 0, lineHeight * 6);
     o.font.size = 16;
     o.font.tint = "0xffff00";
     o.anchor.set(0.5, 0);
     results.overlay.addChild(o);
     results.num.push(o);
-    o = createText("Boss Time", 0, lineHeight * 8);
+    o = createText("Stage Time", 0, lineHeight * 8);
     o.font.size = 16;
     o.font.tint = "0xffffff";
     o.anchor.set(0.5, 0);
     results.overlay.addChild(o);
-    o = createText("553.20s", 0, lineHeight * 9);
+    o = createText("0s", 0, lineHeight * 9);
     o.font.size = 16;
     o.font.tint = "0xffff00";
     o.anchor.set(0.5, 0);
     results.overlay.addChild(o);
     results.num.push(o);
-    o = createText("Restart", 0, lineHeight*12, () => restartGame(), play);
+    o = createText("Boss Time", 0, lineHeight * 11);
     o.font.size = 16;
+    o.font.tint = "0xffffff";
     o.anchor.set(0.5, 0);
     results.overlay.addChild(o);
+    o = createText("0s", 0, lineHeight * 12);
+    o.font.size = 16;
+    o.font.tint = "0xffff00";
+    o.anchor.set(0.5, 0);
+    results.overlay.addChild(o);
+    results.num.push(o);
+    o = createText("Restart", gameProperties.width / 2 - 64, gameProperties.height - lineHeight * 5, () => restartGame(), play);
+    o.font.size = 16;
+    o.anchor.set(1, 0);
+    results.overlay.addChild(o);
+    results.restart = o;
+    o = createText(version_number, -gameProperties.width / 2 + 10, gameProperties.height - lineHeight * 2 - 10);
+    o.font.size = 16;
+    o.anchor.set(0, 1);
+    results.overlay.addChild(o);
+    results.version = o;
 
     initialize_menu();
 
@@ -468,6 +488,10 @@ function levelResize() {
     dialog.overlay.y = gameProperties.height - 16 - 80;
 
     results.overlay.x = gameProperties.width / 2;
+    results.restart.x = gameProperties.width / 2 - 64;
+    results.restart.y = gameProperties.height - 20 * 5;
+    results.version.x = -gameProperties.width / 2 + 10;
+    results.version.y = gameProperties.height - 20 * 2 - 10
 }
 /*
 function levelResize() {
@@ -1279,6 +1303,7 @@ function play(delta) {
             if (Math.abs(player.cx - hina.x) < 72 && Math.abs(player.cy - hina.y) < 62) {
                 PIXI.sound.play('sfx_kill');
                 hina.health--;
+                if (godMode) hina.health -= 20;
                 if (hina.health <= 0) bossEnd();
                 hina.invuln = 80;
                 for (var i = 0; i < hinaballs.children.length; i++) {
@@ -1621,6 +1646,7 @@ function loseHealth(vx, vy) {
     if (player.invuln >= 1 || godMode) return false;
     player.vx = vx;
     player.vy = vy;
+    painCounter++;
     if (health.lives <= 0) {// || player.cx >= 5632 - 64 && player.cy > 1088) {
         if (bossState > 0) {
             bossState = 2;
@@ -1705,9 +1731,10 @@ function bossEnd() {
         startDialog(dlg_soupend);
         results.num[0].text = "[PERFECT END]"
     }
-    results.num[1].text = killCounter.kills;
-    results.num[2].text = Math.floor(readStopwatch(0) * 1000) / 1000 + "s";
-    results.num[3].text = Math.floor(readStopwatch(1) * 1000) / 1000 + "s";
+    results.num[1].text = killCounter.kills + " / " + fairies.children.length;
+    results.num[2].text = painCounter;
+    results.num[3].text = Math.floor(readStopwatch(0) * 1000) / 1000 + "s";
+    results.num[4].text = Math.floor(readStopwatch(1) * 1000) / 1000 + "s";
     hina.children[0].texture = PIXI.utils.TextureCache["hina sit"];
     //hina.y += 23;
     gui_overlay.visible = false;

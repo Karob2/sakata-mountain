@@ -26,7 +26,7 @@ function initialize_menu() {
     title_overlay.addChild(o);
 
     o = createText(
-        "v0.01",
+        version_number,
         10,
         gameProperties.height - 10
     );
@@ -277,6 +277,7 @@ function restartGame() {
 
     killCounter.kills = 0;
     killCounter.num.text = "0";
+    painCounter = 0;
 
     resetStopwatch();
 

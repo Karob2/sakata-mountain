@@ -1,5 +1,7 @@
 "use strict";
 
+var version_number = "v0.02-pre"
+
 var textureList = [
     "img/logo.json",
     "img/parchment.json",
