@@ -43,34 +43,40 @@ function initialize_menu() {
     menu_difficulty.y = menuCenter + 12;
     title_overlay.addChild(menu_difficulty);
     newTitlemenu = {menu: [], active: 1, container: menu_difficulty, state: play_difficulty};
-    o = createText("Easy", 0, -36, chooseVerbose, play_difficulty);
+    o = createText("Easy", 0, -36, () => {difficultyChosen(0)}, play_difficulty);
     menu_difficulty.addChild(o);
-    newTitlemenu.menu.push({name: "Easy", display: o, action: chooseVerbose});
-    o = createText("Normal", 0, -12, chooseVerbose, play_difficulty);
+    newTitlemenu.menu.push({name: "Easy", display: o, action: () => {difficultyChosen(0)}});
+    o = createText("Normal", 0, -12, () => {difficultyChosen(1)}, play_difficulty);
     menu_difficulty.addChild(o);
-    newTitlemenu.menu.push({name: "Normal", display: o, action: chooseVerbose});
-    o = createText("Hard", 0, 12, chooseVerbose, play_difficulty);
+    newTitlemenu.menu.push({name: "Normal", display: o, action: () => {difficultyChosen(1)}});
+    o = createText("Hard", 0, 12, () => {difficultyChosen(2)}, play_difficulty);
     menu_difficulty.addChild(o);
-    newTitlemenu.menu.push({name: "Hard", display: o, action: chooseVerbose});
-    o = createText("Lunatic", 0, 36, chooseVerbose, play_difficulty);
+    newTitlemenu.menu.push({name: "Hard", display: o, action: () => {difficultyChosen(2)}});
+    o = createText("Lunatic", 0, 36, () => {difficultyChosen(3)}, play_difficulty);
     menu_difficulty.addChild(o);
-    newTitlemenu.menu.push({name: "Lunatic", display: o, action: chooseVerbose});
+    newTitlemenu.menu.push({name: "Lunatic", display: o, action: () => {difficultyChosen(3)}});
     titlemenu.push(newTitlemenu);
     menu_difficulty.visible = false;
+
+    difficulty = parseInt(loadData("difficulty", 1));
+    newTitlemenu.active = difficulty;
 
     menu_verbose = new PIXI.Container();
     menu_verbose.x = gameProperties.width / 2;
     menu_verbose.y = menuCenter + 12;
     title_overlay.addChild(menu_verbose);
     newTitlemenu = {menu: [], active: 0, container: menu_verbose, state: play_verbose};
-    o = createText("Show Dialog", 0, -12, startLevel, play_verbose);
+    o = createText("Show Dialog", 0, -12, () => {verboseChosen(1)}, play_verbose);
     menu_verbose.addChild(o);
-    newTitlemenu.menu.push({name: "Show Dialog", display: o, action: startLevel});
-    o = createText("Skip Dialog", 0, 12, startLevel, play_verbose);
+    newTitlemenu.menu.push({name: "Show Dialog", display: o, action: () => {verboseChosen(1)}});
+    o = createText("Skip Dialog", 0, 12, () => {verboseChosen(0)}, play_verbose);
     menu_verbose.addChild(o);
-    newTitlemenu.menu.push({name: "Skip Dialog", display: o, action: startLevel});
+    newTitlemenu.menu.push({name: "Skip Dialog", display: o, action: () => {verboseChosen(0)}});
     titlemenu.push(newTitlemenu);
     menu_verbose.visible = false;
+
+    verbose = parseInt(loadData("verbose", 1));
+    newTitlemenu.active = (1 - verbose);
 
     configTitlemenu = titlemenu.length;
     titlemenu.push({menu: [], active: 0});
@@ -166,8 +172,18 @@ function previousTitlemenu() {
 function chooseDifficulty() {
     activateTitlemenu(1);
 }
+function difficultyChosen(val) {
+    difficulty = val;
+    saveData("difficulty", val);
+    chooseVerbose();
+}
 function chooseVerbose() {
     activateTitlemenu(2);
+}
+function verboseChosen(val) {
+    verbose = val;
+    saveData("verbose", val);
+    startLevel();
 }
 function play_difficulty(delta) {
     play_title(delta);
@@ -574,7 +590,7 @@ function startDialog(chain) {
     dialog.chain = chain;
     dialog.chainstep = 0;
     dialog.timer = 1;
-    dialog.overlay.visible = true;
+    if (verbose == 1) dialog.overlay.visible = true;
     showDialog();
 }
 function showDialog() {
@@ -616,6 +632,13 @@ function showDialog() {
     //dialog.overlay.visible = true;
 }
 function ageDialog(delta) {
+    if (verbose == 0) {
+        dialog.timer = 0;
+        if (bossState == 2) bossTimer = 500;
+        if (bossState == 4) bossState = 5;
+        keys.a.toggled = false;
+        return;
+    }
     dialog.timer -= delta;
     if (dialog.timer <= 0) {
         if (dialog.step < dialog.text.length) {

@@ -4,6 +4,9 @@ var gui_overlay;
 var dialog = {};
 var results = {};
 
+var difficulty = 1;
+var verbose = 1;
+
 var levelProperties;
 var levelScene;
 var camera;
