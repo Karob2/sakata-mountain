@@ -413,34 +413,40 @@ function initialize_level() {
     o.anchor.set(0.5, 0);
     results.overlay.addChild(o);
     results.num.push(o);
-    o = createText("Hits Taken", 0, lineHeight * 5);
-    o.font.size = 16;
-    o.font.tint = "0xffffff";
-    o.anchor.set(0.5, 0);
-    results.overlay.addChild(o);
-    o = createText("0", 0, lineHeight * 6);
+    o = createText("[]", 0, lineHeight * 3 + 16);
     o.font.size = 16;
     o.font.tint = "0xffff00";
     o.anchor.set(0.5, 0);
     results.overlay.addChild(o);
     results.num.push(o);
-    o = createText("Stage Time", 0, lineHeight * 8);
+    o = createText("Hits Taken", 0, lineHeight * 5 + 16);
     o.font.size = 16;
     o.font.tint = "0xffffff";
     o.anchor.set(0.5, 0);
     results.overlay.addChild(o);
-    o = createText("0s", 0, lineHeight * 9);
+    o = createText("0", 0, lineHeight * 6 + 16);
     o.font.size = 16;
     o.font.tint = "0xffff00";
     o.anchor.set(0.5, 0);
     results.overlay.addChild(o);
     results.num.push(o);
-    o = createText("Boss Time", 0, lineHeight * 11);
+    o = createText("Route Time", 0, lineHeight * 8 + 16);
     o.font.size = 16;
     o.font.tint = "0xffffff";
     o.anchor.set(0.5, 0);
     results.overlay.addChild(o);
-    o = createText("0s", 0, lineHeight * 12);
+    o = createText("0s", 0, lineHeight * 9 + 16);
+    o.font.size = 16;
+    o.font.tint = "0xffff00";
+    o.anchor.set(0.5, 0);
+    results.overlay.addChild(o);
+    results.num.push(o);
+    o = createText("Boss Time", 0, lineHeight * 11 + 16);
+    o.font.size = 16;
+    o.font.tint = "0xffffff";
+    o.anchor.set(0.5, 0);
+    results.overlay.addChild(o);
+    o = createText("0s", 0, lineHeight * 12 + 16);
     o.font.size = 16;
     o.font.tint = "0xffff00";
     o.anchor.set(0.5, 0);
@@ -1746,23 +1752,36 @@ function bossEnd() {
         bullets_1[i].active = false;
         bullets_1[i].sprite.visible = false;
     }
+    var endText;
     if (killCounter.kills <= 8) {
         startDialog(dlg_kappaend);
-        results.num[0].text = "[KAPPA END]"
+        endText = "[KAPPA END]"
     } else if (killCounter.kills <= 30) {
         startDialog(dlg_badend);
-        results.num[0].text = "[BAD END]"
+        endText = "[BAD END]"
     } else if (killCounter.kills < fairies.children.length) {
         startDialog(dlg_goodend);
-        results.num[0].text = "[GOOD END]"
+        endText = "[GOOD END]"
     } else {
         startDialog(dlg_soupend);
-        results.num[0].text = "[PERFECT END]"
+        endText = "[PERFECT END]"
     }
+    var modeText;
+    if (difficulty == 0) {
+        modeText = "Easy"
+    } else if (difficulty == 1) {
+        modeText = "Normal"
+    } else if (difficulty == 2) {
+        modeText = "Hard"
+    } else {
+        modeText = "Lunatic"
+    }
+    results.num[0].text = modeText + " Mode - " + Math.floor((readStopwatch(0) + readStopwatch(1)) * 1000) / 1000 + "s";
     results.num[1].text = killCounter.kills + " / " + fairies.children.length;
-    results.num[2].text = painCounter;
-    results.num[3].text = Math.floor(readStopwatch(0) * 1000) / 1000 + "s";
-    results.num[4].text = Math.floor(readStopwatch(1) * 1000) / 1000 + "s";
+    results.num[2].text = endText;
+    results.num[3].text = painCounter;
+    results.num[4].text = Math.floor(readStopwatch(0) * 1000) / 1000 + "s";
+    results.num[5].text = Math.floor(readStopwatch(1) * 1000) / 1000 + "s";
     hina.children[0].texture = PIXI.utils.TextureCache["hina sit"];
     //hina.y += 23;
     gui_overlay.visible = false;
