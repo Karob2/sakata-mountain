@@ -241,6 +241,7 @@ function play_title(delta) {
 }
 
 function startLevel() {
+    hideCursor();
     PIXI.sound.play('sfx_menu');
     start_stage("level", 1);
     delayedStartDialog(dlg_intro);
@@ -352,6 +353,7 @@ function showCredits() {
 }
 
 function showPause() {
+    showCursor();
     pauseStopwatch();
     PIXI.sound.pause('bgm_level');
     PIXI.sound.pause('bgm_boss');
@@ -413,6 +415,7 @@ function showRestart() {
     initTitlemenu(restartTitlemenu, 0);
 }
 function unPause() {
+    if (bossState != 5) hideCursor();
     player.hasJumped = true; //prevent unintentional jump after unpause
     player.hasSlashed = true;
     unpauseStopwatch();
@@ -646,7 +649,10 @@ function ageDialog(delta) {
     if (verbose == 0) {
         dialog.timer = 0;
         if (bossState == 2) bossTimer = 500;
-        if (bossState == 4) bossState = 5;
+        if (bossState == 4) {
+            showCursor();
+            bossState = 5;
+        }
         keys.a.toggled = false;
         return;
     }
@@ -673,7 +679,10 @@ function ageDialog(delta) {
             } else {
                 dialog.overlay.visible = false;
                 if (bossState == 2) bossTimer = 500;
-                if (bossState == 4) bossState = 5;
+                if (bossState == 4) {
+                    showCursor();
+                    bossState = 5;
+                }
             }
         }
     }

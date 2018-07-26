@@ -145,6 +145,8 @@ function initialize() {
     initialize_level();
     //initialize_end();
 
+    initCursor();
+
     start_stage("title", 1);
 
     app.ticker.add(delta => gameLoop(delta));
@@ -205,6 +207,7 @@ function start_stage(stageType, stageNumber) {
 }
 
 function gameLoop(delta) {
+    updateCursor(delta);
     state(delta);
 }
 
@@ -353,9 +356,9 @@ var app = new PIXI.Application({
     backgroundColor: 0x000000
 });
 PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
-app.renderer.plugins.interaction.cursorStyles.default = "default";
-app.renderer.plugins.interaction.cursorStyles.hover = "default";
-app.renderer.plugins.interaction.cursorStyles.pointer = "default";
+app.renderer.plugins.interaction.cursorStyles.default = "none"; //"default"
+app.renderer.plugins.interaction.cursorStyles.hover = "none";
+app.renderer.plugins.interaction.cursorStyles.pointer = "none";
 
 var frameScene = new PIXI.Container();
 app.stage.addChild(frameScene);
@@ -379,6 +382,7 @@ o.y = 0;
 o.width = 100;
 o.height = 100;
 frameScene.addChild(o);
+
 /*
 document.getElementById("gamebox").appendChild(app.view);
 

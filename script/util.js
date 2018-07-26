@@ -318,3 +318,41 @@ function getStopwatchText() {
     }
     return message;
 }
+
+var mouseCursor = {};
+function initCursor() {
+    mouseCursor.lastPos = {x: 0, y: 0}
+    mouseCursor.decay = 0;
+    mouseCursor.sprite = new PIXI.Sprite(spriteAtlas["bullet 2"]);
+    mouseCursor.sprite.anchor.set(0.5, 0.5);
+    /*
+    var mouseCursor.sprite = new PIXI.Graphics();
+    mouseCursor.sprite.beginFill(0x000000);
+    mouseCursor.sprite.drawRect(0, 0, 32, 32);
+    mouseCursor.sprite.endFill();
+    */
+    mouseCursor.sprite.x = 0;
+    mouseCursor.sprite.y = 0;
+    app.stage.addChild(mouseCursor.sprite);
+    showCursor();
+}
+function showCursor() {
+    //mouseCursor.sprite.visible = true;
+}
+function hideCursor() {
+    //mouseCursor.sprite.visible = false;
+}
+function updateCursor(delta) {
+    mouseCursor.sprite.x = app.renderer.plugins.interaction.mouse.global.x;
+    mouseCursor.sprite.y = app.renderer.plugins.interaction.mouse.global.y;
+    mouseCursor.sprite.scale.x = gameScene.scale.x;
+    mouseCursor.sprite.scale.y = gameScene.scale.y;
+    if (mouseCursor.sprite.x == mouseCursor.lastPos.x && mouseCursor.sprite.y == mouseCursor.lastPos.y) {
+        mouseCursor.decay += delta;
+    } else {
+        mouseCursor.decay = -100;
+    }
+    mouseCursor.lastPos.x = mouseCursor.sprite.x;
+    mouseCursor.lastPos.y = mouseCursor.sprite.y;
+    mouseCursor.sprite.alpha = Math.min(Math.max((100 - mouseCursor.decay) / 100, 0), 1);
+}
