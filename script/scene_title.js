@@ -412,7 +412,7 @@ function showRestart() {
     newTitlemenu.menu.push({name: "No", display: o, action: () => closePopup(true), leftAction: () => {runTitlemenu(restartTitlemenu, -1)}});
 
     titlemenu[restartTitlemenu] = newTitlemenu;
-    initTitlemenu(restartTitlemenu, 0);
+    initTitlemenu(restartTitlemenu, 1); //select "No" by default
 }
 function unPause() {
     if (bossState != 5) hideCursor();
