@@ -129,7 +129,7 @@ function aspectMode(mode) {
     saveData("aspect_mode", mode);
     setGameSize();
 }
-aspect_mode = parseInt(loadData("aspect_mode", 0));
+aspect_mode = loadRangedInt("aspect_mode", 0, 0, 2);
 
 var spriteAtlas, tileAtlas, logoAtlas, parchmentAtlas;
 function initialize() {
@@ -138,8 +138,8 @@ function initialize() {
     logoAtlas = PIXI.loader.resources["img/logo.json"].textures;
     parchmentAtlas = PIXI.loader.resources["img/parchment.json"].textures;
 
-    controls.music.setVolume(parseFloat(loadData("music_volume", 0.7)));
-    controls.sfx.setVolume(parseFloat(loadData("sfx_volume", 0.7)));
+    controls.music.setVolume(loadRangedFloat("music_volume", 0.7, 0, 1));
+    controls.sfx.setVolume(loadRangedFloat("sfx_volume", 0.7, 0, 1));
 
     //initialize_menu();
     initialize_level();

@@ -1109,13 +1109,15 @@ function play(delta) {
         }
 
         dist = Math.sqrt(Math.pow(player.cx - fairy.x, 2) + Math.pow(player.cy - fairy.y, 2));
-        if (!fairy.super && dist < 128 && fairy.cooldown_2 >= 2) {
+        if (!fairy.super && dist < 128 && fairy.cooldown_2 >= 2 && difficulty > 0) {
             fairy.texture = PIXI.utils.TextureCache["fairy_charge 3"];
             fairy.super = true;
         }
         if ((dist < 256 || fairy.cooldown_2 < 2 || fairy.super == true) && dist > 0) { //added >0 to avoid potential divide by zero
+            if (difficulty >= 2 && fairy.cooldown_2 > 2) fairy.cooldown_2 = 2;
             if (fairy.cooldown_1 < 1) {
-                fairy.cooldown_1 = 100; // * (Math.random() + 0.5);
+                fairy.cooldown_1 = 100;
+                if (difficulty >= 1) fairy.cooldown_1 = 85;
                 if (fairy.super) {
                     for (var j = 0; j < 12; j++) {
                         fireBullet_1(
@@ -1148,14 +1150,24 @@ function play(delta) {
                         "bullet 1",
                         0
                     );
+                    /*
+                    fireBullet_1(
+                        fairy.x,
+                        fairy.y,
+                        (player.cx - fairy.x) / dist * 3,
+                        (player.cy - fairy.y) / dist * 3,
+                        "bullet 1",
+                        0
+                    );
+                    */
                     PIXI.sound.play('sfx_bullet1');
-                    if (fairy.cooldown_2 < 1) {
+                    if (fairy.cooldown_2 < 1 && difficulty > 0) {
                         fairy.cooldown_2 = 5; //4 + Math.random() * 2.5;
                         fireBullet_1(
                             fairy.x,
                             fairy.y,
-                            (player.cx - fairy.x) / dist * 7,
-                            (player.cy - fairy.y) / dist * 7,
+                            (player.cx - fairy.x) / dist * 5,
+                            (player.cy - fairy.y) / dist * 5,
                             "bullet 2",
                             0
                         );
@@ -1164,7 +1176,7 @@ function play(delta) {
                     }
                 }
                 fairy.super = false;
-                if (fairy.cooldown_2 < 2) {
+                if (fairy.cooldown_2 < 2 && difficulty > 0) {
                     fairy.texture = PIXI.utils.TextureCache["fairy_charge 2"];
                 } else {
                     fairy.texture = PIXI.utils.TextureCache["fairy"];
@@ -1176,7 +1188,7 @@ function play(delta) {
     for (var i = 0; i < bullets_1.length; i++) {
         if (bullets_1[i].active) {
             // Check if bullet is attacked.
-            if (bullets_1[i].type == 1) {
+            if (difficulty < 2 && (bullets_1[i].type == 1 || bullets_1[i].type == 2) || difficulty == 0) {
                 if (player.cooldown > 35) {
                     if (Math.abs(player.cx - bullets_1[i].sprite.x) < 72 && Math.abs(player.cy - bullets_1[i].sprite.y) < 62) {
                         //bullets_1[i].sprite.scale.x *= -1;
@@ -1197,7 +1209,7 @@ function play(delta) {
                 */
             }
             // Check if player is attacked.
-            if (Math.abs(player.cx - bullets_1[i].sprite.x) < 20 && Math.abs(player.cy - bullets_1[i].sprite.y) < 48) {
+            if (Math.abs(player.cx - bullets_1[i].sprite.x) < 20 && Math.abs(player.cy - bullets_1[i].sprite.y - 5) < 45) {
                 if (loseHealth(bullets_1[i].vx, player.vy / 2)) {
                     //player.vx = bullets_1[i].vx;
                     //player.vy /= 2;
@@ -1281,6 +1293,7 @@ function play(delta) {
             hina.invuln = 0;
             hina.cooldown = 100;
             hina.chain = 0;
+            hinaballs.delta = 0;
             /*
             for (var i = 0; i < hinaballs.children.length; i++) {
                 hinaballs.children[i].visible = false;
@@ -1307,13 +1320,15 @@ function play(delta) {
                 if (godMode) hina.health -= 20;
                 if (hina.health <= 0) bossEnd();
                 hina.invuln = 80;
+                var bossRamp = 0;
                 for (var i = 0; i < hinaballs.children.length; i++) {
                     if (!hinaballs.children[i].visible) {
                         hinaballs.children[i].visible = true;
                         hinaballs.children[i].blink = 100;
                         hinaballs.children[i + hinaballs.layer1 + hinaballs.layer2].visible = true;
                         hinaballs.children[i + hinaballs.layer1 + hinaballs.layer2].blink = 100;
-                        break;
+                        bossRamp++;
+                        if (bossRamp >= 2) break;
                     }
                 }
             }
@@ -1335,26 +1350,28 @@ function play(delta) {
         var hcl = hinaballs.children.length;
         for (var i = 0; i < hcl; i++) {
             var o;
+            var spd = 1;
+            if (difficulty == 0) spd = 0.5;
             o = hinaballs.children[i];
             if (i < hinaballs.layer1) {
-                o.x = Math.sin(i * 2 * Math.PI / hinaballs.layer1 + hinaballs.delta*0.4 + Math.PI/2) * 214 + 80;
-                o.y = Math.cos(i * 2 * Math.PI / hinaballs.layer1 + hinaballs.delta*0.4 + Math.PI/2) * 214;
-                o.x += Math.sin(hinaballs.delta / 5) * 240;
+                o.x = Math.sin(i * 2 * Math.PI / hinaballs.layer1 + hinaballs.delta*0.4*spd + Math.PI/2) * 214 + 80;
+                o.y = Math.cos(i * 2 * Math.PI / hinaballs.layer1 + hinaballs.delta*0.4*spd + Math.PI/2) * 214;
+                o.x += Math.sin(hinaballs.delta/5*spd) * 240;
                 o.y += 64;
             } else if (i < hinaballs.layer1 + hinaballs.layer2) {
-                o.x = Math.sin(i * 2 * Math.PI / hinaballs.layer2 + hinaballs.delta*0.4) * 214 + 80;
-                o.y = Math.cos(i * 2 * Math.PI / hinaballs.layer2 + hinaballs.delta*0.4) * 214;
-                o.x += Math.sin(hinaballs.delta / 5 + Math.PI / 2) * 240;
+                o.x = Math.sin(i * 2 * Math.PI / hinaballs.layer2 + hinaballs.delta*0.4*spd) * 214 + 80;
+                o.y = Math.cos(i * 2 * Math.PI / hinaballs.layer2 + hinaballs.delta*0.4*spd) * 214;
+                o.x += Math.sin(hinaballs.delta/5*spd + Math.PI / 2) * 240;
                 o.y += 64;
             } else if (i < hinaballs.layer1 + hinaballs.layer2 + hinaballs.layer3) {
-                o.x = Math.sin(i * 2 * Math.PI / hinaballs.layer3 + hinaballs.delta*0.4 + Math.PI/2) * 214 + 80;
-                o.y = Math.cos(i * 2 * Math.PI / hinaballs.layer3 + hinaballs.delta*0.4 + Math.PI/2) * 214;
-                o.x += Math.sin(hinaballs.delta / 5 + Math.PI) * 240;
+                o.x = Math.sin(i * 2 * Math.PI / hinaballs.layer3 + hinaballs.delta*0.4*spd + Math.PI/2) * 214 + 80;
+                o.y = Math.cos(i * 2 * Math.PI / hinaballs.layer3 + hinaballs.delta*0.4*spd + Math.PI/2) * 214;
+                o.x += Math.sin(hinaballs.delta/5*spd + Math.PI) * 240;
                 o.y += 64;
             } else {
-                o.x = Math.sin(i * 2 * Math.PI / hinaballs.layer4 + hinaballs.delta*0.4) * 214 + 80;
-                o.y = Math.cos(i * 2 * Math.PI / hinaballs.layer4 + hinaballs.delta*0.4) * 214;
-                o.x += Math.sin(hinaballs.delta / 5 + Math.PI * 3 / 2) * 240;
+                o.x = Math.sin(i * 2 * Math.PI / hinaballs.layer4 + hinaballs.delta*0.4*spd) * 214 + 80;
+                o.y = Math.cos(i * 2 * Math.PI / hinaballs.layer4 + hinaballs.delta*0.4*spd) * 214;
+                o.x += Math.sin(hinaballs.delta/5*spd + Math.PI * 3 / 2) * 240;
                 o.y += 64;
             }
             //o.x += Math.max(64*15 - bossTimer, 0);
@@ -1366,7 +1383,7 @@ function play(delta) {
                 o.blink--;
             } else if (o.visible) {
                 o.alpha = 1;
-                if (Math.abs(player.cx - o.x - hina.x) < 30 && Math.abs(player.cy - o.y - hina.y) < 48) {
+                if (Math.abs(player.cx - o.x - hina.x) < 30 && Math.abs(player.cy - o.y - hina.y - 5) < 45) {
                     if (loseHealth(-2, -2)) {
                         o.blink = 50;
                         continue;
@@ -1435,11 +1452,14 @@ function play(delta) {
         waveTimer -= delta;
         if (waveTimer < 1) {
             waveTimer = 100;
+            if (difficulty == 0) waveTimer = 150;
             //var dir = Math.floor(Math.random() * 2) * 2 - 1;
             var dir = -1;
             var off = Math.floor(player.cy / levelProperties.grid); // + Math.floor(Math.random() * 3) - 1;
+            var vel = 8;
+            if (difficulty == 0) vel = 6;
             //fireWave(player.cx - 7 * levelProperties.grid * dir, levelProperties.grid * (off + 0.5), 8 * dir, 0);
-            fireBullet_1(player.cx - 7 * levelProperties.grid * dir, levelProperties.grid * (off + 0.5), 8 * dir, 0, "wave 3 f1", 1);
+            fireBullet_1(player.cx - 7 * levelProperties.grid * dir, levelProperties.grid * (off + 0.5), vel * dir, 0, "wave 3 f1", 1);
             PIXI.sound.play('sfx_bullet1');
         }
     }
@@ -1592,9 +1612,11 @@ function fireWave(x, y, vx, vy) {
 
 function fullHealth() {
     health.lives = health.maxLives;
+    /*
     for (var n = 0; n < health.maxLives; n++) {
         health.children[n].visible = true;
     }
+    */
     styleHealth();
     if (bossState != 0) return;
     killCounter.kills = 0;
@@ -1669,7 +1691,7 @@ function loseHealth(vx, vy) {
     }
     PIXI.sound.play('sfx_pain');
     health.lives--;
-    health.children[health.lives].visible = false;
+    //health.children[health.lives].visible = false;
     styleHealth();
     //camera.shake = 10;
     //player.shake = 20;
@@ -1679,7 +1701,7 @@ function loseHealth(vx, vy) {
 }
 
 function styleHealth() {
-    for (var n = 0; n < health.maxLives; n++) {
+    for (var n = 0; n < 6; n++) {
         if (n < health.lives) {
             health.children[n].visible = true;
             health.children[n].y = Math.floor(Math.sin(n * 4 * health.maxLives / health.lives) * 5);
@@ -1698,6 +1720,7 @@ function playerCheckpoint() {
     player.py = lastCheckpoint.y;
     player.vx = 0;
     player.vy = 0;
+    player.cooldown = 0;
     waveTimer = 3;
     //hina.cooldown = 3;
     //hina.chain = 0;

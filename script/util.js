@@ -226,6 +226,20 @@ function loadData(key, def) {
     if (val == null) return def;
     else return val;
 }
+function loadRangedFloat(key, def, min, max) {
+    var val = parseFloat(loadData(key, def));
+    if (isNaN(val)) return def;
+    if (val < min) return min;
+    if (val > max) return max;
+    return val;
+}
+function loadRangedInt(key, def, min, max) {
+    var val = parseInt(loadData(key, def));
+    if (isNaN(val)) return def;
+    if (val < min) return min;
+    if (val > max) return max;
+    return val;
+}
 
 function setCookie(cname, cvalue, exdays) {
     var d = new Date();

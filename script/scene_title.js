@@ -58,7 +58,7 @@ function initialize_menu() {
     titlemenu.push(newTitlemenu);
     menu_difficulty.visible = false;
 
-    difficulty = parseInt(loadData("difficulty", 1));
+    difficulty = loadRangedInt("difficulty", 1, 0, 3);
     newTitlemenu.active = difficulty;
 
     menu_verbose = new PIXI.Container();
@@ -75,7 +75,7 @@ function initialize_menu() {
     titlemenu.push(newTitlemenu);
     menu_verbose.visible = false;
 
-    verbose = parseInt(loadData("verbose", 1));
+    verbose = loadRangedInt("verbose", 1, 0, 1);
     newTitlemenu.active = (1 - verbose);
 
     configTitlemenu = titlemenu.length;
@@ -175,6 +175,17 @@ function chooseDifficulty() {
 function difficultyChosen(val) {
     difficulty = val;
     saveData("difficulty", val);
+    if (difficulty == 0) {
+        health.maxLives = 6;
+    } else if (difficulty == 1) {
+        health.maxLives = 3;
+    } else if (difficulty == 2) {
+        health.maxLives = 3;
+    } else {
+        health.maxLives = 0;
+    }
+    health.lives = health.maxLives;
+    styleHealth();
     chooseVerbose();
 }
 function chooseVerbose() {
