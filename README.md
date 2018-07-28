@@ -37,10 +37,6 @@ Music
 - **Arranged and sequenced by:** [Karob](https://soundcloud.com/krichotomy)
 - **Original:** [ZUN](https://kourindou.exblog.jp/)
 
-The background audio "crickets.mp3" is a derivative of "rbh crickets suburb night1.wav" by RHumphries, which is licensed under CC BY 3.0.
-- **Source:** https://freesound.org/people/RHumphries/sounds/1053/
-- **License:** https://creativecommons.org/licenses/by/3.0/
-
 Font: Pixellari by Zacchary Dempsey-Plante.
 - **Source:** https://www.dafont.com/pixellari.font
 - **License:** Free use as long as author is credited.

@@ -170,9 +170,11 @@ function previousTitlemenu() {
     activateTitlemenu();
 }
 function chooseDifficulty() {
+    PIXI.sound.play('sfx_select');
     activateTitlemenu(1);
 }
 function difficultyChosen(val) {
+    PIXI.sound.play('sfx_select');
     difficulty = val;
     saveData("difficulty", val);
     if (difficulty == 0) {
@@ -192,6 +194,7 @@ function chooseVerbose() {
     activateTitlemenu(2);
 }
 function verboseChosen(val) {
+    PIXI.sound.play('sfx_select');
     verbose = val;
     saveData("verbose", val);
     startLevel();
@@ -242,7 +245,7 @@ function play_title(delta) {
 
 function startLevel() {
     hideCursor();
-    PIXI.sound.play('sfx_menu');
+    //PIXI.sound.play('sfx_menu');
     start_stage("level", 1);
     delayedStartDialog(dlg_intro);
     //substate = 1;
@@ -250,7 +253,7 @@ function startLevel() {
 }
 
 function showConfig() {
-    PIXI.sound.play('sfx_menu');
+    PIXI.sound.play('sfx_select');
 
     var box = createPopup(levelScene, play_config, gameProperties.preferred_width - 64, gameProperties.preferred_height - 64)//, 32, 32, gameProperties.width - 64, gameProperties.height - 64);
     var lineHeight = 20;
@@ -329,17 +332,17 @@ function showConfig() {
 }
 
 function showCredits() {
-    PIXI.sound.play('sfx_menu');
+    PIXI.sound.play('sfx_select');
 
     var box = createPopup(levelScene, play_credits, gameProperties.preferred_width * 3 / 4, gameProperties.preferred_height - 64)//, 32, 32, gameProperties.width - 64, gameProperties.height - 64);
     var o;
 
     var newTitlemenu = {menu: [], active: 0};
 
-    o = createText("Sakata Mountain by Karob\nPowered by PixiJS\n\nMusic: Karob\nOriginal: ZUN\n\nCricket sfx by RHumphries under CC BY 3.0\n\nFont: Pixellari by Zacchary Dempsey-Plante", -(gameProperties.preferred_width * 3 / 4) / 2 + 20, -(gameProperties.preferred_height - 64) / 2 + 20);
+    o = createText("Sakata Mountain by Karob\nPowered by PixiJS\n\nMusic: Karob\nOriginal: ZUN\n\nFont: Pixellari by Zacchary Dempsey-Plante", -(gameProperties.preferred_width * 3 / 4) / 2 + 20, -(gameProperties.preferred_height - 64) / 2 + 20);
     o.anchor.set(0, 0);
     o.font.size = 16;
-    o.font.tint = "0x000000";
+    o.font.tint = "0xffffff";
     box.addChild(o);
 
     o = createText("Okay", 100 - 20,
@@ -358,6 +361,7 @@ function showPause() {
     PIXI.sound.pause('bgm_level');
     PIXI.sound.pause('bgm_boss');
     PIXI.sound.pause('bgm_result');
+    PIXI.sound.play('sfx_select');
 
     var box = createPopup(levelScene, play_pause, gameProperties.preferred_width / 2, gameProperties.preferred_height * 3 / 5);
     var lineHeight = 20;
@@ -390,7 +394,7 @@ function showPause() {
     initTitlemenu(pauseTitlemenu, 0);
 }
 function showRestart() {
-    PIXI.sound.play('sfx_menu');
+    PIXI.sound.play('sfx_select');
 
     var box = createPopup(levelScene, play_restart, gameProperties.preferred_width * 3 / 5, gameProperties.preferred_height / 2);
     var lineHeight = 20;
@@ -446,7 +450,7 @@ function play_restart() {
     }
 }
 function restartGame() {
-    PIXI.sound.play('sfx_menu');
+    //PIXI.sound.play('sfx_menu');
     closeAllPopups();
     activateTitlemenu(0, 0);
 
@@ -662,6 +666,7 @@ function ageDialog(delta) {
     dialog.timer -= delta;
     if (dialog.timer <= 0) {
         if (dialog.step < dialog.text.length) {
+            PIXI.sound.play('sfx_text');
             if (dialog.step > 0) dialog.textBuild += " ";
             dialog.textBuild += dialog.text[dialog.step];
             dialog.message.text = dialog.textBuild;

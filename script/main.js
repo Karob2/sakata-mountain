@@ -9,7 +9,7 @@ var textureList = [
     "img/tiles.json"
     ]
 var soundList = [
-    ["env_crickets", "sfx/crickets.mp3"],
+    //["env_crickets", "sfx/crickets.mp3"],
     ["bgm_menu", "sfx/mountain_bells-e.mp3"],
     ["bgm_level", "sfx/mountain_wind-d.mp3"],
     ["bgm_boss", "sfx/mountain_supplication-c.mp3"],
@@ -23,7 +23,10 @@ var soundList = [
     ["sfx_bullet2", "sfx/ender.wav"],
     ["sfx_bullet3", "sfx/mortar.wav"],
     ["sfx_pain", "sfx/hitcrit.wav"],
-    ["sfx_menu", "sfx/tri.wav"],
+    //["sfx_foot", "sfx/step5.wav"],
+    ["sfx_menu", "sfx/tap.wav"],
+    ["sfx_text", "sfx/tap2.wav"],
+    ["sfx_select", "sfx/select.wav"],
     ["sfx_close", "sfx/close.wav"]
     ]
 var fontList = [

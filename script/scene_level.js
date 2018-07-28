@@ -149,6 +149,7 @@ function initialize_level() {
     player.invuln = 0;
     player.shake = 0;
     player.respawnTimer = 0;
+    player.stepTimer = 0;
 
     // DEBUG:
     //player.px = levelProperties.width - levelProperties.grid * 11.5;
@@ -797,6 +798,15 @@ function play(delta) {
     //if (keys.down.held) player.vy += 0.5 * delta;
     if (keys.left.held) player.vx -= 0.5 * delta;
     if (keys.right.held) player.vx += 0.5 * delta;
+    if (keys.left.held || keys.right.held) {
+        player.steptimer++;
+    } else {
+        player.steptimer = 0;
+    }
+    if (player.steptimer > 8) {
+        //PIXI.sound.play('sfx_foot');
+        player.steptimer = 0;
+    }
 
     // Set player animation.
 
