@@ -2,7 +2,7 @@
 
 Originally created for Touhou Game Jam 2, using PixiJS.
 
-Nemuno Sakata just wants to get vegetables for soup, but there's trouble on the mountain. Jump and slash your way around a twisting level with enemies throughout and a mystery boss at the end.
+Nemuno Sakata just wants to gather some vegetables, but there's trouble on the mountain. Jump and slash your way around a twisting level with enemies throughout and a mystery boss at the end.
 
 This is a fan work of the Touhou Project and is not associated with the original creators.
 
@@ -12,10 +12,10 @@ This project is a mass of spaghetti code and bad algorithms thrown together for 
 
 # Game Instructions
 
-- Avoid enemy projectiles. (Green "wind" projectiles can be destroyed with your melee attack.)
+- Avoid enemy projectiles. (Some projectiles can be destroyed with your melee attack, depending on difficulty mode.)
 - Activate checkpoints along the way. (You are immune to damage while standing on checkpoints.)
 - The screen shows health (top-left), score (top-right), and time elapsed in seconds (bottom-left).
-- The ending depends on your score (below 31, 31-40, or 41).
+- The ending dialog depends on your score (below 31, 31-40, or 41).
 
 ## Controls
 
