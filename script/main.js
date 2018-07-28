@@ -37,21 +37,18 @@ var controls = {
     music: {
         val: 0.7,
         callback() {
+            resumeMusic();
             for (var i = 0; i < soundList.length; i++) {
                 if (soundList[i][0].substring(0, 3) == "bgm") {
                     var snd = PIXI.sound.find(soundList[i][0]);
-                    if (!snd.isPlaying)
-                        PIXI.sound.resume(soundList[i][0]);
+                    //if (!snd.isPlaying) PIXI.sound.resume(soundList[i][0]);
                     PIXI.sound.volume(soundList[i][0], this.val);
-                    /*
-                    PIXI.sound.resume(soundList[i][0]);
-                    PIXI.sound.volume(soundList[i][0], this.val);
-                    */
                 }
             }
             saveData("music_volume", this.val);
         },
         setVolume(vol) {
+            resumeMusic();
             this.val = vol;
             for (var i = 0; i < soundList.length; i++) {
                 if (soundList[i][0].substring(0, 3) == "bgm") {

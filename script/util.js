@@ -1,18 +1,62 @@
 "use strict"
 
+var currentMusic;
+var isPaused = false;
 function playMusic(mtitle) {
+    /*
     var snd = PIXI.sound.find(mtitle);
     if (!snd.isPlaying) {
         stopMusic();
         PIXI.sound.play(mtitle, {loop:true});
     }
+    */
+    if (currentMusic != null) {
+        //PIXI.sound.resume(currentMusic);
+        PIXI.sound.stop(currentMusic);
+    }
+    PIXI.sound.play(mtitle, {loop:true});
+    currentMusic = mtitle;
+    isPaused = false;
 }
 
 function stopMusic() {
+    /*
+    PIXI.sound.resume('bgm_menu');
+    PIXI.sound.resume('bgm_level');
+    PIXI.sound.resume('bgm_boss');
+    PIXI.sound.resume('bgm_result');
+    */
     PIXI.sound.stop('bgm_menu');
     PIXI.sound.stop('bgm_level');
     PIXI.sound.stop('bgm_boss');
     PIXI.sound.stop('bgm_result');
+    currentMusic = null;
+    isPaused = false;
+}
+
+function pauseMusic() {
+    /*
+    PIXI.sound.pause('bgm_level');
+    PIXI.sound.pause('bgm_boss');
+    PIXI.sound.pause('bgm_result');
+    */
+    if (currentMusic != null) {
+        PIXI.sound.pause(currentMusic);
+    }
+    isPaused = true;
+}
+
+function resumeMusic() {
+    /*
+    PIXI.sound.resume('bgm_level');
+    PIXI.sound.resume('bgm_boss');
+    PIXI.sound.resume('bgm_result');
+    */
+    if (!isPaused) return;
+    if (currentMusic != null) {
+        PIXI.sound.resume(currentMusic);
+    }
+    isPaused = false;
 }
 
 function createText (text, x, y, buttonCall, stateCheck) {

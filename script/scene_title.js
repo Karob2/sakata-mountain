@@ -358,9 +358,7 @@ function showCredits() {
 function showPause() {
     showCursor();
     pauseStopwatch();
-    PIXI.sound.pause('bgm_level');
-    PIXI.sound.pause('bgm_boss');
-    PIXI.sound.pause('bgm_result');
+    pauseMusic();
     PIXI.sound.play('sfx_select');
 
     var box = createPopup(levelScene, play_pause, gameProperties.preferred_width / 2, gameProperties.preferred_height * 3 / 5);
@@ -424,9 +422,7 @@ function unPause() {
     player.hasJumped = true; //prevent unintentional jump after unpause
     player.hasSlashed = true;
     unpauseStopwatch();
-    PIXI.sound.resume('bgm_level');
-    PIXI.sound.resume('bgm_boss');
-    PIXI.sound.resume('bgm_result');
+    resumeMusic();
     closePopup(true);
 }
 function play_pause() {
@@ -450,6 +446,7 @@ function play_restart() {
     }
 }
 function restartGame() {
+    resumeMusic();
     //PIXI.sound.play('sfx_menu');
     closeAllPopups();
     activateTitlemenu(0, 0);
