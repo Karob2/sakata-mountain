@@ -357,6 +357,7 @@ function showPause() {
     pauseStopwatch();
     PIXI.sound.pause('bgm_level');
     PIXI.sound.pause('bgm_boss');
+    PIXI.sound.pause('bgm_result');
 
     var box = createPopup(levelScene, play_pause, gameProperties.preferred_width / 2, gameProperties.preferred_height * 3 / 5);
     var lineHeight = 20;
@@ -421,6 +422,7 @@ function unPause() {
     unpauseStopwatch();
     PIXI.sound.resume('bgm_level');
     PIXI.sound.resume('bgm_boss');
+    PIXI.sound.resume('bgm_result');
     closePopup(true);
 }
 function play_pause() {
@@ -651,6 +653,7 @@ function ageDialog(delta) {
         if (bossState == 2) bossTimer = 500;
         if (bossState == 4) {
             showCursor();
+            playMusic('bgm_result');
             bossState = 5;
         }
         keys.a.toggled = false;
@@ -681,6 +684,7 @@ function ageDialog(delta) {
                 if (bossState == 2) bossTimer = 500;
                 if (bossState == 4) {
                     showCursor();
+                    playMusic('bgm_result');
                     bossState = 5;
                 }
             }

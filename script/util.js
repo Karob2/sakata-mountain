@@ -12,6 +12,7 @@ function stopMusic() {
     PIXI.sound.stop('bgm_menu');
     PIXI.sound.stop('bgm_level');
     PIXI.sound.stop('bgm_boss');
+    PIXI.sound.stop('bgm_result');
 }
 
 function createText (text, x, y, buttonCall, stateCheck) {

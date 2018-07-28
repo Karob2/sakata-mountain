@@ -10,9 +10,10 @@ var textureList = [
     ]
 var soundList = [
     ["env_crickets", "sfx/crickets.mp3"],
-    ["bgm_menu", "sfx/bells.mp3"],
-    ["bgm_level", "sfx/mountain_wind.mp3"],
-    ["bgm_boss", "sfx/mountain_boss.mp3"],
+    ["bgm_menu", "sfx/mountain_bells-e.mp3"],
+    ["bgm_level", "sfx/mountain_wind-d.mp3"],
+    ["bgm_boss", "sfx/mountain_supplication-c.mp3"],
+    ["bgm_result", "sfx/player_score.mp3"],
     ["sfx_kill", "sfx/mischit.wav"],
     ["sfx_checkpoint", "sfx/block2.wav"],
     ["sfx_respawn", "sfx/die.wav"],
